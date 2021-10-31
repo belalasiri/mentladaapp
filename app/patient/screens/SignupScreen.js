@@ -91,7 +91,7 @@ const LoginScreen = ({navigation}) => {
         </View>
         <FormButton
           buttonTitle="Create an account"
-          onPress={() => register(email, password)}
+          onPress={() => register(email, password, confirmPassword)}
         />
 
         {/* OR */}

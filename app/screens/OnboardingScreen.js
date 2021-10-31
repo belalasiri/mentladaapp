@@ -43,7 +43,9 @@ const OnboardingScreen = ({navigation}) => {
       pages={[
         {
           backgroundColor: colors.primary,
-          image: <Image source={require('../assets/image/Onboarding4.png')} />,
+          image: (
+            <Image source={require('../assets/image/Onboarding-img3.png')} />
+          ),
           title: 'Psychological helth',
           subtitle: 'Done with React Native Onboarding Swiper',
           titleStyles: {
@@ -57,7 +59,9 @@ const OnboardingScreen = ({navigation}) => {
         },
         {
           backgroundColor: colors.secoundary,
-          image: <Image source={require('../assets/image/Onboarding5.png')} />,
+          image: (
+            <Image source={require('../assets/image/Onboarding-img3.png')} />
+          ),
           title: 'Psychological helth',
           subtitle: 'Done with React Native Onboarding Swiper',
           titleStyles: {
@@ -71,7 +75,9 @@ const OnboardingScreen = ({navigation}) => {
         },
         {
           backgroundColor: colors.primary,
-          image: <Image source={require('../assets/image/Onboarding4.png')} />,
+          image: (
+            <Image source={require('../assets/image/Onboarding-img3.png')} />
+          ),
           title: 'Psychological helth',
           subtitle: 'Done with React Native Onboarding Swiper',
           titleStyles: {

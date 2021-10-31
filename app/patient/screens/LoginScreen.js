@@ -12,8 +12,8 @@ const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  //firebase
-  const {login} = useContext(AuthContext);
+  //firebase and google Login
+  const {login, googleLogin} = useContext(AuthContext);
   return (
     <View style={styles.container}>
       {/* segment */}
@@ -76,7 +76,7 @@ const LoginScreen = ({navigation}) => {
         btnType="google"
         color="#de4d41"
         backgroundColor="#f5e7ea"
-        onPress={() => {}}
+        onPress={() => googleLogin()}
       />
 
       <SocialButton
