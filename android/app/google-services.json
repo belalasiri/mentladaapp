@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "55064714268",
+    "project_id": "mentlada-project",
+    "storage_bucket": "mentlada-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55064714268:android:844b7dfccb1ed6c854d3d9",
+        "android_client_info": {
+          "package_name": "com.mentlada"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "55064714268-057p499ki1499poi1ptpaj18osqnieit.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_bOJb9pGN8lgNz3kgrr9BOP2lWKa1DVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55064714268-057p499ki1499poi1ptpaj18osqnieit.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55064714268:android:693bcd7d1c2ed0ee54d3d9",
+        "android_client_info": {
+          "package_name": "com.mentladaproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "55064714268-057p499ki1499poi1ptpaj18osqnieit.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_bOJb9pGN8lgNz3kgrr9BOP2lWKa1DVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55064714268-057p499ki1499poi1ptpaj18osqnieit.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
