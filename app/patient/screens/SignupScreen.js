@@ -118,7 +118,7 @@ const LoginScreen = ({navigation}) => {
         </View>
 
         <SocialButton
-          buttonTitle="Sign up with Facebook"
+          buttonTitle="Sign up with Facebook!"
           btnType="facebook"
           color="#4867aa"
           backgroundColor="#e6eaf4"
