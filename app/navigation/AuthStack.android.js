@@ -5,8 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import OnboardingScreen from '../screens/OnboardingScreen';
-import LoginScreen from '../patient/screens/LoginScreen';
 import SignupScreen from '../patient/screens/SignupScreen';
+import LoginScreen from '../patient/screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +48,7 @@ const AuthStack = () => {
         component={LoginScreen}
         options={{header: () => null}}
       />
+
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
