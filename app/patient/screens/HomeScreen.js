@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import colors from '../../config/colors';
 import FormButton from '../../config/components/FormButton';
+import font from '../../config/font';
 import {AuthContext} from '../../navigation/AuthProvider';
 
 const HomeScreen = () => {
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    color: colors.primary,
+    color: colors.text,
+    fontFamily: font.subtitle,
   },
 });

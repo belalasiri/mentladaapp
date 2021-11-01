@@ -1,5 +1,12 @@
 import React, {useState, useContext} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import colors from '../../config/colors';
 
 import FormButton from '../../config/components/FormButton';
@@ -13,7 +20,8 @@ const LoginScreen = ({navigation}) => {
   const [password, setPassword] = useState();
 
   //firebase and google Login
-  const {login, googleLogin} = useContext(AuthContext);
+  const {login, googleLogin, fbLogin} = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       {/* segment */}
@@ -71,21 +79,25 @@ const LoginScreen = ({navigation}) => {
         <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
       </View>
 
-      <SocialButton
-        buttonTitle="Sign in with Google"
-        btnType="google"
-        color="#de4d41"
-        backgroundColor="#f5e7ea"
-        onPress={() => googleLogin()}
-      />
+      {Platform.OS === 'android' ? (
+        <View>
+          <SocialButton
+            buttonTitle="Sign in with Google"
+            btnType="google"
+            color="#de4d41"
+            backgroundColor="#f5e7ea"
+            onPress={() => googleLogin()}
+          />
 
-      <SocialButton
-        buttonTitle="Sign in with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-        onPress={() => {}}
-      />
+          <SocialButton
+            buttonTitle="Sign in with Facebook"
+            btnType="facebook"
+            color="#4867aa"
+            backgroundColor="#e6eaf4"
+            onPress={() => fbLogin()}
+          />
+        </View>
+      ) : null}
 
       {/* Don’t have an account? */}
       <View style={styles.textPrivate}>
