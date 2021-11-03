@@ -6,7 +6,7 @@ import font from '../../config/font';
 import {AuthContext} from '../../navigation/AuthProvider';
 import {windowHeight} from '../../utils/Dimentions';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = () => {
   const {user, logout} = useContext(AuthContext);
   return (
     <View style={styles.container}>

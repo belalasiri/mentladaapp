@@ -34,13 +34,9 @@ export default function CustomSwitch({
           borderColor: getSelectionMode == 1 ? '#B283E4' : colors.empty,
           borderRadius: 7,
           borderWidth: 3,
-          justifyContent: 'center',
           alignItems: 'center',
+          margin: 3,
         }}>
-        <Image
-          source={require('../../assets/image/patient.png')}
-          style={{height: 100, width: 100, resizeMode: 'cover'}}
-        />
         <Text
           style={{
             opacity: 5,
@@ -50,6 +46,10 @@ export default function CustomSwitch({
           }}>
           {option1}
         </Text>
+        <Image
+          source={require('../../assets/image/patient.png')}
+          style={{height: 100, width: 100, resizeMode: 'cover'}}
+        />
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={1}
@@ -58,14 +58,11 @@ export default function CustomSwitch({
           flex: 1,
           borderColor: getSelectionMode == 2 ? '#B283E4' : colors.empty,
           borderRadius: 7,
+          margin: 3,
           borderWidth: 3,
-          justifyContent: 'center',
+
           alignItems: 'center',
         }}>
-        <Image
-          source={require('../../assets/image/professional.png')}
-          style={{height: 100, width: 100, resizeMode: 'cover'}}
-        />
         <Text
           style={{
             color: getSelectionMode == 2 ? colors.primary : colors.text,
@@ -74,6 +71,10 @@ export default function CustomSwitch({
           }}>
           {option2}
         </Text>
+        <Image
+          source={require('../../assets/image/professional.png')}
+          style={{height: 100, width: 100, resizeMode: 'cover'}}
+        />
       </TouchableOpacity>
     </View>
   );

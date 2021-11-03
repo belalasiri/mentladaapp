@@ -8,70 +8,8 @@ import BlogScreen from '../patient/screens/BlogScreen';
 import PostScreen from '../patient/screens/PostScreen';
 import MessageScreen from '../patient/screens/MessegeScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import colors from '../config/colors';
 
-const Stack = createStackNavigator();
-// const Tab = createMaterialBottomTabNavigator();
 const Tab = createBottomTabNavigator();
-// const MainTapScreen = () => {
-//   return (
-//     <Tab.Navigator activeColor={colors.empty}>
-//       <Tab.Screen
-//         name="Home"
-//         component={HomeScreen}
-//         options={{
-//           tabBarColor: '#67D8AF',
-//           tabBarLabel: 'Home',
-//           tabBarIcon: ({color}) => <Icon name="home" color={color} size={26} />,
-//         }}
-//       />
-//       <Tab.Screen
-//         name="Post"
-//         component={PostScreen}
-//         options={{
-//           tabBarLabel: 'Profile',
-//           tabBarColor: '#61EDEA',
-//           tabBarIcon: ({color}) => (
-//             <MaterialCommunityIcons name="account" color={color} size={26} />
-//           ),
-//         }}
-//       />
-//       <Tab.Screen
-//         name="Blog"
-//         component={BlogScreen}
-//         options={{
-//           tabBarLabel: 'Profile',
-//           tabBarColor: '#B283E4',
-//           tabBarIcon: ({color}) => (
-//             <MaterialCommunityIcons name="account" color={color} size={26} />
-//           ),
-//         }}
-//       />
-//       <Tab.Screen
-//         name="Message"
-//         component={MessageScreen}
-//         options={{
-//           tabBarLabel: 'Profile',
-//           tabBarColor: '#FFC646',
-//           tabBarIcon: ({color}) => (
-//             <MaterialCommunityIcons name="account" color={color} size={26} />
-//           ),
-//         }}
-//       />
-//       <Tab.Screen
-//         name="Profile"
-//         component={ProfileScreen}
-//         options={{
-//           tabBarLabel: 'Profile',
-//           tabBarColor: '#6D768E',
-//           tabBarIcon: ({color}) => (
-//             <MaterialCommunityIcons name="account" color={color} size={26} />
-//           ),
-//         }}
-//       />
-//     </Tab.Navigator>
-//   );
-// };
 
 const AppStack = () => {
   return (
@@ -133,48 +71,6 @@ const AppStack = () => {
         options={{header: () => null}}
       />
     </Tab.Navigator>
-  );
-};
-
-const MainTapScreen = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          header: () => null,
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          header: () => null,
-        }}
-      />
-      <Stack.Screen
-        name="Blog"
-        component={BlogScreen}
-        options={{
-          header: () => null,
-        }}
-      />
-      <Stack.Screen
-        name="Post"
-        component={PostScreen}
-        options={{
-          header: () => null,
-        }}
-      />
-      <Stack.Screen
-        name="Message"
-        component={MessageScreen}
-        options={{
-          header: () => null,
-        }}
-      />
-    </Stack.Navigator>
   );
 };
 
