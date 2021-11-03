@@ -10,37 +10,19 @@ const HomeScreen = ({navigation}) => {
   const {user, logout} = useContext(AuthContext);
   return (
     <View style={styles.container}>
-      <View style={{width: '100%', height: '17%', backgroundColor: '#C2EFDF'}}>
-        <View style={{padding: 20, marginVertical: 20}}>
+      <View style={{width: '100%', height: '20%', backgroundColor: '#C2EFDF'}}>
+        <View
+          style={{paddingTop: 10, paddingHorizontal: 20, marginVertical: 20}}>
           <Text
             style={{
               fontSize: 16,
               fontFamily: font.subtitle,
-              paddingBottom: -20,
             }}>
             How are you today?
           </Text>
-          <Text style={styles.text}>Hi, {user.email}</Text>
+          <Text style={styles.text}>Good evening, {user.uid}</Text>
         </View>
       </View>
-
-      <View style={{}}>
-        <FormButton buttonTitle="Logout" onPress={() => logout()} />
-      </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Profile')}
-        style={{
-          marginTop: 10,
-          paddingBottom: 3,
-          width: '100%',
-          height: windowHeight / 15,
-          backgroundColor: colors.secoundary,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 7,
-        }}>
-        <Text> Go to Profile screen </Text>
-      </TouchableOpacity>
     </View>
   );
 };

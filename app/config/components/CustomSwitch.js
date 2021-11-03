@@ -24,7 +24,7 @@ export default function CustomSwitch({
         borderRadius: 7,
         borderColor: '#B283E4',
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
       }}>
       <TouchableOpacity
         activeOpacity={1}

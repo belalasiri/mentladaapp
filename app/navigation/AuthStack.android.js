@@ -36,6 +36,7 @@ const AuthStack = () => {
   } else {
     routName = 'Login';
   }
+
   return (
     <Stack.Navigator initialRouteName={routName}>
       <Stack.Screen

@@ -13,11 +13,12 @@ export const AuthProvider = ({children}) => {
       value={{
         user,
         setUser,
+
         login: async (email, password) => {
           try {
             await auth().signInWithEmailAndPassword(email, password);
-          } catch (e) {
-            console.log(e);
+          } catch (error) {
+            alert(error);
           }
         },
 
@@ -28,7 +29,7 @@ export const AuthProvider = ({children}) => {
               auth.GoogleAuthProvider.credential(idToken);
             await auth().signInWithCredential(googleCredential);
           } catch (error) {
-            console.log({error});
+            alert(error);
           }
         },
 
@@ -50,7 +51,7 @@ export const AuthProvider = ({children}) => {
             );
             await auth().signInWithCredential(facebookCredential);
           } catch (error) {
-            console.log({error});
+            alert(error);
           }
         },
 
@@ -61,15 +62,15 @@ export const AuthProvider = ({children}) => {
               return;
             }
             await auth().createUserWithEmailAndPassword(email, password);
-          } catch (e) {
-            console.log(e);
+          } catch (error) {
+            alert(error);
           }
         },
         logout: async () => {
           try {
             await auth().signOut();
-          } catch (e) {
-            console.log(e);
+          } catch (error) {
+            alert(error);
           }
         },
       }}>
