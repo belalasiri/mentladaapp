@@ -18,7 +18,9 @@ export default BlogScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.w,
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   text: {

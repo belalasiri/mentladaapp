@@ -5,6 +5,7 @@ export default {
   secoundary: '#ffde9f',
   thirdly: '#61edea',
   empty: '#f0e6fa',
+  w: '#f7f3fc',
 };
 
 /*

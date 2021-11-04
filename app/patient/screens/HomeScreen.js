@@ -10,19 +10,7 @@ const HomeScreen = () => {
   const {user, logout} = useContext(AuthContext);
   return (
     <View style={styles.container}>
-      <View style={{width: '100%', height: '20%', backgroundColor: '#C2EFDF'}}>
-        <View
-          style={{paddingTop: 10, paddingHorizontal: 20, marginVertical: 20}}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: font.subtitle,
-            }}>
-            How are you today?
-          </Text>
-          <Text style={styles.text}>Good evening, {user.uid}</Text>
-        </View>
-      </View>
+      <Text style={styles.text}>Hi, Welcome</Text>
     </View>
   );
 };
@@ -31,13 +19,35 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.w,
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
-  text: {
-    fontSize: 20,
+  textTitle: {
+    fontSize: 35,
     color: colors.text,
-
     fontFamily: font.title,
   },
+  text: {
+    fontSize: 18,
+    color: colors.text,
+    fontFamily: font.title,
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
 });
+
+//  <View style={{width: '100%', height: '20%', backgroundColor: '#C2EFDF'}}>
+//    <View style={{paddingTop: 10, paddingHorizontal: 20, marginVertical: 20}}>
+//      <Text
+//        style={{
+//          fontSize: 16,
+//          fontFamily: font.subtitle,
+//        }}>
+//        How are you today?
+//      </Text>
+//      {/* <Text style={styles.text}>Good evening, {user.uid}</Text> */}
+//      <Text style={styles.textTitle}>Hi, Welcome</Text>
+//    </View>
+//  </View>;

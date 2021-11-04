@@ -11,7 +11,7 @@ const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Profile Screen</Text>
-      <View style={{padding: 20}}>
+      <View style={{padding: 20, alignSelf: 'stretch'}}>
         <FormButton buttonTitle="Logout" onPress={() => logout()} />
       </View>
     </View>
@@ -22,12 +22,15 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.w,
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   text: {
     fontSize: 20,
     color: colors.text,
+
     fontFamily: font.title,
   },
 });

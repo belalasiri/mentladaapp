@@ -1,15 +1,27 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from '../patient/screens/HomeScreen';
 import ProfileScreen from '../patient/screens/profileScreen';
 import BlogScreen from '../patient/screens/BlogScreen';
 import PostScreen from '../patient/screens/PostScreen';
 import MessageScreen from '../patient/screens/MessegeScreen';
-import Icon from 'react-native-vector-icons/Ionicons';
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// const FeedStack =({ navigation }) => (
+//   <Stack.Navigator>
+//     <Stack.Screen
+//     name="Mentlada Social"
+//     component={PostScreen}
+//     options
+
+//     />
+//   </Stack.Navigator>
+// )
 
 const AppStack = () => {
   return (
@@ -24,13 +36,15 @@ const AppStack = () => {
             color = '#67D8AF';
             // size = 30;
           } else if (route.name === 'Post') {
-            iconName = focused ? 'grid' : 'grid-outline';
+            iconName = focused ? 'layers' : 'layers-outline';
             color = '#61EDEA';
           } else if (route.name === 'Blog') {
-            iconName = focused ? 'reader' : 'reader-outline';
+            iconName = focused ? 'grid' : 'grid-outline';
             color = '#B283E4';
           } else if (route.name === 'Message') {
-            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+            iconName = focused
+              ? 'chatbox-ellipses'
+              : 'chatbox-ellipses-outline';
             color = '#FFC646';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
@@ -53,6 +67,7 @@ const AppStack = () => {
       <Tab.Screen
         name="Post"
         component={PostScreen}
+        // component={FeedStack}
         options={{header: () => null}}
       />
       <Tab.Screen

@@ -1,11 +1,7 @@
-import React, {useContext} from 'react';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {Text, View, StyleSheet} from 'react-native';
 import colors from '../../config/colors';
-import FormButton from '../../config/components/FormButton';
 import font from '../../config/font';
-import {AuthContext} from '../../navigation/AuthProvider';
-import {windowHeight} from '../../utils/Dimentions';
-import CustomSwitch from '../../config/components/CustomSwitch';
 
 const MessageScreen = ({navigation}) => {
   return (
@@ -19,7 +15,9 @@ export default MessageScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.w,
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   text: {
