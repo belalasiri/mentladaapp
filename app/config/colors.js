@@ -6,6 +6,8 @@ export default {
   thirdly: '#61edea',
   empty: '#f0e6fa',
   w: '#f7f3fc',
+  post: '#61EDEA',
+  postL: '#effdfd',
 };
 
 /*
