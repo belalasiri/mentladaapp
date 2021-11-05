@@ -133,6 +133,7 @@ android {
     defaultConfig {
         applicationId "com.mentlada"
         minSdkVersion 21
+        vectorDrawables.useSupportLibrary = true
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
