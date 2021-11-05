@@ -15,6 +15,7 @@ export const InputField = styled.TextInput`
   text-align: center;
   width: 90%;
   margin-bottom: 15px;
+  font-family: 'DINNextLTArabic-Regular';
 `;
 
 export const AddImage = styled.Image`
@@ -31,14 +32,14 @@ export const StatusWrapper = styled.View`
 export const SubmitBtn = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
-  background-color: #2e64e515;
-  border-radius: 5px;
-  padding: 10px 25px;
+  background-color: #61edea;
+  border-radius: 7px;
+  padding: 5px 40px;
 `;
 
 export const SubmitBtnText = styled.Text`
-  font-size: 18px;
-  font-family: 'Lato-Bold';
-  font-weight: bold;
-  color: #2e64e5;
+  font-size: 20px;
+  font-family: 'DINNextLTArabic-Medium';
+  color: #effdfd;
+  margin-bottom: 4px;
 `;
