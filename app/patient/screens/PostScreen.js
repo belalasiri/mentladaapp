@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Alert} from 'react-native';
+import {FlatList, Alert, SafeAreaView, ScrollView} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import PostCard from '../../config/components/PostCard';
 import {Container} from '../styles/FeedStyles';
 import storage from '@react-native-firebase/storage';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 const Posts = [
   {
@@ -183,16 +184,146 @@ const PostScreen = () => {
       .catch(e => console.log('Error deleting posst.', e));
   };
   return (
-    <Container>
-      <FlatList
-        data={posts}
-        renderItem={({item}) => (
-          <PostCard item={item} onDelete={handleDelete} />
-        )}
-        keyExtractor={item => item.id}
-        showsVerticalScrollIndicator={false}
-      />
-    </Container>
+    <SafeAreaView style={{flex: 1}}>
+      {loading ? (
+        // loading View
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={{alignItems: 'center'}}>
+          <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item
+              flexDirection="row"
+              alignItems="center"
+              marginTop={20}>
+              <SkeletonPlaceholder.Item width={60} height={60} />
+              <SkeletonPlaceholder.Item marginLeft={20}>
+                <SkeletonPlaceholder.Item
+                  width={120}
+                  height={20}
+                  borderRadius={4}
+                />
+                <SkeletonPlaceholder.Item
+                  marginTop={6}
+                  width={80}
+                  height={20}
+                  borderRadius={4}
+                />
+              </SkeletonPlaceholder.Item>
+            </SkeletonPlaceholder.Item>
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={300}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={250}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={350}
+              height={200}
+              borderRadius={4}
+            />
+          </SkeletonPlaceholder>
+
+          <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item
+              flexDirection="row"
+              alignItems="center"
+              marginTop={20}>
+              <SkeletonPlaceholder.Item width={60} height={60} />
+              <SkeletonPlaceholder.Item marginLeft={20}>
+                <SkeletonPlaceholder.Item
+                  width={120}
+                  height={20}
+                  borderRadius={4}
+                />
+                <SkeletonPlaceholder.Item
+                  marginTop={6}
+                  width={80}
+                  height={20}
+                  borderRadius={4}
+                />
+              </SkeletonPlaceholder.Item>
+            </SkeletonPlaceholder.Item>
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={300}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={250}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={350}
+              height={200}
+              borderRadius={4}
+            />
+          </SkeletonPlaceholder>
+
+          <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item
+              flexDirection="row"
+              alignItems="center"
+              marginTop={20}>
+              <SkeletonPlaceholder.Item width={60} height={60} />
+              <SkeletonPlaceholder.Item marginLeft={20}>
+                <SkeletonPlaceholder.Item
+                  width={120}
+                  height={20}
+                  borderRadius={4}
+                />
+                <SkeletonPlaceholder.Item
+                  marginTop={6}
+                  width={80}
+                  height={20}
+                  borderRadius={4}
+                />
+              </SkeletonPlaceholder.Item>
+            </SkeletonPlaceholder.Item>
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={300}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={250}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={350}
+              height={200}
+              borderRadius={4}
+            />
+          </SkeletonPlaceholder>
+          {/* <Text style={styles.text}>Message Screen</Text> */}
+        </ScrollView>
+      ) : (
+        <Container>
+          <FlatList
+            data={posts}
+            renderItem={({item}) => (
+              <PostCard item={item} onDelete={handleDelete} />
+            )}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+        </Container>
+      )}
+    </SafeAreaView>
   );
 };
 

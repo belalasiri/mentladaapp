@@ -19,15 +19,16 @@ export const UserInfo = styled.View`
 `;
 
 export const UserImg = styled.Image`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: 40px;
+  height: 40px;
+  border-radius: 7px;
 `;
 
 export const UserInfoText = styled.View`
   flex-direction: column;
   justify-content: center;
   margin-left: 10px;
+  margin-top: -5px;
 `;
 
 export const UserName = styled.Text`
@@ -39,6 +40,7 @@ export const PostTime = styled.Text`
   font-size: 12px;
   font-family: 'DINNextLTArabic-Regular';
   color: #666;
+  margin-top: -5px;
 `;
 
 export const PostText = styled.Text`

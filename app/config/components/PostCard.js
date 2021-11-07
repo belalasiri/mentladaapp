@@ -18,6 +18,7 @@ import {
   UserName,
 } from '../../patient/styles/FeedStyles';
 import {AuthContext} from '../../navigation/AuthProvider';
+import ProgressiveImage from '../components/ProgressiveImage';
 
 const PostCard = ({item, onDelete}) => {
   const {user, logout} = useContext(AuthContext);
@@ -51,10 +52,20 @@ const PostCard = ({item, onDelete}) => {
       </UserInfo>
       <PostText>{item.post}</PostText>
       {item.postImg != null ? (
-        <PostImg source={{uri: item.postImg}} />
+        <ProgressiveImage
+          defaultImageSource={require('../../assets/image/default-img.jpg')}
+          source={{uri: item.postImg}}
+          style={{width: '100%', height: 250}}
+          resizeMode="cover"
+        />
       ) : (
         <Divider />
       )}
+      {/* {item.postImg != null ? (
+        <PostImg source={{uri: item.postImg}} />
+      ) : (
+        <Divider />
+      )} */}
       {/* <PostImg source={require('../../assets/image/post/img_3.jpg')} /> */}
       <InteractionWrapper>
         <Interaction active>
