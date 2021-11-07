@@ -2,9 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.View`
   flex: 1;
-  align-items: center;
   background-color: #fff;
-  padding: 10px;
 `;
 
 export const Card = styled.View`
@@ -68,7 +66,7 @@ export const Divider = styled.View`
 export const InteractionWrapper = styled.View`
   flex-direction: row;
   justify-content: space-around;
-  padding: 15px;
+  padding: 10px;
 `;
 
 export const Interaction = styled.TouchableOpacity`
@@ -82,8 +80,7 @@ export const Interaction = styled.TouchableOpacity`
 export const InteractionText = styled.Text`
   font-size: 12px;
   font-family: 'DINNextLTArabic-Medium';
-
-  color: ${props => (props.active ? '#61edea' : '#120d17')};
+  color: ${props => (props.active ? '#b283e4 ' : '#120d17')};
 
   margin-left: 5px;
 `;

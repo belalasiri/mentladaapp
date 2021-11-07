@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, useColorScheme, View} from 'react-native';
+import {View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -26,9 +26,9 @@ const FeedStack = ({navigation}) => (
       options={{
         headerTitleAlign: 'center',
         headerTitleStyle: {
-          color: colors.post,
+          color: colors.primary,
           fontFamily: font.title,
-          fontSize: 18,
+          fontSize: 19,
         },
         headerStyle: {
           shadowColor: '#fff',
@@ -40,7 +40,7 @@ const FeedStack = ({navigation}) => (
               name="plus"
               // size={22}
               backgroundColor="#fff"
-              color={colors.post}
+              color={colors.primary}
               onPress={() => navigation.navigate('AddPost')}
             />
           </View>
@@ -62,14 +62,14 @@ const FeedStack = ({navigation}) => (
         title: '',
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: colors.postL,
+          backgroundColor: '#f7f3fc',
           shadowColor: colors.postL,
           elevation: 0,
         },
         headerBackTitleVisible: false,
         headerBackImage: () => (
           <View style={{marginLeft: 15}}>
-            <Ionicons name="arrow-back" size={25} color={colors.post} />
+            <Ionicons name="arrow-back" size={25} color={colors.p} />
           </View>
         ),
       }}
@@ -91,10 +91,10 @@ const AppStack = () => {
             // size = 30;
           } else if (route.name === 'Post') {
             iconName = focused ? 'layers' : 'layers-outline';
-            color = '#61EDEA';
+            color = colors.primary;
           } else if (route.name === 'Blog') {
             iconName = focused ? 'grid' : 'grid-outline';
-            color = '#B283E4';
+            color = '#61EDEA';
           } else if (route.name === 'Message') {
             iconName = focused
               ? 'chatbox-ellipses'

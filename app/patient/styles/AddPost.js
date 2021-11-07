@@ -5,23 +5,23 @@ export const InputWrapper = styled.View`
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #2e64e515;
+  background-color: #f7f3fc;
 `;
 
 export const InputField = styled.TextInput`
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 20px;
   text-align: center;
   width: 90%;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
   font-family: 'DINNextLTArabic-Regular';
 `;
 
 export const AddImage = styled.Image`
   width: 100%;
   height: 250px;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 `;
 
 export const StatusWrapper = styled.View`
@@ -32,13 +32,13 @@ export const StatusWrapper = styled.View`
 export const SubmitBtn = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
-  background-color: #61edea;
+  background-color: #b283e4;
   border-radius: 7px;
-  padding: 5px 40px;
+  padding: 2px 20px;
 `;
 
 export const SubmitBtnText = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
   font-family: 'DINNextLTArabic-Medium';
   color: #effdfd;
   margin-bottom: 4px;

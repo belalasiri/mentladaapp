@@ -10,7 +10,7 @@ const ProfileScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Profile Screen</Text>
+      <Text style={styles.text}>Profile Screen {user.uid}</Text>
       <View style={{padding: 20, alignSelf: 'stretch'}}>
         <FormButton buttonTitle="Logout" onPress={() => logout()} />
       </View>

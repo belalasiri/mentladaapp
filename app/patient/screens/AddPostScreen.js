@@ -21,9 +21,16 @@ import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 const AddPostScreen = () => {
+  const {user, logout} = useContext(AuthContext);
+
   const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  const [post, setPost] = useState(null);
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -49,6 +56,83 @@ const AddPostScreen = () => {
     });
   };
 
+  const submitPost = async () => {
+    const imageUrl = await uploadImage();
+    console.log('Image Url: ', imageUrl);
+    //  console.log('Post: ', post);
+
+    firestore()
+      .collection('posts')
+      .add({
+        userId: user.uid,
+        post: post,
+        postImg: imageUrl,
+        postTime: firestore.Timestamp.fromDate(new Date()),
+        likes: null,
+        comments: null,
+      })
+      .then(() => {
+        console.log('Post Added!');
+        Alert.alert(
+          'Post published!',
+          'Your post has been published Successfully!',
+        );
+        setPost(null);
+      })
+      .catch(error => {
+        console.log(
+          'Something went wrong with added post to firestore.',
+          error,
+        );
+      });
+  };
+
+  const uploadImage = async () => {
+    if (image == null) {
+      return null;
+    }
+
+    const uploadUri = image;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name for the image to be uoniqe
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    setUploading(true);
+    setTransferred(0);
+    // to place the uploded or taken images to the photos folder
+    const storageRef = storage().ref(`photos/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+
+    // Seting transferred state in cmd
+    task.on('state_changed', taskSnapshot => {
+      console.log(
+        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+      );
+
+      setTransferred(
+        Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
+          100,
+      );
+    });
+    try {
+      await task;
+
+      const url = await storageRef.getDownloadURL();
+      setUploading(false);
+      Alert.alert(
+        'image uploaded',
+        'Your image has been uploade to the Firebase Cloud storage',
+      );
+      return url;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  };
+
   return (
     <View style={styles.Container}>
       <InputWrapper>
@@ -57,21 +141,31 @@ const AddPostScreen = () => {
           placeholder="What's on your mind?"
           multiline
           numberOfLines={4}
+          value={post}
+          onChangeText={content => setPost(content)}
         />
-        <SubmitBtn onPress={() => {}}>
-          <SubmitBtnText>Post</SubmitBtnText>
-        </SubmitBtn>
+
+        {uploading ? (
+          <StatusWrapper>
+            <Text>{transferred} % completed!</Text>
+            <ActivityIndicator size="large" color="#b283e4" />
+          </StatusWrapper>
+        ) : (
+          <SubmitBtn onPress={submitPost}>
+            <SubmitBtnText>Post</SubmitBtnText>
+          </SubmitBtn>
+        )}
       </InputWrapper>
 
-      <ActionButton buttonColor={colors.post}>
+      <ActionButton buttonColor={colors.primary}>
         <ActionButton.Item
-          buttonColor={colors.primary}
+          buttonColor="#4ebebb"
           title="Take Photo"
           onPress={takePhotoFromCamera}>
           <Icon name="camera-outline" style={styles.actionButtonIcon} />
         </ActionButton.Item>
         <ActionButton.Item
-          buttonColor={colors.subtext}
+          buttonColor="#48977a"
           title="Choose Photo"
           onPress={choosePhotoFromLibrary}>
           <Icon name="md-images-outline" style={styles.actionButtonIcon} />
