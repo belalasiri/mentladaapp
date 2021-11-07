@@ -12,6 +12,7 @@ import BlogScreen from '../patient/screens/BlogScreen';
 import PostScreen from '../patient/screens/PostScreen';
 import MessageScreen from '../patient/screens/MessegeScreen';
 import AddPostScreen from '../patient/screens/AddPostScreen';
+import ChatScreen from '../patient/screens/ChatScreen';
 import font from '../config/font';
 import colors from '../config/colors';
 
@@ -77,6 +78,20 @@ const FeedStack = ({navigation}) => (
   </Stack.Navigator>
 );
 
+const MessageStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Messages" component={MessageScreen} />
+    <Stack.Screen
+      name="Chat"
+      component={ChatScreen}
+      options={({route}) => ({
+        title: route.params.userName,
+        headerBackTitleVisible: false,
+      })}
+    />
+  </Stack.Navigator>
+);
+
 const AppStack = () => {
   return (
     <Tab.Navigator
@@ -121,7 +136,10 @@ const AppStack = () => {
         name="Post"
         // component={PostScreen}
         component={FeedStack}
-        options={{header: () => null}}
+        options={({route}) => ({
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        })}
       />
       <Tab.Screen
         name="Blog"
@@ -130,9 +148,13 @@ const AppStack = () => {
       />
       <Tab.Screen
         name="Message"
-        component={MessageScreen}
-        options={{header: () => null}}
+        component={MessageStack}
+        options={({route}) => ({
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        })}
       />
+
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
