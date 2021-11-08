@@ -7,12 +7,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from '../patient/screens/HomeScreen';
-import ProfileScreen from '../patient/screens/profileScreen';
-import BlogScreen from '../patient/screens/BlogScreen';
 import PostScreen from '../patient/screens/PostScreen';
-import MessageScreen from '../patient/screens/MessegeScreen';
 import AddPostScreen from '../patient/screens/AddPostScreen';
+import BlogScreen from '../patient/screens/BlogScreen';
+import MessageScreen from '../patient/screens/MessegeScreen';
 import ChatScreen from '../patient/screens/ChatScreen';
+import ProfileScreen from '../patient/screens/profileScreen';
+import EditProfileScreen from '../patient/screens/EditProfileScreen';
 import font from '../config/font';
 import colors from '../config/colors';
 
@@ -75,6 +76,26 @@ const FeedStack = ({navigation}) => (
         ),
       }}
     />
+    <Stack.Screen
+      name="HomeProfile"
+      component={ProfileScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0,
+        },
+        tabBarHideOnKeyboard: true,
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      }}
+    />
   </Stack.Navigator>
 );
 
@@ -88,6 +109,33 @@ const MessageStack = () => (
         title: route.params.userName,
         headerBackTitleVisible: false,
       })}
+    />
+  </Stack.Navigator>
+);
+
+const ProfileStack = ({navigation}) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Profiles"
+      component={ProfileScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="EditProfile"
+      component={EditProfileScreen}
+      options={{
+        headerTitle: 'Edit Profile',
+        headerBackTitleVisible: false,
+        tabBarHideOnKeyboard: true,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0,
+        },
+      }}
     />
   </Stack.Navigator>
 );
@@ -130,7 +178,10 @@ const AppStack = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{header: () => null}}
+        options={({route}) => ({
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        })}
       />
       <Tab.Screen
         name="Post"
@@ -157,8 +208,11 @@ const AppStack = () => {
 
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
-        options={{header: () => null}}
+        component={ProfileStack}
+        options={({route}) => ({
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        })}
       />
     </Tab.Navigator>
   );

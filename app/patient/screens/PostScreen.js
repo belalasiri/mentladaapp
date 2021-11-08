@@ -65,7 +65,7 @@ const Posts = [
   },
 ];
 
-const PostScreen = () => {
+const PostScreen = ({navigation}) => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
@@ -182,6 +182,10 @@ const PostScreen = () => {
         setDeleted(true);
       })
       .catch(e => console.log('Error deleting posst.', e));
+  };
+
+  const ListHeader = () => {
+    return null;
   };
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -316,10 +320,18 @@ const PostScreen = () => {
           <FlatList
             data={posts}
             renderItem={({item}) => (
-              <PostCard item={item} onDelete={handleDelete} />
+              <PostCard
+                item={item}
+                onDelete={handleDelete}
+                onPress={() =>
+                  navigation.navigate('HomeProfile', {userId: item.userId})
+                }
+              />
             )}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={ListHeader}
+            ListFooterComponent={ListHeader}
           />
         </Container>
       )}

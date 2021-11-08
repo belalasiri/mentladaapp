@@ -16,7 +16,8 @@ import font from '../../config/font';
 import {AuthContext} from '../../navigation/AuthProvider';
 
 const LoginScreen = ({navigation}) => {
-  const [name, setName] = useState();
+  const [fname, setfName] = useState();
+  const [lname, setlName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
@@ -36,9 +37,16 @@ const LoginScreen = ({navigation}) => {
         </View>
         <Text style={styles.text}>Create account</Text>
         <FormInput
-          labelValue={name}
-          onChangeText={userName => setName(userName)}
-          placeholderText="Name"
+          labelValue={fname}
+          onChangeText={userName => setfName(userName)}
+          placeholderText="Frist Name"
+          iconType="user"
+          keyboardType="default"
+        />
+        <FormInput
+          labelValue={lname}
+          onChangeText={userName => setlName(userName)}
+          placeholderText="Last Name"
           iconType="user"
           keyboardType="default"
         />
@@ -91,7 +99,9 @@ const LoginScreen = ({navigation}) => {
         </View>
         <FormButton
           buttonTitle="Create an account"
-          onPress={() => register(email, password, confirmPassword)}
+          onPress={() =>
+            register(fname, lname, email, password, confirmPassword)
+          }
         />
 
         {/* OR */}
