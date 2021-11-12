@@ -9,13 +9,22 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import Share from 'react-native-share';
+
+import Feather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import font from '../../config/font';
 import colors from '../../config/colors';
 import PostCard from '../../config/components/PostCard';
+import {Divider} from '../styles/FeedStyles';
+import File from '../../assets/filesBase64';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -23,6 +32,8 @@ const ProfileScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
+
+  const [image, setImage] = useState(null);
 
   const fetchPosts = async () => {
     try {
@@ -40,9 +51,8 @@ const ProfileScreen = ({navigation, route}) => {
             list.push({
               id: doc.id,
               userId,
-              userName: 'Test Name',
-              userImg:
-                'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg',
+              userName: 'Mentlada Patient',
+              userImg: 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
               postTime: postTime,
               post,
               postImg,
@@ -59,7 +69,7 @@ const ProfileScreen = ({navigation, route}) => {
         setLoading(false);
       }
 
-      console.log('Posts: ', posts);
+      // console.log('Posts: ', posts);
     } catch (e) {
       console.log(e);
     }
@@ -72,7 +82,7 @@ const ProfileScreen = ({navigation, route}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('User Data', documentSnapshot.data());
+          // console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
@@ -83,6 +93,11 @@ const ProfileScreen = ({navigation, route}) => {
     fetchPosts();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
+
+  useEffect(() => {
+    fetchPosts();
+    setDeleted(false);
+  }, [deleted]);
 
   const handleDelete = postId => {
     Alert.alert(
@@ -150,70 +165,242 @@ const ProfileScreen = ({navigation, route}) => {
       .catch(e => console.log('Error deleting posst.', e));
   };
 
+  const myCustomShare = async () => {
+    const shareOptions = {
+      message:
+        "Come to Mentlada App, where you may get support with any mental health condition you are now experiencing. I've already completed several portions, and they were excellent; come my friend and give them a go.",
+      url: File.image1,
+      // urls: [files.image1, files.image2]
+    };
+
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      console.log(JSON.stringify(ShareResponse));
+    } catch (error) {
+      console.log('Error => ', error);
+    }
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-        showsVerticalScrollIndicator={false}>
-        <Image
-          style={styles.userImg}
-          source={{
-            uri: userData
-              ? userData.userImg || 'https://i.ibb.co/pv5S0nm/logo.png'
-              : 'https://i.ibb.co/pv5S0nm/logo.png',
-          }}
-        />
-        <Text style={styles.userName}>
-          {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
-          {userData ? userData.lname || 'Patient' : 'Patient'}
-        </Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 15,
+            }}>
+            <Text style={{color: colors.text, fontFamily: font.subtitle}}>
+              Hello, {user.email}
+            </Text>
 
-        <Text style={styles.aboutUser}>
-          {userData ? userData.about || 'No details added.' : ''}
-        </Text>
-
-        {/* buttons for the edit profile message and follow */}
-        <View style={styles.userBtnWrapper}>
-          {route.params ? (
+            <Feather.Button
+              name="credit-card"
+              //name="edit-2"
+              size={22}
+              backgroundColor="#fff"
+              color={colors.subtext}
+              onPress={() => {
+                navigation.navigate('EditProfile');
+              }}
+            />
+          </View>
+          {/* {route.params ? (
             <>
-              <TouchableOpacity style={styles.userBtn} onPress={() => {}}>
-                <Text style={styles.userBtnTxt}>Message</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.userBtn} onPress={() => {}}>
-                <Text style={styles.userBtnTxt}>Follow</Text>
-              </TouchableOpacity>
+              <View
+                style={{
+                  marginTop: -15,
+                }}></View>
             </>
           ) : (
             <>
-              <TouchableOpacity
-                style={styles.userBtn}
-                onPress={() => {
-                  navigation.navigate('EditProfile');
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 15,
                 }}>
-                <Text style={styles.userBtnTxt}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.userBtn} onPress={() => logout()}>
-                <Text style={styles.userBtnTxt}>Logout</Text>
-              </TouchableOpacity>
+                <Text style={{color: colors.text, fontFamily: font.subtitle}}>
+                  Hello, {user.email}
+                </Text>
+
+                <Feather.Button
+                  name="plus-square"
+                  size={22}
+                  backgroundColor="#fff"
+                  color={colors.subtext}
+                  onPress={() => navigation.navigate('AddPost')}
+                />
+              </View>
             </>
-          )}
+          )} */}
+
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1.4, alignItems: 'flex-start'}}>
+              <Image
+                style={styles.userImg}
+                source={{
+                  uri: userData
+                    ? userData.userImg ||
+                      'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                    : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                }}
+              />
+            </View>
+
+            {/* posts, followers, folowing */}
+            <View style={{flex: 3}}>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>{posts.length}</Text>
+                  <Text style={styles.userInfoSubTitle}>Posts</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>34</Text>
+                  <Text style={styles.userInfoSubTitle}>Followers</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>212</Text>
+                  <Text style={styles.userInfoSubTitle}>Folowing</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+            <Text style={styles.userName}>
+              {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
+              {userData ? userData.lname || 'Patient' : 'Patient'}
+            </Text>
+
+            <Text style={styles.aboutUser}>
+              {userData ? userData.about || 'No details added.' : ''}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                paddingVertical: 15,
+              }}>
+              <Icon name="mail-outline" size={15} />
+
+              <Text style={styles.phone}>
+                {userData ? userData.email || 'No email added.' : ''}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+              }}>
+              <Icon name="call-outline" size={15} />
+
+              <Text style={styles.phone}>
+                {userData ? userData.phone || 'No phone no. added.' : ''}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 15,
+                alignContent: 'center',
+              }}>
+              <MaterialCommunityIcons
+                name="map-marker-outline"
+                color="#333333"
+                size={15}
+              />
+
+              <Text style={styles.phone}>
+                {userData ? userData.country || 'No details added.' : ''}
+                {' _ '}
+                {userData ? userData.city || 'No details added.' : ''}
+              </Text>
+            </View>
+          </View>
+
+          {/* buttons for the edit profile message and follow */}
+          <View style={styles.userBtnWrapper}>
+            {route.params ? (
+              <>
+                <TouchableOpacity style={styles.UserBtn} onPress={() => {}}>
+                  <Text style={styles.userBtnTxt}>Follow</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.UserBtn} onPress={() => {}}>
+                  <Text style={styles.userBtnTxt}>Message</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.userBtn_E}
+                  onPress={() => {
+                    navigation.navigate('EditProfile');
+                  }}>
+                  <Text style={styles.userBtnTxt}>Edit profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.userBtn_L}
+                  onPress={() => logout()}>
+                  <Text style={styles.userBtnTxt}>Logout</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+
+          {/* Tell Your Friends button */}
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              borderRadius: 7,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 6,
+              backgroundColor: colors.w,
+            }}
+            onPress={myCustomShare}>
+            <Icon name="share-outline" color={colors.primary} size={20} />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontFamily: font.title,
+                color: colors.primary,
+                fontSize: 14,
+              }}>
+              Tell Your Friends
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* posts, followers, folowing */}
-        <View style={styles.userInfoWrapper}>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>{posts.length}</Text>
-            <Text style={styles.userInfoSubTitle}>Posts</Text>
+        {/* Your Post or $user_name posts  */}
+        <View style={{marginBottom: 20, marginHorizontal: 5, marginTop: 10}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginBottom: -9,
+              marginLeft: 20,
+            }}>
+            {route.params ? (
+              <>
+                <Icon name="apps" size={20} />
+                <Text style={styles.sPosts}>
+                  {userData ? userData.fname || 'Mentlada' : 'Mentlada'}'s posts
+                </Text>
+              </>
+            ) : (
+              <>
+                <Icon name="apps" size={20} />
+                <Text style={styles.Posts}>Your posts</Text>
+              </>
+            )}
           </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>34</Text>
-            <Text style={styles.userInfoSubTitle}>Followers</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>212</Text>
-            <Text style={styles.userInfoSubTitle}>Folowing</Text>
-          </View>
+          <Divider />
         </View>
 
         {/* mapping the user post */}
@@ -235,60 +422,92 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   userImg: {
-    height: 150,
-    width: 150,
-    borderRadius: 20,
+    height: 100,
+    width: 100,
+    borderRadius: 55,
   },
   userName: {
     fontSize: 18,
     fontFamily: font.title,
-    // fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 10,
+    color: colors.text,
   },
   aboutUser: {
     fontSize: 12,
     fontWeight: '600',
     color: '#666',
-    textAlign: 'center',
-    marginBottom: 10,
+    marginTop: 10,
+  },
+  phone: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666',
+    marginLeft: 10,
   },
   userBtnWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    width: '100%',
     marginBottom: 10,
   },
-  userBtn: {
-    borderColor: colors.primary,
-    borderWidth: 2,
-    borderRadius: 3,
+  userBtn_L: {
+    flex: 1,
+    borderColor: '#dedede',
+    backgroundColor: '#dedede3b',
+    borderWidth: 1,
+    borderRadius: 7,
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginHorizontal: 5,
+    marginHorizontal: 2,
+    marginTop: 10,
+  },
+  userBtn_E: {
+    flex: 3,
+    borderColor: '#dedede',
+    borderWidth: 1,
+    borderRadius: 7,
+    alignItems: 'center',
+    alignContent: 'center',
+    paddingVertical: 8,
+    marginHorizontal: 2,
+    marginTop: 10,
+  },
+  UserBtn: {
+    flex: 2,
+    borderColor: colors.primary,
+    borderWidth: 1,
+    borderRadius: 7,
+    paddingVertical: 8,
+    marginHorizontal: 2,
+    marginTop: 10,
   },
   userBtnTxt: {
-    color: colors.primary,
+    textAlign: 'center',
+    color: colors.subtext,
   },
-  userInfoWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginVertical: 20,
-  },
+
   userInfoItem: {
-    justifyContent: 'center',
+    alignItems: 'center',
   },
   userInfoTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 5,
-    textAlign: 'center',
+    fontWeight: 'bold',
     color: colors.text,
   },
   userInfoSubTitle: {
     fontSize: 12,
     color: '#666',
-    textAlign: 'center',
+  },
+  sPosts: {
+    fontSize: 16,
+    fontFamily: font.title,
+    marginHorizontal: 10,
+    color: colors.text,
+    paddingBottom: 1,
+  },
+  Posts: {
+    fontSize: 16,
+    fontFamily: font.title,
+    marginHorizontal: 10,
+    color: colors.text,
+    paddingBottom: 1,
   },
 });

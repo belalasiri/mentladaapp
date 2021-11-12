@@ -1,74 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {FlatList, Alert, SafeAreaView, ScrollView} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
+import {AuthContext} from '../../navigation/AuthProvider';
 import PostCard from '../../config/components/PostCard';
 import {Container} from '../styles/FeedStyles';
 import storage from '@react-native-firebase/storage';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-const Posts = [
-  {
-    id: '1',
-    userName: 'Belal Alqadasi',
-    userImg: require('../../assets/image/users/user_1.jpg'),
-    postTime: '4 mins ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_1.jpg'),
-    liked: true,
-    likes: '14',
-    comments: '5',
-  },
-  {
-    id: '2',
-    userName: 'Ahmed Asiri',
-    userImg: require('../../assets/image/users/user_4.jpg'),
-    postTime: '2 hours ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '8',
-    comments: '0',
-  },
-  {
-    id: '3',
-    userName: 'Eng.Amer Aljabre',
-    userImg: require('../../assets/image/users/user_2.jpg'),
-    postTime: '1 hours ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_2.jpg'),
-    liked: true,
-    likes: '1',
-    comments: '0',
-  },
-  {
-    id: '4',
-    userName: 'Hanan Alatas',
-    userImg: require('../../assets/image/users/user_5.jpg'),
-    postTime: '1 day ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_3.jpg'),
-    liked: true,
-    likes: '22',
-    comments: '4',
-  },
-  {
-    id: '5',
-    userName: 'Bari Abikar',
-    userImg: require('../../assets/image/users/user_3.jpg'),
-    postTime: '2 days ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '0',
-    comments: '0',
-  },
-];
-
-const PostScreen = ({navigation}) => {
+const PostScreen = ({navigation, route}) => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
+  const {user, logout} = useContext(AuthContext);
 
   const fetchPosts = async () => {
     try {
@@ -76,6 +20,7 @@ const PostScreen = ({navigation}) => {
 
       await firestore()
         .collection('posts')
+        // .where('userId', '!=', user.uid)
         .orderBy('postTime', 'desc')
         .get()
         .then(querySnapshot => {
@@ -85,11 +30,11 @@ const PostScreen = ({navigation}) => {
             list.push({
               id: doc.id,
               userId,
-              userName: 'Mentlada user',
+              userName: 'Mentlada Patient',
               userImg: 'https://i.ibb.co/pv5S0nm/logo.png',
               postTime: postTime,
               post,
-              postImg: postImg,
+              postImg,
               liked: false,
               likes,
               comments,
@@ -102,7 +47,7 @@ const PostScreen = ({navigation}) => {
         setLoading(false);
       }
 
-      console.log('Posts: ', list);
+      // console.log('Posts: ', list);
     } catch (e) {
       console.log(e);
     }
@@ -110,7 +55,8 @@ const PostScreen = ({navigation}) => {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading]);
 
   useEffect(() => {
     fetchPosts();

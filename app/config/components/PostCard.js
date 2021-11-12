@@ -25,6 +25,7 @@ import firestore from '@react-native-firebase/firestore';
 const PostCard = ({item, onDelete, onPress}) => {
   const {user, logout} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   likeIcon = item.liked ? 'heart' : 'heart-outline';
   likeIconColor = item.liked ? '#b283e4' : '#120d17';
@@ -68,8 +69,9 @@ const PostCard = ({item, onDelete, onPress}) => {
         <UserImg
           source={{
             uri: userData
-              ? userData.userImg || 'https://i.ibb.co/pv5S0nm/logo.png'
-              : 'https://i.ibb.co/pv5S0nm/logo.png',
+              ? userData.userImg ||
+                'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+              : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
           }}
         />
         <TouchableOpacity onPress={onPress}>
@@ -93,14 +95,9 @@ const PostCard = ({item, onDelete, onPress}) => {
       ) : (
         <Divider />
       )}
-      {/* {item.postImg != null ? (
-        <PostImg source={{uri: item.postImg}} />
-      ) : (
-        <Divider />
-      )} */}
-      {/* <PostImg source={require('../../assets/image/post/img_3.jpg')} /> */}
+
       <InteractionWrapper>
-        <Interaction active={item.liked}>
+        <Interaction>
           <Icon name={likeIcon} size={25} color={likeIconColor} />
           <InteractionText active={item.liked}>{likeText}</InteractionText>
         </Interaction>

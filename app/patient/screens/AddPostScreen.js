@@ -24,9 +24,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 
-const AddPostScreen = () => {
+const AddPostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
-
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -58,8 +57,8 @@ const AddPostScreen = () => {
 
   const submitPost = async () => {
     const imageUrl = await uploadImage();
-    console.log('Image Url: ', imageUrl);
-    console.log('Post: ', post);
+    // console.log('Image Url: ', imageUrl);
+    // console.log('Post: ', post);
 
     firestore()
       .collection('posts')
@@ -72,7 +71,7 @@ const AddPostScreen = () => {
         comments: null,
       })
       .then(() => {
-        console.log('Post Added!');
+        // console.log('Post Added!');
         Alert.alert(
           'Post published!',
           'Your post has been published Successfully!',
@@ -134,15 +133,13 @@ const AddPostScreen = () => {
     <View style={styles.Container}>
       <InputWrapper>
         {image != null ? <AddImage source={{uri: image}} /> : null}
-
         <InputField
           placeholder="What's on your mind?"
-          multiline
+          multiline={true}
           numberOfLines={4}
           value={post}
           onChangeText={content => setPost(content)}
         />
-
         {uploading ? (
           <StatusWrapper>
             <Text>{transferred} % completed!</Text>
@@ -177,9 +174,9 @@ export default AddPostScreen;
 
 const styles = StyleSheet.create({
   Container: {
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // backgroundColor: '#fff',
+    // // justifyContent: 'center',
+    // // alignItems: 'center',
     flex: 1,
   },
   actionButtonIcon: {

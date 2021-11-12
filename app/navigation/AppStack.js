@@ -1,10 +1,11 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 
 import HomeScreen from '../patient/screens/HomeScreen';
 import PostScreen from '../patient/screens/PostScreen';
@@ -20,49 +21,51 @@ import colors from '../config/colors';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const FeedStack = ({navigation}) => (
+const FeedStack = ({navigation, route}) => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Mentlada Social"
+      // name="Mentlada Social"
+      name=" "
       component={PostScreen}
       options={{
+        headerTintColor: 'white',
         headerTitleAlign: 'center',
-        headerTitleStyle: {
-          color: colors.primary,
-          fontFamily: font.title,
-          fontSize: 19,
-        },
         headerStyle: {
           shadowColor: '#fff',
           elevation: 0,
         },
         headerRight: () => (
           <View style={{marginRight: 10, marginTop: 5}}>
-            <FontAwesome5.Button
-              name="plus"
-              // size={22}
+            <Feather.Button
+              name="plus-square"
+              size={25}
               backgroundColor="#fff"
               color={colors.primary}
               onPress={() => navigation.navigate('AddPost')}
             />
           </View>
         ),
-        // headerLeft: () => (
-        //   <View style={{marginLeft: 10, marginTop: 5}}>
-        //     <Image
-        //       source={require('../assets/image/logo.png')}
-        //       style={{height: 40, width: 40}}
-        //     />
-        //   </View>
-        // ),
+        headerLeft: () => (
+          <View style={{marginLeft: 10, marginTop: 5}}>
+            <Image
+              source={require('../assets/image/logo_s.png')}
+              style={{height: 40, width: 140}}
+            />
+          </View>
+        ),
       }}
     />
     <Stack.Screen
       name="AddPost"
       component={AddPostScreen}
       options={{
-        title: '',
+        title: 'Create post',
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontSize: 16,
+          fontFamily: font.title,
+          margin: 15,
+        },
         headerStyle: {
           backgroundColor: '#f7f3fc',
           shadowColor: colors.postL,
@@ -70,8 +73,8 @@ const FeedStack = ({navigation}) => (
         },
         headerBackTitleVisible: false,
         headerBackImage: () => (
-          <View style={{marginLeft: 15}}>
-            <Ionicons name="arrow-back" size={25} color={colors.p} />
+          <View style={{margin: 15}}>
+            <Ionicons name="close" size={25} color={colors.p} />
           </View>
         ),
       }}
@@ -91,7 +94,7 @@ const FeedStack = ({navigation}) => (
         headerBackTitleVisible: false,
         headerBackImage: () => (
           <View style={{marginLeft: 15}}>
-            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+            <Ionicons name="arrow-back" size={25} color={colors.primary} />
           </View>
         ),
       }}
@@ -113,7 +116,7 @@ const MessageStack = () => (
   </Stack.Navigator>
 );
 
-const ProfileStack = ({navigation}) => (
+const ProfileStack = ({navigation, route}) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Profiles"

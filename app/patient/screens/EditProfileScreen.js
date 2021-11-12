@@ -23,17 +23,17 @@ import storage from '@react-native-firebase/storage';
 
 import FormButton from '../../config/components/FormButton';
 import colors from '../../config/colors';
-import font from '../../config/font';
 
-const EditProfileScreen = () => {
-  const {user, logout} = useContext(AuthContext);
+const EditProfileScreen = ({}) => {
+  const {user} = useContext(AuthContext);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
 
   const getUser = async () => {
-    const currentUser = await firestore()
+    // const currentUser = await firestore()
+    await firestore()
       .collection('users')
       .doc(user.uid)
       .get()
@@ -125,6 +125,7 @@ const EditProfileScreen = () => {
   useEffect(() => {
     getUser();
   }, []);
+
   // const takePhotoFromCamera = () => {
   //   ImagePicker.openCamera({
   //     compressImageMaxWidth: 300,
@@ -147,7 +148,7 @@ const EditProfileScreen = () => {
       console.log(image);
       const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
       setImage(imageUri);
-      this.bs.current.snapTo(1);
+      // this.bs.current.snapTo(1);
     });
   };
   // const choosePhotoFromLibrary = () => {
@@ -186,10 +187,11 @@ const EditProfileScreen = () => {
                       ? image
                       : userData
                       ? userData.userImg ||
-                        'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg'
-                      : 'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg',
+                        'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                      : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
                   }}
                   style={{height: 100, width: 100}}
+                  blurRadius={1}
                   imageStyle={{borderRadius: 15}}>
                   <View
                     style={{
@@ -246,8 +248,8 @@ const EditProfileScreen = () => {
             <Icon name="clipboard-outline" color="#333333" size={20} />
             <TextInput
               multiline
-              numberOfLines={3}
-              placeholder="About Me"
+              numberOfLines={2}
+              placeholder="Bio"
               placeholderTextColor="#666666"
               value={userData ? userData.about : ''}
               onChangeText={txt => setUserData({...userData, about: txt})}
@@ -294,10 +296,10 @@ const EditProfileScreen = () => {
             />
           </View>
           {/* update */}
-          <FormButton buttonTitle="Update" onPress={handleUpdate} />
-          {/* <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
+          {/* <FormButton buttonTitle="Update" onPress={handleUpdate} /> */}
+          <TouchableOpacity style={styles.commandButton} onPress={handleUpdate}>
             <Text style={styles.panelButtonTitle}>Update</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

@@ -16,7 +16,7 @@ export const UserInfo = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   padding: 15px;
-  margin-left: 5px;
+  margin-left: 10px;
 `;
 
 export const UserImg = styled.Image`
@@ -47,7 +47,7 @@ export const PostTime = styled.Text`
 export const PostText = styled.Text`
   font-size: 14px;
   font-family: 'DINNextLTArabic-Regular';
-  padding-left: 20px;
+  padding-left: 25px;
   padding-right: 15px;
   margin-bottom: 15px;
 `;
