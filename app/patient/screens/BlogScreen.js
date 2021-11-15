@@ -5,7 +5,6 @@ import FormButton from '../../config/components/FormButton';
 import font from '../../config/font';
 import {AuthContext} from '../../navigation/AuthProvider';
 import {windowHeight} from '../../utils/Dimentions';
-
 const BlogScreen = ({navigation}) => {
   return (
     <View style={styles.container}>

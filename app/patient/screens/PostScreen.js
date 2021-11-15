@@ -2,7 +2,6 @@ import React, {useEffect, useState, useContext} from 'react';
 import {FlatList, Alert, SafeAreaView, ScrollView} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import {AuthContext} from '../../navigation/AuthProvider';
 import PostCard from '../../config/components/PostCard';
 import {Container} from '../styles/FeedStyles';
 import storage from '@react-native-firebase/storage';
@@ -12,7 +11,6 @@ const PostScreen = ({navigation, route}) => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
-  const {user, logout} = useContext(AuthContext);
 
   const fetchPosts = async () => {
     try {

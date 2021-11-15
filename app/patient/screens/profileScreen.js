@@ -1,4 +1,3 @@
-// userImg: 'https://i.ibb.co/pv5S0nm/logo.png',
 import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
@@ -9,11 +8,12 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
-  ImageBackground,
+  Button,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import Share from 'react-native-share';
+import auth from '@react-native-firebase/auth';
 
 import Feather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,8 +32,59 @@ const ProfileScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [Following, setFollowing] = useState(false);
 
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
+
+  const fetchUserFollowing = async () => {
+    console.log('hi baby');
+    try {
+      const followings = [];
+
+      await firestore()
+        .collection('Following')
+        .doc('h2aH2YRqnIPZIbwmYv87WmtY6Lo1')
+        .collection('userFollowing')
+        .onSnapshot(Snapshot => {
+          Snapshot.docs.map(doc => {
+            followings.push(doc.id);
+          });
+          let countFollowings = 0;
+          countFollowings = followings.length;
+          console.log(countFollowings);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // const fetchUserFollowing = async () => {
+  //   try {
+  //     const Following = [];
+
+  //     await firestore()
+  //       .collection('Following')
+  //       .doc(route.params.userId)
+  //       .collection('userFollowing')
+  //       .onSnapshot(snapshot => {
+  //         snapshot.docs.map(doc => {
+  //           const id = doc.id;
+  //           return id;
+  //         });
+  //       });
+
+  //     setFollowing(Following);
+  //     if (Following(route.params.userId) > -1) {
+  //       setFollowing(true);
+  //     } else {
+  //       setFollowing(false);
+  //     }
+
+  //     console.log('userFollowing: ', userFollowing);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const fetchPosts = async () => {
     try {
@@ -64,11 +115,9 @@ const ProfileScreen = ({navigation, route}) => {
         });
 
       setPosts(list);
-
       if (loading) {
         setLoading(false);
       }
-
       // console.log('Posts: ', posts);
     } catch (e) {
       console.log(e);
@@ -88,11 +137,16 @@ const ProfileScreen = ({navigation, route}) => {
       });
   };
 
+  // useEffect(() => {
+  //   getUser();
+  //   fetchPosts();
+  //   navigation.addListener('focus', () => setLoading(!loading));
+  // }, [navigation, loading]);
+
   useEffect(() => {
     getUser();
     fetchPosts();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, []);
 
   useEffect(() => {
     fetchPosts();
@@ -181,33 +235,30 @@ const ProfileScreen = ({navigation, route}) => {
     }
   };
 
+  const onUnfollow = () => {
+    firebase
+      .firestore()
+      .collection('following')
+      .doc(auth().currentUser.uid)
+      .collection('userFollowing')
+      .doc(route.params.userId)
+      .delete({});
+  };
+  const onFollow = () => {
+    firebase
+      .firestore()
+      .collection('following')
+      .doc(auth().currentUser.uid)
+      .collection('userFollowing')
+      .doc(route.params.userId)
+      .set({});
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 15,
-            }}>
-            <Text style={{color: colors.text, fontFamily: font.subtitle}}>
-              Hello, {user.email}
-            </Text>
-
-            <Feather.Button
-              name="credit-card"
-              //name="edit-2"
-              size={22}
-              backgroundColor="#fff"
-              color={colors.subtext}
-              onPress={() => {
-                navigation.navigate('EditProfile');
-              }}
-            />
-          </View>
-          {/* {route.params ? (
+          {route.params ? (
             <>
               <View
                 style={{
@@ -226,17 +277,26 @@ const ProfileScreen = ({navigation, route}) => {
                 <Text style={{color: colors.text, fontFamily: font.subtitle}}>
                   Hello, {user.email}
                 </Text>
-
                 <Feather.Button
+                  name="credit-card"
+                  //name="edit-2"
+                  size={22}
+                  backgroundColor="#fff"
+                  color={colors.subtext}
+                  onPress={() => {
+                    navigation.navigate('EditProfile');
+                  }}
+                />
+                {/* <Feather.Button
                   name="plus-square"
                   size={22}
                   backgroundColor="#fff"
                   color={colors.subtext}
                   onPress={() => navigation.navigate('AddPost')}
-                />
+                /> */}
               </View>
             </>
-          )} */}
+          )}
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1.4, alignItems: 'flex-start'}}>
@@ -324,15 +384,19 @@ const ProfileScreen = ({navigation, route}) => {
           </View>
 
           {/* buttons for the edit profile message and follow */}
+          <View style={styles.userBtnWrapper}></View>
           <View style={styles.userBtnWrapper}>
             {route.params ? (
               <>
-                <TouchableOpacity style={styles.UserBtn} onPress={() => {}}>
-                  <Text style={styles.userBtnTxt}>Follow</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.UserBtn} onPress={() => {}}>
-                  <Text style={styles.userBtnTxt}>Message</Text>
-                </TouchableOpacity>
+                {route.params.userId !== auth().currentUser.uid ? (
+                  <View>
+                    {Following ? (
+                      <Button title="Following" onPress={() => onUnfollow()} />
+                    ) : (
+                      <Button title="Follow" onPress={() => onFollow()} />
+                    )}
+                  </View>
+                ) : null}
               </>
             ) : (
               <>
@@ -477,6 +541,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginHorizontal: 2,
     marginTop: 10,
+    width: '100%',
   },
   userBtnTxt: {
     textAlign: 'center',
