@@ -1,8 +1,9 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
   Platform,
+  TouchableOpacity,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -16,6 +17,24 @@ import {
   SubmitBtnText,
   StatusWrapper,
 } from '../styles/AddPost';
+
+import moment from 'moment';
+
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImg,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+} from '../../patient/styles/FeedStyles';
 import {AuthContext} from '../../navigation/AuthProvider';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,6 +49,7 @@ const AddPostScreen = ({navigation, route}) => {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [post, setPost] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -129,8 +149,42 @@ const AddPostScreen = ({navigation, route}) => {
     }
   };
 
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          // console.log('User Data', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <View style={styles.Container}>
+      <UserInfo>
+        <UserImg
+          source={{
+            uri: userData
+              ? userData.userImg ||
+                'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+              : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+          }}
+        />
+        <UserInfoText>
+          <UserName>
+            {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
+            {userData ? userData.lname || 'Patient' : 'Patient'}
+          </UserName>
+        </UserInfoText>
+      </UserInfo>
+
       <InputWrapper>
         {image != null ? <AddImage source={{uri: image}} /> : null}
         <InputField
@@ -175,8 +229,8 @@ export default AddPostScreen;
 const styles = StyleSheet.create({
   Container: {
     // backgroundColor: '#fff',
-    // // justifyContent: 'center',
-    // // alignItems: 'center',
+    // justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   actionButtonIcon: {

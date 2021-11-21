@@ -1,15 +1,15 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 
-const BlogScreen = () => {
+const ProfProfile = () => {
   return (
     <View style={styles.container}>
-      <Text>BlogScreen Screen </Text>
+      <Text>ProfProfile Screen </Text>
     </View>
   );
 };
 
-export default BlogScreen;
+export default ProfProfile;
 
 const styles = StyleSheet.create({
   container: {

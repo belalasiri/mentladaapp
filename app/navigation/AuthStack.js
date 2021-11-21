@@ -2,10 +2,16 @@ import React, {useState, useEffect} from 'react';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import OnboardingScreen from '../screens/OnboardingScreen';
-import LoginScreen from '../patient/screens/LoginScreen';
 import SignupScreen from '../patient/screens/SignupScreen';
+import AppRoutes from '../patient/screens/AppRoutes';
+import LoginScreen from '../patient/screens/LoginScreen';
+import ProfLogin from '../../appProfessional/professional/screens/ProfLogin';
+import ProfSignup from '../../appProfessional/professional/screens/ProfSignup';
+import Patient_Login from '../screens/Pati_Login';
+import Home from '../patient/screens/Testing';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +28,10 @@ const AuthStack = () => {
         setIsFirstLaunch(false);
       }
     });
+    GoogleSignin.configure({
+      webClientId:
+        '55064714268-057p499ki1499poi1ptpaj18osqnieit.apps.googleusercontent.com',
+    });
   }, []);
 
   if (isFirstLaunch === null) {
@@ -29,8 +39,9 @@ const AuthStack = () => {
   } else if (isFirstLaunch === true) {
     routName = 'Onboarding';
   } else {
-    routName = 'Login';
+    routName = 'Routes';
   }
+
   return (
     <Stack.Navigator initialRouteName={routName}>
       <Stack.Screen
@@ -39,13 +50,38 @@ const AuthStack = () => {
         options={{header: () => null}}
       />
       <Stack.Screen
-        name="Login"
+        name="Routes"
+        component={AppRoutes}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="PatLogin"
         component={LoginScreen}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="ProfLogin"
+        component={ProfLogin}
         options={{header: () => null}}
       />
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="ProfSignup"
+        component={ProfSignup}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="Patient_Login"
+        component={Patient_Login}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="Home"
+        component={Home}
         options={{header: () => null}}
       />
     </Stack.Navigator>

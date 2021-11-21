@@ -275,7 +275,7 @@ const ProfileScreen = ({navigation, route}) => {
                   marginBottom: 15,
                 }}>
                 <Text style={{color: colors.text, fontFamily: font.subtitle}}>
-                  Hello, {user.email}
+                  Hello, Dear!
                 </Text>
                 <Feather.Button
                   name="credit-card"

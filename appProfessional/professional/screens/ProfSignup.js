@@ -4,71 +4,86 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Button,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
-import colors from '../../config/colors';
 import FormButton from '../../config/components/FormButton';
-import FormInput from '../../config/components/FormInput';
-import SocialButton from '../../config/components/SocialButton';
+import Input from '../../config/components/Input';
+import Link from '../../config/components/Link';
+import colors from '../../config/colors';
 import font from '../../config/font';
-import {AuthContext} from '../../navigation/AuthProvider';
 
-const LoginScreen = ({navigation}) => {
+import {AuthContext} from '../../../app/navigation/AuthProvider';
+
+const ProfSignup = ({navigation}) => {
   const [fname, setfName] = useState();
   const [lname, setlName] = useState();
   const [email, setEmail] = useState();
+  const [BirthDate, setBirthDate] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
 
-  // Firebase
-  const {register} = useContext(AuthContext);
+  const {ProfRegister} = useContext(AuthContext);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* segment */}
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.fullLogo}>
           <Image
-            source={require('../../assets/image/logo.png')}
+            source={{
+              uri: 'https://i.ibb.co/pv5S0nm/logo.png',
+            }}
             style={styles.logo}
           />
         </View>
         <Text style={styles.text}>Create account</Text>
-        <FormInput
+        <Input
           labelValue={fname}
-          onChangeText={userName => setfName(userName)}
+          onChangeText={ProfName => setfName(ProfName)}
           placeholderText="Frist Name"
           iconType="user"
           keyboardType="default"
         />
-        <FormInput
+        <Input
           labelValue={lname}
-          onChangeText={userName => setlName(userName)}
+          onChangeText={ProfName => setlName(ProfName)}
           placeholderText="Last Name"
           iconType="user"
           keyboardType="default"
         />
-        <FormInput
+        <Input
           labelValue={email}
-          onChangeText={userEmail => setEmail(userEmail)}
+          onChangeText={ProfEmail => setEmail(ProfEmail)}
           placeholderText="Email"
           iconType="mail"
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <FormInput
+        <Input
+          labelValue={BirthDate}
+          onChangeText={ProfBirthDate => setBirthDate(ProfBirthDate)}
+          placeholderText="YYYY - MM - DD"
+          iconType="calendar"
+          keyboardType="number-pad"
+          autoCapitalize="none"
+        />
+
+        <Input
           labelValue={password}
-          onChangeText={userPassword => setPassword(userPassword)}
+          onChangeText={ProfPassword => setPassword(ProfPassword)}
           placeholderText="Password"
           iconType="lock"
           secureTextEntry={true}
         />
-        <FormInput
+        <Input
           labelValue={confirmPassword}
-          onChangeText={userPassword => setConfirmPassword(userPassword)}
+          onChangeText={ProfPassword => setConfirmPassword(ProfPassword)}
           placeholderText="Confirm Password"
           iconType="lock"
           secureTextEntry={true}
@@ -99,87 +114,50 @@ const LoginScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Create an account */}
         <FormButton
           buttonTitle="Create an account"
-          onPress={() =>
-            register(fname, lname, email, password, confirmPassword)
-          }
-        />
-
-        {/* OR */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: 10,
-            marginTop: 20,
-          }}>
-          <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
-          <View>
-            <Text
-              style={{
-                width: 50,
-                textAlign: 'center',
-                color: '#353948',
-                fontFamily: font.title,
-              }}>
-              OR
-            </Text>
-          </View>
-          <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
-        </View>
-
-        <SocialButton
-          buttonTitle="Sign up with Facebook!"
-          btnType="facebook"
-          color="#4867aa"
-          backgroundColor="#e6eaf4"
-          onPress={() => {}}
-        />
-
-        <SocialButton
-          buttonTitle="Sign up with Google"
-          btnType="google"
-          color="#de4d41"
-          backgroundColor="#f5e7ea"
-          onPress={() => {}}
+          onPress={() => navigation.navigate('Home')}
         />
 
         {/* Have an account? Sign In */}
-        <View style={styles.textPrivate}>
+        <View style={[styles.textPrivate, {marginBottom: 30}]}>
           <Text style={styles.color_textPrivate}>Have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProfLogin')}>
             <Text
               style={[
                 styles.color_textPrivate,
-                {color: '#353948', textDecorationLine: 'underline'},
+                {color: colors.subtext, textDecorationLine: 'underline'},
               ]}>
-              Sign In
+              SIGN IN
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-export default LoginScreen;
+export default ProfSignup;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
-    paddingTop: 50,
+    paddingHorizontal: 20,
     backgroundColor: '#fff',
   },
   fullLogo: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 20,
   },
   logo: {
-    height: 150,
-    width: 150,
+    height: 100,
+    width: 100,
+    margin: 10,
+    borderRadius: 17,
     resizeMode: 'cover',
   },
   text: {
@@ -188,26 +166,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: font.title,
   },
-  navButton: {
-    marginTop: 15,
-  },
-
-  createAccount: {
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 20,
-  },
-
-  navButtonTextcreateAccount: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 10,
-    color: '#353948',
-  },
   textPrivate: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 15,
+    marginVertical: 10,
     justifyContent: 'center',
   },
   color_textPrivate: {

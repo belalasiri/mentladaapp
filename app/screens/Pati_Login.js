@@ -9,7 +9,7 @@ import font from '../config/font';
 import colors from '../config/colors';
 import CustomLink from '../config/components/CustomLink';
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 

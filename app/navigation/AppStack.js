@@ -14,11 +14,46 @@ import MessageScreen from '../patient/screens/MessegeScreen';
 import ChatScreen from '../patient/screens/ChatScreen';
 import ProfileScreen from '../patient/screens/profileScreen';
 import EditProfileScreen from '../patient/screens/EditProfileScreen';
+import ProfProfile from '../patient/screens/ProfProfile';
 import font from '../config/font';
 import colors from '../config/colors';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const HomeStack = ({navigation, route}) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="ProfProfile"
+      component={ProfProfile}
+      options={({route}) => ({
+        title: route.params.ProfName + "'s Profile",
+        // title: route.params.ProfName,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          // shadowColor: colors.postL,
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: font.title,
+          fontSize: 14,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <Ionicons name="chevron-back" size={25} color={colors.subtext} />
+        ),
+      })}
+    />
+  </Stack.Navigator>
+);
 
 const FeedStack = ({navigation, route}) => (
   <Stack.Navigator>
@@ -145,12 +180,12 @@ const ProfileStack = ({navigation, route}) => (
 const AppStack = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Homes"
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
-          if (route.name === 'Home') {
+          if (route.name === 'Homes') {
             iconName = focused ? 'home' : 'home-outline';
             color = '#67D8AF';
             // size = 30;
@@ -178,8 +213,8 @@ const AppStack = () => {
         },
       })}>
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Homes"
+        component={HomeStack}
         options={({route}) => ({
           headerShown: false,
           tabBarHideOnKeyboard: true,
