@@ -23,19 +23,18 @@ const PostScreen = ({navigation, route}) => {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
-            const {userId, post, postImg, postTime, likes, comments} =
-              doc.data();
+            console.log(doc.data());
             list.push({
               id: doc.id,
-              userId,
+              userId: doc.data().userId,
               userName: 'Mentlada Patient',
               userImg: 'https://i.ibb.co/pv5S0nm/logo.png',
-              postTime: postTime,
-              post,
-              postImg,
+              postTime: doc.data().postTime,
+              post: doc.data().post,
+              postImg: doc.data().postImg,
               liked: false,
-              likes,
-              comments,
+              likes: doc.data().likes,
+              comments: doc.data().comments,
             });
           });
         });

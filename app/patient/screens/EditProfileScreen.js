@@ -107,9 +107,8 @@ const EditProfileScreen = ({}) => {
       await task;
 
       const url = await storageRef.getDownloadURL();
-
       setUploading(false);
-      setImage(null);
+      // setImage(null);
 
       // Alert.alert(
       //   'Image uploaded!',

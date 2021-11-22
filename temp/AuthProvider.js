@@ -22,13 +22,6 @@ export const AuthProvider = ({children}) => {
             alert(error);
           }
         },
-        // Proflogin: async (email, password) => {
-        //   try {
-        //     await auth().signInWithEmailAndPassword(email, password);
-        //   } catch (error) {
-        //     alert(error);
-        //   }
-        // },
 
         googleLogin: async () => {
           try {
@@ -45,7 +38,6 @@ export const AuthProvider = ({children}) => {
                   .set({
                     fname: '',
                     lname: '',
-                    role: 'patient',
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
@@ -75,16 +67,20 @@ export const AuthProvider = ({children}) => {
             if (result.isCancelled) {
               throw 'User cancelled the login process';
             }
+
             const data = await AccessToken.getCurrentAccessToken();
 
             if (!data) {
               throw 'Something went wrong obtaining access token';
             }
+
             const facebookCredential = auth.FacebookAuthProvider.credential(
               data.accessToken,
             );
+
             await auth()
               .signInWithCredential(facebookCredential)
+
               .then(() => {
                 console.log('current User', auth().currentUser);
                 firestore()
@@ -93,7 +89,6 @@ export const AuthProvider = ({children}) => {
                   .set({
                     fname: '',
                     lname: '',
-                    role: 'patient',
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
@@ -113,64 +108,18 @@ export const AuthProvider = ({children}) => {
           }
         },
 
-        register: (fname, lname, email, password, confirmPassword) => {
-          auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then(result => {
-              result.user
-                .updateProfile({
-                  displayName: 'patient',
-                })
-                .then(() => {
-                  firestore()
-                    .collection('users')
-                    .doc(auth().currentUser.uid)
-                    .set({
-                      fname: fname,
-                      lname: lname,
-                      email: email,
-                      role: 'patient',
-                      createdAt: firestore.Timestamp.fromDate(new Date()),
-                      userImg: null,
-                    });
-                })
-                .catch(e => {
-                  console.log(e);
-                })
-                .catch(error => {
-                  console.log(
-                    'Something went wrong with added user to firestore: ',
-                    error,
-                  );
-                });
-            })
-            .catch(error => {
-              console.log('Something went wrong with sign up: ', error);
-            });
-        },
-
-        ProfRegister: async (
-          fname,
-          lname,
-          email,
-          password,
-          confirmPassword,
-        ) => {
+        register: async (fname, lname, email, password, confirmPassword) => {
           try {
             await auth()
               .createUserWithEmailAndPassword(email, password)
-              .then(result => {
-                result.user.updateProfile({
-                  displayName: 'professional',
-                });
+              .then(() => {
                 firestore()
-                  .collection('Professional')
+                  .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
                     fname: fname,
                     lname: lname,
                     email: email,
-                    role: 'professional',
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
                   })
@@ -188,15 +137,7 @@ export const AuthProvider = ({children}) => {
             console.log(e);
           }
         },
-
         logout: async () => {
-          try {
-            await auth().signOut();
-          } catch (error) {
-            alert(error);
-          }
-        },
-        Proflogout: async () => {
           try {
             await auth().signOut();
           } catch (error) {

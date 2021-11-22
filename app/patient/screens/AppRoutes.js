@@ -4,19 +4,8 @@ import {View, Text, SafeAreaView, ScrollView} from 'react-native';
 import CustomSwitch from '../../config/components/CustomSwitch';
 import FormButton from '../../config/components/FormButton';
 import CustomLink from '../../config/components/CustomLink';
-import LoginScreen from '../screens/LoginScreen';
 
-const ProfileStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="PatLogin"
-      component={LoginScreen}
-      options={{
-        headerShown: false,
-      }}
-    />
-  </Stack.Navigator>
-);
+
 const AppRoutes = ({navigation}) => {
   const [SwitchTab, setSwitchTab] = useState(1);
 

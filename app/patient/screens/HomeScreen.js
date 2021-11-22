@@ -18,7 +18,6 @@ import firestore from '@react-native-firebase/firestore';
 const Prof = [
   {
     id: '1',
-    // ProfName: 'Dr. Belal Asiri',
     ProfFname: 'Dr.Belal',
     ProfLname: 'Asiri',
     ProfImg: require('../../assets/image/users/user_1.jpg'),
@@ -33,7 +32,6 @@ const Prof = [
   },
   {
     id: '2',
-    // ProfName: 'Dr. Amer',
     ProfFname: 'Dr.Amer',
     ProfLname: 'Love',
     ProfImg: require('../../assets/image/users/user_2.jpg'),
@@ -46,11 +44,26 @@ const Prof = [
     ProfAbout:
       'I am a Licensed Professional Counselor in Yemen - Ibb, practising as a Clinical Case Manager at Ibb Hospital – Behavioral Health.',
   },
+  {
+    id: '3',
+    ProfFname: 'Dr.Hanan',
+    ProfLname: 'Alatas',
+    ProfImg: require('../../assets/image/users/user_5.jpg'),
+    ProfSpecialty: 'Psychologist',
+    ProfReviews: '4.97',
+    ProfPatients: '12',
+    ProfExperienceTime: '1 year',
+    ProfExperience: 'Cognitive psychologist',
+    ProfLicenses: 'LPC 3129982812',
+    ProfAbout:
+      'I am a Licensed Professional Counselor in Yemen - Ibb, practising as a Clinical Case Manager at Ibb Hospital – Behavioral Health.',
+  },
 ];
 
 const HomeScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [Profdata, setProfdata] = useState(null);
 
   const getUser = async () => {
     await firestore()
@@ -97,6 +110,7 @@ const HomeScreen = ({navigation, route}) => {
         <Text style={{fontSize: 16, fontFamily: font.title, paddingTop: 23}}>
           Professionals for you
         </Text>
+
         <FlatList
           data={Prof}
           keyExtractor={item => item.id}

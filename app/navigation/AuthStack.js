@@ -8,13 +8,13 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import SignupScreen from '../patient/screens/SignupScreen';
 import AppRoutes from '../patient/screens/AppRoutes';
 import LoginScreen from '../patient/screens/LoginScreen';
-import ProfLogin from '../../appProfessional/professional/screens/ProfLogin';
-import ProfSignup from '../../appProfessional/professional/screens/ProfSignup';
+import ProfLogin from '../Professional/screans/Auth/ProfLogin';
+import ProfSignup from '../Professional/screans/Auth/ProfSignup';
 import Patient_Login from '../screens/Pati_Login';
 import Home from '../patient/screens/Testing';
 
 const Stack = createNativeStackNavigator();
-
+ 
 const AuthStack = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   let routName;

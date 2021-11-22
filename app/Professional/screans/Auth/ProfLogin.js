@@ -1,18 +1,19 @@
-import React, {useState, useContext} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import FormButton from '../../config/components/FormButton';
-import Input from '../../config/components/Input';
-import Link from '../../config/components/Link';
-import colors from '../../config/colors';
-import font from '../../config/font';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+
+import FormButton from '../../../config/components/FormButton';
+import Input from '../../../config/components/FormInput';
+import Link from '../../../config/components/CustomLink';
+import colors from '../../../config/colors';
+import font from '../../../config/font';
+
 import auth from '@react-native-firebase/auth';
 
 const ProLogin = async () => {
-  console.log('Hi ANGRY BOLBOL');
   try {
     let result = await auth().signInWithEmailAndPassword(
-      'aaa@aaa.com',
-      'aaa@aaa.com',
+      'mentladamera@gmail.com',
+      'mentladamera@gmail.com',
     );
     console.log(result);
   } catch (error) {

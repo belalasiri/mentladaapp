@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Platform,
-  TouchableOpacity,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -18,23 +17,6 @@ import {
   StatusWrapper,
 } from '../styles/AddPost';
 
-import moment from 'moment';
-
-import {
-  Container,
-  Card,
-  UserInfo,
-  UserImg,
-  UserName,
-  UserInfoText,
-  PostTime,
-  PostText,
-  PostImg,
-  InteractionWrapper,
-  Interaction,
-  InteractionText,
-  Divider,
-} from '../../patient/styles/FeedStyles';
 import {AuthContext} from '../../navigation/AuthProvider';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -168,7 +150,7 @@ const AddPostScreen = ({navigation, route}) => {
 
   return (
     <View style={styles.Container}>
-      <UserInfo>
+      {/* <UserInfo>
         <UserImg
           source={{
             uri: userData
@@ -183,7 +165,7 @@ const AddPostScreen = ({navigation, route}) => {
             {userData ? userData.lname || 'Patient' : 'Patient'}
           </UserName>
         </UserInfoText>
-      </UserInfo>
+      </UserInfo> */}
 
       <InputWrapper>
         {image != null ? <AddImage source={{uri: image}} /> : null}
