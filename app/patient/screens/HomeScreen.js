@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, version} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Text,
   View,
@@ -15,55 +15,47 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 
-const Prof = [
-  {
-    id: '1',
-    ProfFname: 'Dr.Belal',
-    ProfLname: 'Asiri',
-    ProfImg: require('../../assets/image/users/user_1.jpg'),
-    ProfSpecialty: 'Cognitive psychologist',
-    ProfReviews: '4.99',
-    ProfPatients: '20',
-    ProfExperienceTime: '10 years',
-    ProfExperience: 'Cognitive psychologist',
-    ProfLicenses: 'LPC 2016017861',
-    ProfAbout:
-      'I am a Licensed Professional Counselor in Malaysia - Kuala Lumpur, practising as a Clinical Case Manager at Ampang Hospital – Behavioral Health.',
-  },
-  {
-    id: '2',
-    ProfFname: 'Dr.Amer',
-    ProfLname: 'Love',
-    ProfImg: require('../../assets/image/users/user_2.jpg'),
-    ProfSpecialty: 'Psychologist',
-    ProfReviews: '4.12',
-    ProfPatients: '320',
-    ProfExperienceTime: '2 years',
-    ProfExperience: 'Cognitive psychologist',
-    ProfLicenses: 'LPC 2014427861',
-    ProfAbout:
-      'I am a Licensed Professional Counselor in Yemen - Ibb, practising as a Clinical Case Manager at Ibb Hospital – Behavioral Health.',
-  },
-  {
-    id: '3',
-    ProfFname: 'Dr.Hanan',
-    ProfLname: 'Alatas',
-    ProfImg: require('../../assets/image/users/user_5.jpg'),
-    ProfSpecialty: 'Psychologist',
-    ProfReviews: '4.97',
-    ProfPatients: '12',
-    ProfExperienceTime: '1 year',
-    ProfExperience: 'Cognitive psychologist',
-    ProfLicenses: 'LPC 3129982812',
-    ProfAbout:
-      'I am a Licensed Professional Counselor in Yemen - Ibb, practising as a Clinical Case Manager at Ibb Hospital – Behavioral Health.',
-  },
-];
-
 const HomeScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [Profdata, setProfdata] = useState(null);
+  const [loading, setLoading] = useState(true);
+  let profList = [];
+
+  const fetchProf = async () => {
+    await firestore()
+      .collection('Professional')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          profList.push({
+            id: doc.id,
+            fname: doc.data().fname,
+            lname: doc.data().lname,
+            email: doc.data().email,
+            about: doc.data().about,
+            Experience: doc.data().Experience,
+            License: doc.data().License,
+            Specialty: doc.data().Specialty,
+            userImg: doc.data().userImg,
+            role: doc.data().role,
+          });
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setProfdata(profList);
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProf();
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading]);
 
   const getUser = async () => {
     await firestore()
@@ -72,7 +64,6 @@ const HomeScreen = ({navigation, route}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          // console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
@@ -110,23 +101,47 @@ const HomeScreen = ({navigation, route}) => {
         <Text style={{fontSize: 16, fontFamily: font.title, paddingTop: 23}}>
           Professionals for you
         </Text>
-
+        {/* <FlatList
+          data={Profdata}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <View>
+              <Text>{item.email} </Text>
+            </View>
+          )}
+        /> */}
         <FlatList
-          data={Prof}
+          data={Profdata}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <TouchableOpacity
               style={styles.Card}
               onPress={() =>
                 navigation.navigate('ProfProfile', {
-                  ProfName: item.ProfFname + ' ' + item.ProfLname,
+                  profName: item.fname + ' ' + item.lname,
+                  profEmail: item.email,
+                  profAvatar: item.userImg,
+                  profRole: item.role,
+                  userName: userData.fname + ' ' + userData.lname,
+                  userEmail: userData.email,
+                  userAvatar: userData.userImg,
+                  userRole: userData.role,
                 })
               }>
               <View style={styles.ProfInfo}>
-                <Image style={styles.ProfImg} source={item.ProfImg} />
+                <Image
+                  style={styles.ProfImg}
+                  source={{
+                    uri: Profdata
+                      ? item.userImg ||
+                        'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                      : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                  }}
+                />
+                {/* <Image style={styles.ProfImg} source={item.userImg} /> */}
                 <View style={styles.ProfNameCont}>
                   <Text style={styles.ProfName}>
-                    {item.ProfFname + ' ' + item.ProfLname}
+                    {item.fname + ' ' + item.lname}
                   </Text>
                   <Text style={styles.ProfDes}>{item.ProfSpecialty}</Text>
                 </View>
@@ -142,7 +157,7 @@ const HomeScreen = ({navigation, route}) => {
                     }}>
                     <Icon name="star" size={20} color="#ffde9f" />
                     <Text style={{fontSize: 16, fontFamily: font.title}}>
-                      {item.ProfReviews}
+                      4.45 {item.ProfReviews}
                     </Text>
                     <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
                       Reviews
@@ -160,7 +175,7 @@ const HomeScreen = ({navigation, route}) => {
                     <Icon name="person" size={20} color="#67d8af" />
 
                     <Text style={{fontSize: 16, fontFamily: font.title}}>
-                      {item.ProfPatients}
+                      22 {item.ProfPatients}
                     </Text>
                     <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
                       Patients
@@ -181,7 +196,7 @@ const HomeScreen = ({navigation, route}) => {
                       color="#61edea"
                     />
                     <Text style={{fontSize: 16, fontFamily: font.title}}>
-                      {item.ProfExperienceTime}
+                      {item.Experience}
                     </Text>
                     <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
                       Experience

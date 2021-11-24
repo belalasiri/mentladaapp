@@ -1,41 +1,75 @@
-import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  SafeAreaView,
+} from 'react-native';
+import auth from '@react-native-firebase/auth';
+import {AuthContext} from '../../navigation/AuthProvider';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 
-const BlogScreen = () => {
+const BlogScreen = ({navigation, route}) => {
+  const {user} = useContext(AuthContext);
+  const [userData, setUserData] = useState(null);
+  const [Profdata, setProfdata] = useState(null);
+  const [loading, setLoading] = useState(true);
+  let profList = [];
 
-const fetchProfs = async () => {
-  try {
-    const profList = [];
-
+  const fetchProf = async () => {
     await firestore()
       .collection('Professional')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          const {userId, post, postImg, postTime, likes, comments} = doc.data();
           profList.push({
             id: doc.id,
-            userId,
-            userName,
-            userImg: 'https://i.ibb.co/pv5S0nm/logo.png',
-            postTime: postTime,
-           
+            fname: doc.data().fname,
+            lname: doc.data().lname,
+            email: doc.data().email,
+            about: doc.data().about,
+            Experience: doc.data().Experience,
+            License: doc.data().License,
+            Specialty: doc.data().Specialty,
+            userImg: doc.data().userImg,
+            role: doc.data().role,
           });
         });
+      })
+      .catch(e => {
+        console.log(e);
       });
-    setPosts(profList);
+    setProfdata(profList);
 
     if (loading) {
       setLoading(false);
     }
+  };
 
-    // console.log('Posts: ', profList);
-  } catch (e) {
-    console.log(e);
-  }
-};
+  useEffect(() => {
+    fetchProf();
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading]);
 
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          // console.log('User Data', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
 
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <View style={styles.container}>
       <Text>BlogScreen Screen </Text>
@@ -50,5 +84,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-   },
+  },
 });

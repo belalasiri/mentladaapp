@@ -9,6 +9,7 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -19,9 +20,8 @@ import ProfInfo from '../../config/components/ProfInfo';
 import SpecialityCard from '../../config/components/SpecialityCard';
 
 const ProfProfile = ({route, item, navigation}) => {
-  const {user, logout} = useContext(AuthContext);
-
-  const [profData, setProfDataData] = useState(null);
+  const {user, Proflogout} = useContext(AuthContext);
+  const [profData, setProfData] = useState(null);
 
   const getUser = async () => {
     await firestore()
@@ -30,136 +30,234 @@ const ProfProfile = ({route, item, navigation}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          setProfDataData(documentSnapshot.data());
+          // console.log('User Data', documentSnapshot.data());
+          setProfData(documentSnapshot.data());
         }
       });
   };
 
-
   useEffect(() => {
     getUser();
-  }, []);
+  }, [profData]);
 
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: '#fff',
-        paddingHorizontal: 15,
       }}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.Hedercontainer}>
-          {/* Profile pic */}
-          <Image
+        <View style={styles.Heder}>
+          <View style={styles.Left} />
+          <View style={styles.Right} />
+        </View>
+        <View style={{paddingHorizontal: 15}}>
+          <View style={styles.Hedercontainer}>
+            {/* Profile pic */}
+            {/* <Image
             style={styles.ProfileImage}
             source={require('../../assets/image/users/user_1.jpg')}
-          />
+          /> */}
+            <Image
+              style={styles.ProfileImage}
+              source={{
+                uri: profData
+                  ? profData.userImg ||
+                    'https://image.freepik.com/free-vector/various-emotions-emoji-concept_140689-2885.jpg'
+                  : 'https://image.freepik.com/free-vector/various-emotions-emoji-concept_140689-2885.jpg',
+              }}
+            />
 
-          {/* Profile name and Specialty */}
-          <View style={{alignItems: 'center'}}>
+            {/* Profile name and Specialty */}
+            <View style={{alignItems: 'center'}}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: font.title,
+                  paddingTop: 10,
+                  color: colors.text,
+                }}>
+                {profData ? profData.fname || 'Professional' : 'Professional'}{' '}
+                {profData ? profData.lname || 'Profile' : 'Profile'}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontFamily: font.subtitle,
+                  color: colors.primary,
+                }}>
+                {profData ? profData.Specialty || 'Mentlada' : 'Spacialist'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.userBtnWrapper}>
+            {route.params ? (
+              <>
+                {route.params.userId !== auth().currentUser.uid ? (
+                  <View>
+                    {Following ? (
+                      <Button title="Following" onPress={() => onUnfollow()} />
+                    ) : (
+                      <Button title="Follow" onPress={() => onFollow()} />
+                    )}
+                  </View>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.userBtn_E}
+                  onPress={() => {
+                    navigation.navigate('EditProfile');
+                  }}>
+                  <Text style={styles.userBtnTxt}>Edit profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.userBtn_L}
+                  onPress={() => Proflogout()}>
+                  <Text style={styles.userBtnTxt}>Logout</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+
+          {/* Prof info continer */}
+          <View style={styles.ProfCont}>
+            <ProfInfo
+              icon="star"
+              iconColor="#ffde9f"
+              backgroundColor="#fff8ea"
+              Title1="4.98"
+              Title2="Reviews"
+            />
+            <ProfInfo
+              icon="person"
+              iconColor="#67d8af"
+              backgroundColor="#e1f7ef"
+              Title1="122"
+              Title2="Patients"
+            />
+            <ProfInfo
+              icon="checkmark-done-circle"
+              iconColor="#61edea"
+              backgroundColor="#dffbfb"
+              Title1={profData ? profData.Experience || 'New' : 'Spacialist'}
+              Title2="Experience"
+            />
+          </View>
+          <View style={{paddingTop: 15}}>
+            {route.params ? (
+              <>
+                {route.params.userId !== auth().currentUser.uid ? (
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: font.title,
+                        color: colors.text,
+                      }}>
+                      About{' '}
+                      {profData
+                        ? profData.fname || 'Professional'
+                        : 'Professional'}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        fontFamily: font.subtitle,
+                        color: colors.subtext,
+                        paddingTop: 5,
+                      }}>
+                      {profData
+                        ? profData.about || 'No deteiles are provided..'
+                        : 'No deteiles are provided..'}
+                    </Text>
+                  </View>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: font.title,
+                    color: colors.text,
+                  }}>
+                  About you
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                    paddingTop: 5,
+                  }}>
+                  {profData
+                    ? profData.about ||
+                      'There are no details provided. By editing your profile, you may add an About you information.'
+                    : 'There are no details provided. By editing your profile, you may add an About you information.'}
+                </Text>
+              </>
+            )}
+          </View>
+          <View
+            style={{
+              backgroundColor: '#F5F7F9',
+              marginTop: 15,
+              borderRadius: 7,
+            }}>
+            <View style={{margin: 10, alignItems: 'center'}}>
+              <Icon name="document-text" size={25} color="#6D768E" />
+
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{fontSize: 15, fontFamily: font.title}}>LPC </Text>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: '#B283E4',
+                    fontFamily: font.title,
+                  }}>
+                  {profData
+                    ? profData.License || 'This Professional has No License'
+                    : 'This Professional has No License'}
+                </Text>
+              </View>
+              <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
+                License
+              </Text>
+            </View>
+          </View>
+          <View style={{paddingTop: 15}}>
             <Text
               style={{
                 fontSize: 16,
                 fontFamily: font.title,
-                paddingTop: 10,
                 color: colors.text,
-              }}></Text>
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: font.subtitle,
-                color: colors.primary,
               }}>
-              {profData ? profData.lname || 'Patient' : 'Patient'}
+              Specialities
             </Text>
-          </View>
-        </View>
-
-        {/* Prof info continer */}
-        <View style={styles.ProfCont}>
-          <ProfInfo
-            icon="star"
-            iconColor="#ffde9f"
-            backgroundColor="#fff8ea"
-            Title1="4.98"
-            Title2="Reviews"
-          />
-          <ProfInfo
-            icon="person"
-            iconColor="#67d8af"
-            backgroundColor="#e1f7ef"
-            Title1="122"
-            Title2="Patients"
-          />
-          <ProfInfo
-            icon="checkmark-done-circle"
-            iconColor="#61edea"
-            backgroundColor="#dffbfb"
-            Title1="10 years"
-            Title2="Experience"
-          />
-        </View>
-        <View style={{paddingTop: 15}}>
-          <Text
-            style={{fontSize: 16, fontFamily: font.title, color: colors.text}}>
-            Professionals for you
-          </Text>
-          <Text
-            style={{
-              fontSize: 13,
-              fontFamily: font.subtitle,
-              color: colors.subtext,
-              paddingTop: 5,
-            }}>
-            I am a Licensed Professional Counselor in Malaysia - Kuala Lumpur,
-            practising as a Clinical Case Manager at Ampang Hospital –
-            Behavioral Health
-          </Text>
-        </View>
-        <View
-          style={{backgroundColor: '#F5F7F9', marginTop: 15, borderRadius: 7}}>
-          <View style={{margin: 10, alignItems: 'center'}}>
-            <Icon name="document-text" size={25} color="#6D768E" />
-
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{fontSize: 15, fontFamily: font.title}}>LPC </Text>
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: '#B283E4',
-                  fontFamily: font.title,
-                }}>
-                2016017861
-              </Text>
+            <View style={{flexDirection: 'row'}}>
+              <ScrollView horizontal>
+                <SpecialityCard
+                  text={profData ? profData.Specialty || ' ' : ' '}
+                />
+                {/* <SpecialityCard text="Anxiety" />
+                <SpecialityCard text="Addictions" />
+                <SpecialityCard text="Family conflicts" />
+                <SpecialityCard text="Anger management" />
+                <SpecialityCard text="Self-Esteem" />
+                <SpecialityCard text="Depression" /> */}
+              </ScrollView>
             </View>
-            <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
-              License
-            </Text>
           </View>
-        </View>
-        <View style={{paddingTop: 15}}>
-          <Text
-            style={{fontSize: 16, fontFamily: font.title, color: colors.text}}>
-            Specialities
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <ScrollView horizontal>
-              <SpecialityCard text="Stress" />
-              <SpecialityCard text="Anxiety" />
-              <SpecialityCard text="Addictions" />
-              <SpecialityCard text="Family conflicts" />
-              <SpecialityCard text="Anger management" />
-              <SpecialityCard text="Self-Esteem" />
-              <SpecialityCard text="Depression" />
-            </ScrollView>
-          </View>
-        </View>
-        <View style={{paddingBottom: 10}}>
-          <FormButton
-            buttonTitle="+ Book counselling session"
-            onPress={() => navigation.navigate('Blog')}
-          />
+          {/* <View style={{paddingBottom: 30, paddingTop: 10}}>
+            <FormButton
+              buttonTitle="+ Book counselling session"
+              onPress={() => navigation.navigate('Home')}
+            />
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -169,9 +267,34 @@ const ProfProfile = ({route, item, navigation}) => {
 export default ProfProfile;
 
 const styles = StyleSheet.create({
+  Heder: {
+    position: 'absolute',
+    width: '100%',
+    top: -50,
+    zIndex: -100,
+  },
+  Left: {
+    backgroundColor: colors.secoundary,
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    left: -50,
+    top: -50,
+  },
+  Right: {
+    backgroundColor: colors.primary,
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    right: -100,
+    top: -200,
+  },
+
   Hedercontainer: {
     alignItems: 'center',
-    paddingTop: 15,
+    paddingTop: 70,
   },
   ProfileImage: {
     width: 100,
@@ -198,5 +321,36 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 14,
+  },
+
+  userBtnTxt: {
+    textAlign: 'center',
+    color: colors.subtext,
+  },
+
+  userBtn_L: {
+    flex: 1,
+    borderColor: '#dedede',
+    backgroundColor: '#dedede3b',
+    borderWidth: 1,
+    borderRadius: 7,
+    paddingVertical: 8,
+    marginHorizontal: 2,
+    marginTop: 10,
+  },
+  userBtn_E: {
+    flex: 3,
+    borderColor: '#dedede',
+    borderWidth: 1,
+    borderRadius: 7,
+    alignItems: 'center',
+    alignContent: 'center',
+    paddingVertical: 8,
+    marginHorizontal: 2,
+    marginTop: 10,
+  },
+  userBtnWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });

@@ -9,38 +9,36 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Fumi} from 'react-native-textinput-effects';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ImagePicker from 'react-native-image-crop-picker';
 
-import {AuthContext} from '../../navigation/AuthProvider';
+import {AuthContext} from '../../..//navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-import FormButton from '../../config/components/FormButton';
-import colors from '../../config/colors';
+import colors from '../../../config/colors';
 
-const EditProfileScreen = ({}) => {
+const EditProfProfile = () => {
   const {user} = useContext(AuthContext);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [userData, setUserData] = useState(null);
+  const [ProfData, setProfData] = useState(null);
 
   const getUser = async () => {
-    // const currentUser = await firestore()
     await firestore()
-      .collection('users')
+      .collection('Professional')
       .doc(user.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
           console.log('User Data', documentSnapshot.data());
-          setUserData(documentSnapshot.data());
+          setProfData(documentSnapshot.data());
         }
       });
   };
@@ -48,21 +46,21 @@ const EditProfileScreen = ({}) => {
   const handleUpdate = async () => {
     let imgUrl = await uploadImage();
 
-    if (imgUrl == null && userData.userImg) {
-      imgUrl = userData.userImg;
+    if (imgUrl == null && ProfData.userImg) {
+      imgUrl = ProfData.userImg;
     }
 
     firestore()
-      .collection('users')
+      .collection('Professional')
       .doc(user.uid)
       .update({
-        fname: userData.fname,
-        lname: userData.lname,
-        about: userData.about,
-        phone: userData.phone,
-        country: userData.country,
-        city: userData.city,
         userImg: imgUrl,
+        fname: ProfData.fname,
+        lname: ProfData.lname,
+        about: ProfData.about,
+        License: ProfData.License,
+        Experience: ProfData.Experience,
+        Specialty: ProfData.Specialty,
       })
       .then(() => {
         console.log('User Updated!');
@@ -80,7 +78,6 @@ const EditProfileScreen = ({}) => {
     const uploadUri = image;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
-    // Add timestamp to File Name
     const extension = filename.split('.').pop();
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
@@ -91,7 +88,6 @@ const EditProfileScreen = ({}) => {
     const storageRef = storage().ref(`photos/${filename}`);
     const task = storageRef.putFile(uploadUri);
 
-    // Set transferred state
     task.on('state_changed', taskSnapshot => {
       console.log(
         `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
@@ -108,12 +104,7 @@ const EditProfileScreen = ({}) => {
 
       const url = await storageRef.getDownloadURL();
       setUploading(false);
-      // setImage(null);
 
-      // Alert.alert(
-      //   'Image uploaded!',
-      //   'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
-      // );
       return url;
     } catch (e) {
       console.log(e);
@@ -125,43 +116,25 @@ const EditProfileScreen = ({}) => {
     getUser();
   }, []);
 
-  // const takePhotoFromCamera = () => {
-  //   ImagePicker.openCamera({
-  //     compressImageMaxWidth: 300,
-  //     compressImageMaxHeight: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
       cropping: true,
       compressImageQuality: 0.7,
-    }).then(image => {
-      console.log(image);
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUri);
-      // this.bs.current.snapTo(1);
-    });
+    })
+      .then(image => {
+        console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(error => {
+        if (error.code === 'E_PICKER_CANCELLED') {
+          // here the solution
+          return false;
+        }
+      });
   };
-  // const choosePhotoFromLibrary = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
 
   return (
     <ScrollView>
@@ -184,8 +157,8 @@ const EditProfileScreen = ({}) => {
                   source={{
                     uri: image
                       ? image
-                      : userData
-                      ? userData.userImg ||
+                      : ProfData
+                      ? ProfData.userImg ||
                         'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
                       : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
                   }}
@@ -216,82 +189,82 @@ const EditProfileScreen = ({}) => {
               </View>
             </TouchableOpacity>
             <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
-              {userData ? userData.fname : ''} {userData ? userData.lname : ''}
+              {ProfData ? ProfData.fname : ''} {ProfData ? ProfData.lname : ''}
             </Text>
             <Text>{user.uid}</Text>
           </View>
+
           {/* f.name, lname, bio, phone, contry, city */}
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#333333" size={20} />
+            <AntDesign name="user" color="#707070" size={20} />
             <TextInput
               placeholder="First Name"
-              placeholderTextColor="#666666"
+              placeholderTextColor="#707070"
               autoCorrect={false}
-              value={userData ? userData.fname : ''}
-              onChangeText={txt => setUserData({...userData, fname: txt})}
+              value={ProfData ? ProfData.fname : ''}
+              onChangeText={txt => setProfData({...ProfData, fname: txt})}
               style={styles.textInput}
             />
           </View>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#333333" size={20} />
+            <AntDesign name="user" color="#707070" size={20} />
             <TextInput
               placeholder="Last Name"
-              placeholderTextColor="#666666"
-              value={userData ? userData.lname : ''}
-              onChangeText={txt => setUserData({...userData, lname: txt})}
+              placeholderTextColor="#707070"
+              value={ProfData ? ProfData.lname : ''}
+              onChangeText={txt => setProfData({...ProfData, lname: txt})}
+              autoCorrect={false}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <AntDesign name="idcard" color="#707070" size={20} />
+            <TextInput
+              placeholder="License No."
+              placeholderTextColor="#707070"
+              keyboardType="number-pad"
+              value={ProfData ? ProfData.License : ''}
+              onChangeText={txt => setProfData({...ProfData, License: txt})}
               autoCorrect={false}
               style={styles.textInput}
             />
           </View>
           <View style={styles.action}>
-            <Icon name="clipboard-outline" color="#333333" size={20} />
+            <AntDesign name="Trophy" color="#707070" size={20} />
+            <TextInput
+              placeholder="Years of experience"
+              placeholderTextColor="#707070"
+              value={ProfData ? ProfData.Experience : ''}
+              onChangeText={txt => setProfData({...ProfData, Experience: txt})}
+              autoCorrect={false}
+              style={styles.textInput}
+            />
+          </View>
+          <View style={styles.action}>
+            <AntDesign name="Safety" color="#707070" size={20} />
+            <TextInput
+              placeholder="Your Specialty"
+              placeholderTextColor="#707070"
+              value={ProfData ? ProfData.Specialty : ''}
+              onChangeText={txt => setProfData({...ProfData, Specialty: txt})}
+              autoCorrect={false}
+              style={styles.textInput}
+            />
+          </View>
+          <View style={styles.bioAction}>
+            <View style={{paddingTop: 10}}>
+              <AntDesign name="infocirlceo" color="#707070" size={20} />
+            </View>
             <TextInput
               multiline
-              numberOfLines={2}
+              numberOfLines={5}
               placeholder="Bio"
               placeholderTextColor="#666666"
-              value={userData ? userData.about : ''}
-              onChangeText={txt => setUserData({...userData, about: txt})}
+              value={ProfData ? ProfData.about : ''}
+              onChangeText={txt => setProfData({...ProfData, about: txt})}
               autoCorrect={true}
-              style={[styles.textInput, {height: 40}]}
-            />
-          </View>
-          <View style={styles.action}>
-            <Feather name="phone" color="#333333" size={20} />
-            <TextInput
-              placeholder="Phone"
-              placeholderTextColor="#666666"
-              keyboardType="number-pad"
-              autoCorrect={false}
-              value={userData ? userData.phone : ''}
-              onChangeText={txt => setUserData({...userData, phone: txt})}
-              style={styles.textInput}
-            />
-          </View>
-          <View style={styles.action}>
-            <FontAwesome name="globe" color="#333333" size={20} />
-            <TextInput
-              placeholder="Country"
-              placeholderTextColor="#666666"
-              autoCorrect={false}
-              value={userData ? userData.country : ''}
-              onChangeText={txt => setUserData({...userData, country: txt})}
-              style={styles.textInput}
-            />
-          </View>
-          <View style={styles.action}>
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              color="#333333"
-              size={20}
-            />
-            <TextInput
-              placeholder="City"
-              placeholderTextColor="#666666"
-              autoCorrect={false}
-              value={userData ? userData.city : ''}
-              onChangeText={txt => setUserData({...userData, city: txt})}
-              style={styles.textInput}
+              style={[styles.biotextInput, {height: 80}]}
             />
           </View>
           {/* update */}
@@ -305,7 +278,8 @@ const EditProfileScreen = ({}) => {
   );
 };
 
-export default EditProfileScreen;
+export default EditProfProfile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -319,7 +293,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   panel: {
-    padding: 20, 
+    padding: 20,
     backgroundColor: '#FFFFFF',
     paddingTop: 20,
     width: '100%',
@@ -369,16 +343,36 @@ const styles = StyleSheet.create({
   action: {
     flexDirection: 'row',
     marginTop: 10,
-    // marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
-    paddingBottom: 5,
+    borderColor: colors.empty,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderRadius: 7,
+    paddingLeft: 10,
+    // paddingBottom: 5,
   },
 
   textInput: {
     flex: 1,
-    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    // marginTop: Platform.OS === 'ios' ? 0 : -12,
     paddingLeft: 10,
-    color: '#333333',
+    color: colors.text,
+  },
+  biotextInput: {
+    paddingRight: 10,
+    lineHeight: 23,
+    flex: 2,
+    textAlignVertical: 'top',
+    paddingLeft: 10,
+    color: colors.text,
+    height: 40,
+  },
+  bioAction: {
+    flexDirection: 'row',
+    marginTop: 10,
+    borderColor: colors.empty,
+    borderWidth: 2,
+    borderRadius: 7,
+    paddingLeft: 10,
+    alignContent: 'center',
   },
 });

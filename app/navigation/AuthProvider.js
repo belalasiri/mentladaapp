@@ -22,13 +22,13 @@ export const AuthProvider = ({children}) => {
             alert(error);
           }
         },
-        // Proflogin: async (email, password) => {
-        //   try {
-        //     await auth().signInWithEmailAndPassword(email, password);
-        //   } catch (error) {
-        //     alert(error);
-        //   }
-        // },
+        Proflogin: async (email, password) => {
+          try {
+            await auth().signInWithEmailAndPassword(email, password);
+          } catch (error) {
+            alert(error);
+          }
+        },
 
         googleLogin: async () => {
           try {
@@ -153,6 +153,9 @@ export const AuthProvider = ({children}) => {
           fname,
           lname,
           email,
+          License,
+          Experience,
+          Specialty,
           password,
           confirmPassword,
         ) => {
@@ -170,6 +173,9 @@ export const AuthProvider = ({children}) => {
                     fname: fname,
                     lname: lname,
                     email: email,
+                    License: License,
+                    Experience: Experience,
+                    Specialty: Specialty,
                     role: 'professional',
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
@@ -196,9 +202,11 @@ export const AuthProvider = ({children}) => {
             alert(error);
           }
         },
+
         Proflogout: async () => {
           try {
             await auth().signOut();
+            console.log('prof sec logout');
           } catch (error) {
             alert(error);
           }

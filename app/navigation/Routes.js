@@ -25,7 +25,7 @@ const Routes = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
-  }, []);
+  }, [role, user]);
 
   if (initializing) return null;
 

@@ -1,33 +1,25 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 
 import FormButton from '../../../config/components/FormButton';
 import Input from '../../../config/components/FormInput';
 import Link from '../../../config/components/CustomLink';
 import colors from '../../../config/colors';
 import font from '../../../config/font';
+import {AuthContext} from '../../../navigation/AuthProvider';
 
-import auth from '@react-native-firebase/auth';
-
-const ProLogin = async () => {
-  try {
-    let result = await auth().signInWithEmailAndPassword(
-      'mentladamera@gmail.com',
-      'mentladamera@gmail.com',
-    );
-    console.log(result);
-  } catch (error) {
-    alert(error);
-  }
-};
 
 const ProfLogin = ({navigation}) => {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const {Proflogin} = useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Professional's Login</Text>
       <Input
-        // labelValue={email}
-        // onChangeText={userEmail => setEmail(userEmail)}
+        labelValue={email}
+        onChangeText={userEmail => setEmail(userEmail)}
         placeholderText="Email"
         iconType="mail"
         keyboardType="email-address"
@@ -35,14 +27,17 @@ const ProfLogin = ({navigation}) => {
         autoCorrect={false}
       />
       <Input
-        // labelValue={password}
-        // onChangeText={userPassword => setPassword(userPassword)}
+        labelValue={password}
+        onChangeText={userPassword => setPassword(userPassword)}
         placeholderText="Password"
         iconType="lock"
         secureTextEntry={true}
       />
 
-      <FormButton buttonTitle="Login to account" onPress={ProLogin} />
+      <FormButton
+        buttonTitle="Login to account"
+        onPress={() => Proflogin(email, password)}
+      />
 
       <Link
         text="Don’t have an account?  "

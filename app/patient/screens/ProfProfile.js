@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Text,
   View,
@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,40 +16,90 @@ import font from '../../config/font';
 import ProfInfo from '../../config/components/ProfInfo';
 import SpecialityCard from '../../config/components/SpecialityCard';
 
-const Prof = [
-  {
-    id: '1',
-    // ProfName: 'Dr. Belal Asiri',
-    ProfFname: 'Dr.Belal',
-    ProfLname: 'Asiri',
-    ProfImg: require('../../assets/image/users/user_1.jpg'),
-    ProfSpecialty: 'Cognitive psychologist',
-    ProfReviews: '4.99',
-    ProfPatients: '20',
-    ProfExperienceTime: '10 years',
-    ProfExperience: 'Cognitive psychologist',
-    ProfLicenses: 'LPC 2016017861',
-    ProfAbout:
-      'I am a Licensed Professional Counselor in Malaysia - Kuala Lumpur, practising as a Clinical Case Manager at Ampang Hospital – Behavioral Health.',
-  },
-  {
-    id: '2',
-    // ProfName: 'Dr. Amer',
-    ProfFname: 'Dr.Amer',
-    ProfLname: 'Love',
-    ProfImg: require('../../assets/image/users/user_2.jpg'),
-    ProfSpecialty: 'Psychologist',
-    ProfReviews: '4.12',
-    ProfPatients: '320',
-    ProfExperienceTime: '2 years',
-    ProfExperience: 'Cognitive psychologist',
-    ProfLicenses: 'LPC 2014427861',
-    ProfAbout:
-      'I am a Licensed Professional Counselor in Yemen - Ibb, practising as a Clinical Case Manager at Ibb Hospital – Behavioral Health.',
-  },
-];
+import auth from '@react-native-firebase/auth';
+import {AuthContext} from '../../navigation/AuthProvider';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 
-const ProfProfile = ({route, item, navigation}) => {
+const ProfProfile = ({navigation, route}) => {
+  const {user} = useContext(AuthContext);
+  const [Profdata, setProfdata] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+
+  let profList = [];
+  const fetchProf = async () => {
+    await firestore()
+      .collection('Professional')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          profList.push({
+            id: doc.id,
+            fname: doc.data().fname,
+            lname: doc.data().lname,
+            email: doc.data().email,
+            about: doc.data().about,
+            Experience: doc.data().Experience,
+            License: doc.data().License,
+            Specialty: doc.data().Specialty,
+            userImg: doc.data().userImg,
+          });
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setProfdata(profList);
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProf();
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading]);
+
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+  const onRequest = () => {
+    firebase
+      .firestore()
+      .collection('session')
+      .doc(auth().currentUser.email + route.params.profEmail)
+      .set({
+        approved: 'pending',
+        isRequested: route.params.userEmail + route.params.profEmail,
+        patientName: route.params.userName,
+        patientEmail: route.params.userEmail,
+        patientAvatar: route.params.userAvatar,
+        professionalName: route.params.profName,
+        profEmail: route.params.profEmail,
+        professionalAvatar: route.params.profAvatar,
+      })
+      .then(() => {
+        console.log('Request Sent!');
+        Alert.alert(
+          'Request Sent!',
+          'Your Request has sent successfully. please wait for the profissinal to approve you request. Thank you',
+        );
+      });
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -62,7 +113,13 @@ const ProfProfile = ({route, item, navigation}) => {
           {/* Profile pic */}
           <Image
             style={styles.ProfileImage}
-            source={require('../../assets/image/users/user_1.jpg')}
+            source={{
+              uri: Profdata
+                ? route.params.profAvatar ||
+                  'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+            }}
+            // source={require('../../assets/image/users/user_1.jpg')}
           />
 
           {/* Profile name and Specialty */}
@@ -74,7 +131,7 @@ const ProfProfile = ({route, item, navigation}) => {
                 paddingTop: 10,
                 color: colors.text,
               }}>
-              {route.params.ProfName}
+              {route.params.profName}
             </Text>
             <Text
               style={{
@@ -168,8 +225,8 @@ const ProfProfile = ({route, item, navigation}) => {
         </View>
         <View style={{paddingBottom: 10}}>
           <FormButton
-            buttonTitle="+ Book counselling session"
-            onPress={() => navigation.navigate('Blog')}
+            buttonTitle="Request for a counselling session"
+            onPress={() => onRequest()}
           />
         </View>
       </ScrollView>

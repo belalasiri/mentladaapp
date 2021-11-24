@@ -18,14 +18,14 @@ import auth from '@react-native-firebase/auth';
 import Feather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+ 
 import {AuthContext} from '../../navigation/AuthProvider';
 import font from '../../config/font';
 import colors from '../../config/colors';
 import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
-
+ 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
@@ -58,34 +58,6 @@ const ProfileScreen = ({navigation, route}) => {
     }
   };
 
-  // const fetchUserFollowing = async () => {
-  //   try {
-  //     const Following = [];
-
-  //     await firestore()
-  //       .collection('Following')
-  //       .doc(route.params.userId)
-  //       .collection('userFollowing')
-  //       .onSnapshot(snapshot => {
-  //         snapshot.docs.map(doc => {
-  //           const id = doc.id;
-  //           return id;
-  //         });
-  //       });
-
-  //     setFollowing(Following);
-  //     if (Following(route.params.userId) > -1) {
-  //       setFollowing(true);
-  //     } else {
-  //       setFollowing(false);
-  //     }
-
-  //     console.log('userFollowing: ', userFollowing);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
   const fetchPosts = async () => {
     try {
       const list = [];
@@ -93,7 +65,7 @@ const ProfileScreen = ({navigation, route}) => {
       await firestore()
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
-        .orderBy('postTime', 'desc')
+        .orderBy('postTime', 'desc') 
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
@@ -131,22 +103,16 @@ const ProfileScreen = ({navigation, route}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          // console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
   };
 
-  // useEffect(() => {
-  //   getUser();
-  //   fetchPosts();
-  //   navigation.addListener('focus', () => setLoading(!loading));
-  // }, [navigation, loading]);
 
   useEffect(() => {
     getUser();
     fetchPosts();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     fetchPosts();
@@ -384,7 +350,6 @@ const ProfileScreen = ({navigation, route}) => {
           </View>
 
           {/* buttons for the edit profile message and follow */}
-          <View style={styles.userBtnWrapper}></View>
           <View style={styles.userBtnWrapper}>
             {route.params ? (
               <>
@@ -482,7 +447,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    //padding: 10,
     paddingTop: 20,
   },
   userImg: {
@@ -500,6 +464,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#666',
     marginTop: 10,
+    fontFamily: font.subtitle,
   },
   phone: {
     fontSize: 12,

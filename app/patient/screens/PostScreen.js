@@ -24,7 +24,7 @@ const PostScreen = ({navigation, route}) => {
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
             console.log(doc.data());
-            list.push({
+            list.push({ 
               id: doc.id,
               userId: doc.data().userId,
               userName: 'Mentlada Patient',
@@ -261,7 +261,7 @@ const PostScreen = ({navigation, route}) => {
       ) : (
         <Container>
           <FlatList
-            data={posts}
+            data={posts} 
             renderItem={({item}) => (
               <PostCard
                 item={item}

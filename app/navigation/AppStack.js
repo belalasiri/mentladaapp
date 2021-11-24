@@ -17,10 +17,22 @@ import EditProfileScreen from '../patient/screens/EditProfileScreen';
 import ProfProfile from '../patient/screens/ProfProfile';
 import font from '../config/font';
 import colors from '../config/colors';
+import sessionPlan from '../patient/screens/sessionPlan';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const BlogStack = ({navigation, route}) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Blogs"
+      component={BlogScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+  </Stack.Navigator>
+);
 const HomeStack = ({navigation, route}) => (
   <Stack.Navigator>
     <Stack.Screen
@@ -34,7 +46,7 @@ const HomeStack = ({navigation, route}) => (
       name="ProfProfile"
       component={ProfProfile}
       options={({route}) => ({
-        title: route.params.ProfName + "'s Profile",
+        title: route.params.profName + "'s Profile",
         // title: route.params.ProfName,
         headerTitleAlign: 'center',
         headerStyle: {
@@ -49,6 +61,28 @@ const HomeStack = ({navigation, route}) => (
         headerBackTitleVisible: false,
         headerBackImage: () => (
           <Ionicons name="chevron-back" size={25} color={colors.subtext} />
+        ),
+      })}
+    />
+    <Stack.Screen
+      name="Plan"
+      component={sessionPlan}
+      options={({route}) => ({
+        title: 'Book Session',
+        // title: route.params.ProfName,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          // shadowColor: colors.postL,
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: font.title,
+          fontSize: 14,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <Ionicons name="close" size={25} color={colors.subtext} />
         ),
       })}
     />
@@ -231,7 +265,7 @@ const AppStack = () => {
       />
       <Tab.Screen
         name="Blog"
-        component={BlogScreen}
+        component={BlogStack}
         options={{header: () => null}}
       />
       <Tab.Screen
