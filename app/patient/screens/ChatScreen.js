@@ -1,95 +1,158 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, ScrollView, Text, Button, StyleSheet} from 'react-native';
-import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import React, {useState, useEffect, useContext} from 'react';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Text,
+  FlatList,
+} from 'react-native';
 
-const ChatScreen = () => {
-  const [messages, setMessages] = useState([]);
+import {AuthContext} from '../../navigation/AuthProvider';
+
+import {moderateScale} from 'react-native-size-matters';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+import colors from '../../config/colors';
+import font from '../../config/font';
+const ChatScreen = ({route, navigation}) => {
+  const [message, setMessage] = useState('');
+  const [allMessages, setAllMessages] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const {user} = useContext(AuthContext);
+
+  let messagesList = [];
+
+  ////Fetch All Messages
+  const fetcMessages = async () => {
+    await firestore()
+      .collection('session')
+      .doc(
+        route.params.profsData.patientEmail + route.params.profsData.profEmail,
+      )
+      .collection('chats')
+      .orderBy('time', 'desc')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          messagesList.push({
+            id: doc.id,
+            message: doc.data().message,
+            sendBy: doc.data().sendBy,
+            time: doc.data().time,
+          });
+        });
+        setLoading(true);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setAllMessages(messagesList);
+
+    if (loading) {
+      setLoading(false);
+    }
+    return messagesList;
+  };
+
+  ///// Send Message
+  async function sendMessage() {
+    {
+      if (message == '') {
+        console.log('No Message');
+      } else {
+        await firestore()
+          .collection('session')
+          .doc(
+            route.params.profsData.patientEmail +
+              route.params.profsData.profEmail,
+          )
+          .collection('chats')
+          .doc()
+          .set({
+            message: message,
+            sendBy: route.params.profsData.patientEmail,
+            time: new Date().getTime(),
+          })
+          .then(() => {
+            setMessage('');
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    }
+  }
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: 'Hello world',
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
-  }, []);
-
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    );
-  }, []);
-
-  const renderSend = props => {
-    return (
-      <Send {...props}>
-        <View>
-          <MaterialCommunityIcons
-            name="send-circle"
-            style={{marginBottom: 5, marginRight: 5}}
-            size={32}
-            color="#b283e4"
-          />
-        </View>
-      </Send>
-    );
-  };
-
-  const renderBubble = props => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: {
-            backgroundColor: '#b283e4',
-          },
-        }}
-        textStyle={{
-          right: {
-            color: '#fff',
-          },
-        }}
-      />
-    );
-  };
-
-  const scrollToBottomComponent = () => {
-    return <FontAwesome name="angle-double-down" size={22} color="#333" />;
-  };
+    fetcMessages();
+  }, [allMessages]);
+  //   navigation.addListener('focus', () => setLoading(!loading));
+  // }, [navigation, loading]);
 
   return (
-    <GiftedChat
-      style={{flex: 1}}
-      messages={messages}
-      keyboardShouldPersistTaps="handled"
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: 1,
-      }}
-      renderBubble={renderBubble}
-      alwaysShowSend
-      renderSend={renderSend}
-      scrollToBottom
-      scrollToBottomComponent={scrollToBottomComponent}
-    />
+    <View style={styles.container}>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          justifyContent: 'flex-end',
+          alignSelf: 'center',
+        }}>
+        <FlatList
+          data={allMessages}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <View
+              style={[
+                styles.Message,
+                item.sendBy == route.params.profsData.patientEmail
+                  ? styles.notMine
+                  : styles.mine,
+              ]}>
+              <View
+                style={[
+                  styles.cloud,
+                  {
+                    backgroundColor:
+                      item.sendBy == route.params.profsData.patientEmail
+                        ? colors.primary
+                        : '#dddddd',
+                  },
+                ]}>
+                <Text
+                  style={[styles.text, {color: user.uid ? 'black' : 'white'}]}>
+                  {item.message}
+                </Text>
+
+              </View>
+            </View>
+
+          )}
+          inverted
+        />
+        <View style={styles.action}>
+          <TextInput
+            value={message}
+            onChangeText={message => setMessage(message)}
+            placeholder="Type your message"
+            placeholderTextColor="#707070"
+            autoCorrect={true}
+            style={styles.textInput}
+          />
+          <TouchableOpacity
+            style={{
+              paddingRight: 15,
+              alignSelf: 'center',
+            }}
+            onPress={() => sendMessage()}>
+            <Icon name="ios-send" color={colors.secoundary} size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 };
 
@@ -98,7 +161,69 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#fff',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
+  action: {
+    flexDirection: 'row',
+    marginTop: 10,
+    borderColor: '#ffefca',
+    borderWidth: 2,
+    borderRadius: 7,
+    backgroundColor: '#fff8ea',
+    paddingLeft: 10,
+    alignContent: 'center',
+  },
+
+  textInput: {
+    // flex: 1,
+    // paddingLeft: 10,
+    // color: colors.text,
+    paddingRight: 10,
+    lineHeight: 23,
+    flex: 2,
+    textAlignVertical: 'top',
+    paddingLeft: 10,
+    color: colors.text,
+    height: 40,
+  },
+  message: {flexDirection: 'row', marginVertical: moderateScale(7, 2)},
+
+  mine: {marginLeft: 20, paddingBottom: 5},
+
+  notMine: {alignSelf: 'flex-end', marginRight: 20, paddingBottom: 5},
+
+  cloud: {
+    maxWidth: moderateScale(250, 2),
+    paddingHorizontal: moderateScale(10, 2),
+    paddingTop: moderateScale(5, 2),
+    paddingBottom: moderateScale(7, 2),
+    borderRadius: 7,
+  },
+
+  text: {
+    paddingTop: 3,
+    fontSize: 14,
+    lineHeight: 22,
+    fontFamily: font.subtitle,
+  },
+
+  arrowContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+    flex: 1,
+  },
+
+  arrowLeftContainer: {justifyContent: 'flex-end', alignItems: 'flex-start'},
+
+  arrowRightContainer: {justifyContent: 'flex-end', alignItems: 'flex-end'},
+
+  arrowLeft: {left: moderateScale(-6, 0.5)},
+
+  arrowRight: {right: moderateScale(-6, 0.5)},
 });

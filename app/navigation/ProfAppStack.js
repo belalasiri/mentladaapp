@@ -5,14 +5,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-
 import ProfHome from '../Professional/screans/ProfHome';
 import ProfProfile from '../Professional/screans/ProfProfile';
 import ProfMessage from '../Professional/screans/ProfMessage';
 import ProfBlog from '../Professional/screans/ProfBlog';
 import ProfChat from '../Professional/screans/subScreens/ProfChat';
 import EditProfProfile from '../Professional/screans/subScreens/EditProfProfile';
-
+import Profrequests from '../Professional/screans/Profrequests';
 import font from '../config/font';
 import colors from '../config/colors';
 
@@ -52,7 +51,7 @@ const MessageStack = ({navigation}) => (
       name="Chat"
       component={ProfChat}
       options={({route}) => ({
-        title: route.params.userName,
+        title: route.params.usersData.patientName,
         headerBackTitleVisible: false,
 
         tabBarHideOnKeyboard: true,
@@ -101,6 +100,9 @@ const AppStack = () => {
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
             color = '#67D8AF';
+          } else if (route.name === 'Requests') {
+            iconName = focused ? 'people' : 'people-outline';
+            color = '#b283e4';
           } else if (route.name === 'Blog') {
             iconName = focused ? 'grid' : 'grid-outline';
             color = '#b283e4';
@@ -130,6 +132,14 @@ const AppStack = () => {
         })}
       />
 
+      <Tab.Screen
+        name="Requests"
+        component={Profrequests}
+        options={({route}) => ({
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        })}
+      />
       <Tab.Screen
         name="Blog"
         component={ProfBlog}

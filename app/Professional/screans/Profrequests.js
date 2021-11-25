@@ -19,7 +19,7 @@ import colors from '../../config/colors';
 import ListCard from '../../config/components/ListCard';
 import {windowWidth} from '../../utils/Dimentions';
 
-const ProfHome = ({navigation, route}) => {
+const Profrequests = ({navigation, route}) => {
   const {user, Proflogout} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -136,12 +136,102 @@ const ProfHome = ({navigation, route}) => {
 
   return (
     <View style={styles.containerss}>
-      <Text>Home screen</Text>
+      <FlatList
+        data={pending}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}>
+              <TouchableOpacity
+                style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+                <Image
+                  source={{
+                    uri: userData
+                      ? item.patientAvatar ||
+                        'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                      : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                  }}
+                  style={{
+                    width: 55,
+                    height: 55,
+                    borderRadius: 10,
+                    marginRight: 8,
+                  }}
+                />
+                <View style={{width: windowWidth - 220}}>
+                  <Text
+                    style={{
+                      color: '#333',
+                      fontFamily: font.title,
+                      fontSize: 14,
+                      textTransform: 'uppercase',
+                    }}>
+                    {item.patientName}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      color: '#333',
+                      fontFamily: font.title,
+                      fontSize: 14,
+                    }}>
+                    {item.approved}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colors.primary,
+                    padding: 10,
+                    margin: 2,
+                    borderRadius: 10,
+                  }}
+                  onPress={() => approvePaitent(item)}>
+                  <Text
+                    style={{
+                      color: colors.w,
+                      textAlign: 'center',
+                      fontFamily: font.subtitle,
+                      fontSize: 12,
+                    }}>
+                    Approve
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colors.thirdly,
+                    padding: 10,
+                    borderRadius: 10,
+                    margin: 2,
+                  }}
+                  onPress={() => {}}>
+                  <Text
+                    style={{
+                      color: colors.subtext,
+                      textAlign: 'center',
+                      fontFamily: font.subtitle,
+                      fontSize: 12,
+                    }}>
+                    Reject
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
 };
 
-export default ProfHome;
+export default Profrequests;
 
 const styles = StyleSheet.create({
   containerss: {

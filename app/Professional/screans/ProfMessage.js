@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import {AuthContext} from '../../navigation/AuthProvider';
 
 import {
   Text,
@@ -21,8 +22,10 @@ import {
   MessageText,
   TextSection,
 } from '../../patient/styles/MessageStyles';
+import Swich from '../../config/components/Swich';
 
 const ProfMessage = ({navigation}) => {
+  const {user} = useContext(AuthContext);
   const [messages, setMessages] = useState(null);
   const [loading, setLoading] = useState(true);
   const [Profdata, setProfdata] = useState(null);
@@ -31,7 +34,9 @@ const ProfMessage = ({navigation}) => {
 
   const fetchSessions = async () => {
     await firestore()
-      .collection('sessions') 
+      .collection('session')
+      .where('approved', '==', 'approved')
+      .where('profEmail', '==', user.email)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -42,6 +47,8 @@ const ProfMessage = ({navigation}) => {
             patientName: doc.data().patientName,
             lname: doc.data().lname,
             approved: doc.data().approved,
+            profEmail: doc.data().profEmail,
+            patientEmail: doc.data().patientEmail,
             userImg: doc.data().userImg,
             // sendBy: doc.data().sendBy,
             // time: doc.data().time,
@@ -57,34 +64,6 @@ const ProfMessage = ({navigation}) => {
       setLoading(false);
     }
   };
-  // let profList = [];
-
-  // const fetchSessions = async () => {
-  //   await firestore()
-  //     .collection('Professional')
-  //     .get()
-  //     .then(querySnapshot => {
-  //       querySnapshot.forEach(doc => {
-  //         profList.push({
-  //           id: doc.id,
-  //           email: doc.data().email,
-  //           fname: doc.data().fname,
-  //           lname: doc.data().lname,
-  //           userImg: doc.data().userImg,
-  //           // sendBy: doc.data().sendBy,
-  //           // time: doc.data().time,
-  //         });
-  //       });
-  //     })
-  //     .catch(e => {
-  //       console.log(e);
-  //     });
-  //   setProfdata(profList);
-
-  //   if (loading) {
-  //     setLoading(false);
-  //   }
-  // };
 
   let messagesList = [];
 
@@ -118,7 +97,7 @@ const ProfMessage = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchSessions();
+    fetchSessions();  
     fetchMessages();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
@@ -129,10 +108,7 @@ const ProfMessage = ({navigation}) => {
         data={Profdata}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <Card
-            onPress={() =>
-              navigation.navigate('Chat', {userName: item.patientName})
-            }>
+          <Card onPress={() => navigation.navigate('Chat', {usersData: item})}>
             <UserInfo>
               <UserImgWrapper>
                 <UserImg
@@ -194,5 +170,4 @@ const styles = StyleSheet.create({
   senderStyle: {
     color: 'teal',
   },
- 
 });

@@ -177,7 +177,7 @@ const MessageStack = () => (
       name="Chat"
       component={ChatScreen}
       options={({route}) => ({
-        title: route.params.userName,
+        title: route.params.profsData.professionalName,
         headerBackTitleVisible: false,
       })}
     />

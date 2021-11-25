@@ -52,8 +52,9 @@ const PostScreen = ({navigation, route}) => {
 
   useEffect(() => {
     fetchPosts();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+    //   navigation.addListener('focus', () => setLoading(!loading));
+    // }, [navigation, loading]);
+  }, [fetchPosts]);
 
   useEffect(() => {
     fetchPosts();

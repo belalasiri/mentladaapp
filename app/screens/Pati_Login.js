@@ -18,7 +18,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Patient's Login</Text>
+      <Text style={styles.text}>Login</Text>
 
       <FormInput
         labelValue={email}

@@ -8,6 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  ActivityIndicator,
   Button,
 } from 'react-native';
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -18,14 +19,14 @@ import auth from '@react-native-firebase/auth';
 import Feather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
- 
+
 import {AuthContext} from '../../navigation/AuthProvider';
 import font from '../../config/font';
 import colors from '../../config/colors';
 import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
- 
+
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
@@ -65,7 +66,7 @@ const ProfileScreen = ({navigation, route}) => {
       await firestore()
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
-        .orderBy('postTime', 'desc') 
+        .orderBy('postTime', 'desc')
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
@@ -84,6 +85,11 @@ const ProfileScreen = ({navigation, route}) => {
               comments,
             });
           });
+        })
+        .then(result => {
+          if (loading == false) {
+            setLoading(true);
+          }
         });
 
       setPosts(list);
@@ -108,16 +114,17 @@ const ProfileScreen = ({navigation, route}) => {
       });
   };
 
+  useEffect(() => {
+    getUser();
+    fetchPosts();
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading, user]);
 
   useEffect(() => {
     getUser();
     fetchPosts();
-  }, [user]);
-
-  useEffect(() => {
-    fetchPosts();
     setDeleted(false);
-  }, [deleted]);
+  }, [deleted, user]);
 
   const handleDelete = postId => {
     Alert.alert(

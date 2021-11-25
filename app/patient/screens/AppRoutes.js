@@ -32,7 +32,7 @@ const AppRoutes = ({navigation}) => {
         {SwitchTab == 1 && (
           <View>
             <FormButton
-              buttonTitle="Login as patient"
+              buttonTitle="Login"
               onPress={() => navigation.navigate('PatLogin')}
             />
             <CustomLink
@@ -46,8 +46,8 @@ const AppRoutes = ({navigation}) => {
         {SwitchTab == 2 && (
           <View>
             <FormButton
-              buttonTitle="Login as Professional"
-              onPress={() => navigation.navigate('ProfLogin')}
+              buttonTitle="Login"
+              onPress={() => navigation.navigate('PatLogin')}
             />
             <CustomLink
               text="Don’t have an account?  "

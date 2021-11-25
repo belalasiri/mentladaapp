@@ -109,6 +109,10 @@ const ProfProfile = ({navigation, route}) => {
       }}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.Heder}>
+          <View style={styles.Left} />
+          <View style={styles.Right} />
+        </View>
         <View style={styles.Hedercontainer}>
           {/* Profile pic */}
           <Image
@@ -175,7 +179,7 @@ const ProfProfile = ({navigation, route}) => {
           </Text>
           <Text
             style={{
-              fontSize: 13,
+              fontSize: 13, 
               fontFamily: font.subtitle,
               color: colors.subtext,
               paddingTop: 5,
@@ -204,7 +208,7 @@ const ProfProfile = ({navigation, route}) => {
             <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
               License
             </Text>
-          </View>
+          </View> 
         </View>
         <View style={{paddingTop: 15}}>
           <Text
@@ -237,6 +241,30 @@ const ProfProfile = ({navigation, route}) => {
 export default ProfProfile;
 
 const styles = StyleSheet.create({
+  Heder: {
+    position: 'absolute',
+    width: '100%',
+    top: -50,
+    zIndex: -100,
+  },
+  Left: {
+    backgroundColor: colors.secoundary,
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    left: -50,
+    top: -50,
+  },
+  Right: {
+    backgroundColor: colors.primary,
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    right: -100,
+    top: -200,
+  },
   Hedercontainer: {
     alignItems: 'center',
     paddingTop: 15,

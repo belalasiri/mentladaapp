@@ -64,8 +64,8 @@ const ProfProfile = ({route, item, navigation}) => {
               source={{
                 uri: profData
                   ? profData.userImg ||
-                    'https://image.freepik.com/free-vector/various-emotions-emoji-concept_140689-2885.jpg'
-                  : 'https://image.freepik.com/free-vector/various-emotions-emoji-concept_140689-2885.jpg',
+                    'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                  : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
               }}
             />
 
@@ -262,7 +262,7 @@ const ProfProfile = ({route, item, navigation}) => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}; 
 
 export default ProfProfile;
 
