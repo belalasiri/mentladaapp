@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image} from 'react-native';
+import {View, Image, TouchableOpacity} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -34,7 +34,7 @@ const BlogStack = ({navigation, route}) => (
   </Stack.Navigator>
 );
 const HomeStack = ({navigation, route}) => (
-  <Stack.Navigator>
+  <Stack.Navigator initialRouteName={'Home'}>
     <Stack.Screen
       name="Home"
       component={HomeScreen}
@@ -61,6 +61,46 @@ const HomeStack = ({navigation, route}) => (
         headerBackTitleVisible: false,
         headerBackImage: () => (
           <Ionicons name="chevron-back" size={25} color={colors.subtext} />
+        ),
+      })}
+    />
+    <Stack.Screen name={'Messages'} component={MessageScreen} />
+    <Stack.Screen
+      name={'Chat'}
+      component={ChatScreen}
+      options={({route}) => ({
+        title: route.params.profsData.professionalName,
+        headerBackTitleVisible: false,
+        tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        headerStyle: {
+          backgroundColor: '#ffefca',
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontSize: 16,
+          fontFamily: font.title,
+        },
+        headerRight: () => (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{marginRight: 10, marginTop: 5}}
+              onPress={() => {}}>
+              <Ionicons name="videocam-outline" size={25} color={colors.text} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{marginRight: 10, marginTop: 5, paddingLeft: 5}}
+              onPress={() => {
+                navigation.navigate('Messages');
+              }}>
+              <Ionicons
+                name="log-out-outline"
+                size={25}
+                color={colors.subtext}
+              />
+            </TouchableOpacity>
+          </View>
         ),
       })}
     />
@@ -171,14 +211,45 @@ const FeedStack = ({navigation, route}) => (
 );
 
 const MessageStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Messages" component={MessageScreen} />
+  <Stack.Navigator initialRouteName={'Messages'}>
+    <Stack.Screen name={'Messages'} component={MessageScreen} />
     <Stack.Screen
-      name="Chat"
+      name={'Chat'}
       component={ChatScreen}
-      options={({route}) => ({
+      options={({route, navigation}) => ({
         title: route.params.profsData.professionalName,
         headerBackTitleVisible: false,
+        tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        headerStyle: {
+          backgroundColor: '#ffefca',
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontSize: 16,
+          fontFamily: font.title,
+        },
+        headerRight: () => (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{marginRight: 10, marginTop: 5}}
+              onPress={() => {}}>
+              <Ionicons name="videocam-outline" size={25} color={colors.text} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{marginRight: 10, marginTop: 5, paddingLeft: 5}}
+              onPress={() => {
+                navigation.navigate('Messages');
+              }}>
+              <Ionicons
+                name="log-out-outline"
+                size={25}
+                color={colors.subtext}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
       })}
     />
   </Stack.Navigator>

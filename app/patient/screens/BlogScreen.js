@@ -51,6 +51,7 @@ const BlogScreen = ({navigation, route}) => {
 
   useEffect(() => {
     fetchProf();
+     getUser();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
 
@@ -67,9 +68,6 @@ const BlogScreen = ({navigation, route}) => {
       });
   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
   return (
     <View style={styles.container}>
       <Text>BlogScreen Screen </Text>

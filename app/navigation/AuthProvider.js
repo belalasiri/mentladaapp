@@ -38,7 +38,6 @@ export const AuthProvider = ({children}) => {
             await auth()
               .signInWithCredential(googleCredential)
               .then(() => {
-                console.log('current User', auth().currentUser);
                 firestore()
                   .collection('users')
                   .doc(auth().currentUser.uid)

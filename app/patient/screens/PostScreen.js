@@ -23,8 +23,7 @@ const PostScreen = ({navigation, route}) => {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
-            console.log(doc.data());
-            list.push({ 
+            list.push({
               id: doc.id,
               userId: doc.data().userId,
               userName: 'Mentlada Patient',
@@ -50,16 +49,11 @@ const PostScreen = ({navigation, route}) => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts();
-    //   navigation.addListener('focus', () => setLoading(!loading));
-    // }, [navigation, loading]);
-  }, [fetchPosts]);
 
   useEffect(() => {
     fetchPosts();
     setDeleted(false);
-  }, [deleted]);
+  }, [deleted, posts]);
 
   // confrmation message before deleting the post
   const handleDelete = postId => {
@@ -82,8 +76,6 @@ const PostScreen = ({navigation, route}) => {
   };
 
   const deletePost = postId => {
-    console.log('Current Post Id: ', postId);
-
     firestore()
       .collection('posts')
       .doc(postId)
@@ -262,7 +254,7 @@ const PostScreen = ({navigation, route}) => {
       ) : (
         <Container>
           <FlatList
-            data={posts} 
+            data={posts}
             renderItem={({item}) => (
               <PostCard
                 item={item}

@@ -23,7 +23,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 
 const PostCard = ({item, onDelete, onPress}) => {
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +53,6 @@ const PostCard = ({item, onDelete, onPress}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });

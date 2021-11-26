@@ -124,7 +124,7 @@ const Profrequests = ({navigation, route}) => {
     fetchProf();
     fetchPendingUsers();
     navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, [navigation, loading, pending]);
 
   if (loading == true) {
     return (
@@ -143,7 +143,7 @@ const Profrequests = ({navigation, route}) => {
           <View>
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection: 'row', 
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: 10,

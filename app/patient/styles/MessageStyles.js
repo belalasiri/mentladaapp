@@ -65,9 +65,10 @@ export const UserName = styled.Text`
   font-family: 'DINNextLTArabic-Medium';
 `;
 
-export const PostTime = styled.Text`
+export const RequestStatus = styled.Text`
   font-size: 12px;
   color: #b283e4;
+  padding-right: 20px;
   font-family: 'DINNextLTArabic-Medium';
 `;
 

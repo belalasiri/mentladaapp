@@ -114,11 +114,11 @@ const ProfileScreen = ({navigation, route}) => {
       });
   };
 
-  useEffect(() => {
-    getUser();
-    fetchPosts();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading, user]);
+  // useEffect(() => {
+  //   getUser();
+  //   fetchPosts();
+  //   navigation.addListener('focus', () => setLoading(!loading));
+  // }, [navigation, loading, user]);
 
   useEffect(() => {
     getUser();

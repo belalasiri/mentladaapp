@@ -8,19 +8,21 @@ import {
   Text,
   FlatList,
 } from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
 
- 
- 
-import Icon from 'react-native-vector-icons/Ionicons';
-import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../../../navigation/AuthProvider';
 import colors from '../../../config/colors';
+import font from '../../../config/font';
+
+import firestore from '@react-native-firebase/firestore';
+import {moderateScale} from 'react-native-size-matters';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 const ProfChat = ({route, navigation}) => {
+  const {user} = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
   ////Fetch All Messages
   let messagesList = [];
   const fetcMessages = async () => {
@@ -82,10 +84,13 @@ const ProfChat = ({route, navigation}) => {
     }
   }
 
+  // useEffect(() => {
+  //   fetcMessages();
+  //     navigation.addListener('focus', () => setLoading(!loading));
+  //   }, [navigation, loading]);
   useEffect(() => {
     fetcMessages();
-      navigation.addListener('focus', () => setLoading(!loading));
-    }, [navigation, loading]);
+  }, [allMessages]);
 
   return (
     <View style={styles.container}>
@@ -101,15 +106,30 @@ const ProfChat = ({route, navigation}) => {
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: moderateScale(7, 2),
-              }}>
-              <View style={{backgroundColor: colors.primary}}>
-                <Text>{item.message}</Text>
+              style={[
+                styles.Message,
+                item.sendBy == route.params.usersData.profEmail
+                  ? styles.notMine
+                  : styles.mine,
+              ]}>
+              <View
+                style={[
+                  styles.cloud,
+                  {
+                    backgroundColor:
+                      item.sendBy == route.params.usersData.profEmail
+                        ? '#e8daf7'
+                        : '#dddddd',
+                  },
+                ]}>
+                <Text
+                  style={[styles.text, {color: user.uid ? 'black' : 'white'}]}>
+                  {item.message}
+                </Text>
               </View>
             </View>
           )}
+          inverted
         />
         <View style={styles.action}>
           <TextInput
@@ -144,14 +164,6 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
   },
   action: {
-    // flexDirection: 'row',
-    // marginTop: 10,
-    // borderColor: '#ffefca',
-    // alignItems: 'center',
-    // borderWidth: 2,
-    // borderRadius: 7,
-    // paddingLeft: 10,
-    // backgroundColor: '#fff8ea',
     flexDirection: 'row',
     marginTop: 10,
     borderColor: '#ffefca',
@@ -174,4 +186,42 @@ const styles = StyleSheet.create({
     color: colors.text,
     height: 40,
   },
+  message: {flexDirection: 'row', marginVertical: moderateScale(7, 2)},
+
+  mine: {marginLeft: 20, paddingBottom: 5},
+
+  notMine: {alignSelf: 'flex-end', marginRight: 20, paddingBottom: 5},
+
+  cloud: {
+    maxWidth: moderateScale(250, 2),
+    paddingHorizontal: moderateScale(10, 2),
+    paddingTop: moderateScale(5, 2),
+    paddingBottom: moderateScale(7, 2),
+    borderRadius: 7,
+  },
+
+  text: {
+    paddingTop: 3,
+    fontSize: 14,
+    lineHeight: 22,
+    fontFamily: font.subtitle,
+  },
+
+  arrowContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+    flex: 1,
+  },
+
+  arrowLeftContainer: {justifyContent: 'flex-end', alignItems: 'flex-start'},
+
+  arrowRightContainer: {justifyContent: 'flex-end', alignItems: 'flex-end'},
+
+  arrowLeft: {left: moderateScale(-6, 0.5)},
+
+  arrowRight: {right: moderateScale(-6, 0.5)},
 });

@@ -14,6 +14,7 @@ import {
   Container,
   Card,
   UserInfo,
+  RequestStatus,
   UserImgWrapper,
   UserImg,
   UserInfoText,
@@ -29,49 +30,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Swich from '../../config/components/Swich';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
-
-const Messages = [
-  {
-    id: '1',
-    userName: 'Belal Alqadasi',
-    userImg: require('../../assets/image/users/user_1.jpg'),
-    messageTime: '4 mins ago',
-    messageText:
-      'Hey there, this is my test for a post of Mentlada app in React Native.',
-  },
-  {
-    id: '2',
-    userName: 'Amer',
-    userImg: require('../../assets/image/users/user_2.jpg'),
-    messageTime: '2 hours ago',
-    messageText:
-      'Hey there, this is my test for a post of Mentlada app in React Native.',
-  },
-  {
-    id: '3',
-    userName: 'Bari Abikr',
-    userImg: require('../../assets/image/users/user_3.jpg'),
-    messageTime: '1 hours ago',
-    messageText:
-      'Hey there, this is my test for a post of Mentlada app in React Native.',
-  },
-  {
-    id: '4',
-    userName: 'Ahmed Asiri',
-    userImg: require('../../assets/image/users/user_4.jpg'),
-    messageTime: '1 day ago',
-    messageText:
-      'Hey there, this is my test for a post of Mentlada app in React Native.',
-  },
-  {
-    id: '5',
-    userName: 'Hanan Alatas',
-    userImg: require('../../assets/image/users/user_5.jpg'),
-    messageTime: '2 days ago',
-    messageText:
-      'Hey there, this is my test for a post of Mentlada app in React Native.',
-  },
-];
 
 const MessageScreen = ({navigation, route}) => {
   const {user, Proflogout} = useContext(AuthContext);
@@ -147,7 +105,7 @@ const MessageScreen = ({navigation, route}) => {
   };
 
   let userList = [];
-  const fetchProf = async () => {
+  const fetchUsers = async () => {
     await firestore()
       .collection('users')
       .orderBy('createdAt', 'desc')
@@ -176,27 +134,6 @@ const MessageScreen = ({navigation, route}) => {
     }
   };
 
-  async function approvePaitent(item) {
-    await firestore()
-      .collection('session')
-      .doc(item.patientEmail + item.profEmail)
-      .update({
-        approved: 'approved',
-      })
-      .then(result => {
-        if (loading == false) {
-          setLoading(true);
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      });
-
-    if (loading) {
-      setLoading(false);
-    }
-  }
-
   const getProf = async () => {
     await firestore()
       .collection('Professional')
@@ -215,11 +152,11 @@ const MessageScreen = ({navigation, route}) => {
 
   useEffect(() => {
     getProf();
-    fetchProf();
+    fetchUsers();
     fetchPendingUsers();
     fetchapprovedUsers();
     navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, [navigation, loading, profData]);
 
   if (loading == true) {
     return (
@@ -265,7 +202,7 @@ const MessageScreen = ({navigation, route}) => {
                     <TextSection>
                       <UserInfoText>
                         <UserName>{item.professionalName}</UserName>
-                        <PostTime>{item.approved}</PostTime>
+                        <RequestStatus>{item.approved}</RequestStatus>
                       </UserInfoText>
                       <MessageText>{item.profEmail}</MessageText>
                     </TextSection>
@@ -275,6 +212,7 @@ const MessageScreen = ({navigation, route}) => {
             />
           </View>
         )}
+
         {requests == 2 && (
           <View>
             <Text>Professional still pending</Text>
@@ -305,7 +243,7 @@ const MessageScreen = ({navigation, route}) => {
                     <TextSection>
                       <UserInfoText>
                         <UserName>{item.professionalName}</UserName>
-                        <PostTime>{item.approved}</PostTime>
+                        <RequestStatus>{item.approved}</RequestStatus>
                       </UserInfoText>
                       <MessageText>{item.profEmail}</MessageText>
                     </TextSection>
@@ -323,10 +261,12 @@ const MessageScreen = ({navigation, route}) => {
 export default MessageScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 4,
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+  containerss: {
+    flex: 1,
+    backgroundColor: '#fff',
+
+    // justifyContent: 'center',
+    // padding: 20,
   },
   containerLoading: {
     flex: 1,
@@ -337,35 +277,57 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
   },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    // marginVertical: 20,
+    paddingHorizontal: 20,
+  },
+  Card: {
+    backgroundColor: '#F5F7F9',
+    // backgroundColor: colors.w,
+    width: '100%',
+    // marginBottom: 20,
+    marginTop: 10,
+    borderRadius: 7,
+  },
+  ProfInfo: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 15,
+    alignItems: 'center',
+    // marginLeft: 10,
+  },
+  ProfImg: {
+    width: 50,
+    height: 50,
+    borderRadius: 70,
+  },
+  ProfInfoText: {
+    marginLef: 10,
+    fontSize: 12,
+  },
+  ProfName: {
+    fontSize: 16,
+    fontFamily: font.title,
+  },
+  ProfDes: {
+    fontSize: 12,
+    fontFamily: font.title,
+  },
+  ProfNameCont: {
+    flexDirection: 'column',
+    paddingLeft: 7,
+    marginTop: -4,
+  },
+  ProfCont: {
+    flex: 3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingBottom: 15,
+    alignItems: 'center',
+    // marginLeft: 10,
+  },
 });
-
-{
-  /* <TouchableOpacity
-        style={{
-          backgroundColor: '#ad30af',
-          padding: 20,
-          width: '90%',
-          borderRadius: 5,
-          flexDirection: 'row',
-          alignItems: 'center',
-
-          justifyContent: 'space-between',
-        }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            style={styles.UserImage}
-            source={require('../../assets/image/gaming.png')}
-          />
-          <View style={{alignSelf: 'center'}}>
-            <Text>Let's Begin</Text>
-          </View>
-          <View>
-            <Text>Let's Begin</Text>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text>Let's Begin</Text>
-          <Icon name="chevron-forward-outline" size={20} color="#ffde9f" />
-        </View>
-      </TouchableOpacity> */
-}

@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 
 import ProfHome from '../Professional/screans/ProfHome';
 import ProfProfile from '../Professional/screans/ProfProfile';
@@ -46,7 +47,13 @@ const ProfileStack = ({navigation, route}) => (
 );
 const MessageStack = ({navigation}) => (
   <Stack.Navigator>
-    <Stack.Screen name="Messages" component={ProfMessage} />
+    <Stack.Screen
+      name="Messages"
+      component={ProfMessage}
+      options={{
+        headerShown: false,
+      }}
+    />
     <Stack.Screen
       name="Chat"
       component={ProfChat}

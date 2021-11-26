@@ -54,6 +54,7 @@ const HomeScreen = ({navigation, route}) => {
 
   useEffect(() => {
     fetchProf();
+     getUser();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
 
@@ -69,9 +70,6 @@ const HomeScreen = ({navigation, route}) => {
       });
   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
 
   return (
     <SafeAreaView

@@ -18,14 +18,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import font from '../../config/font';
 const ChatScreen = ({route, navigation}) => {
+  const {user} = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {user} = useContext(AuthContext);
-
-  let messagesList = [];
 
   ////Fetch All Messages
+  let messagesList = [];
   const fetcMessages = async () => {
     await firestore()
       .collection('session')
@@ -118,18 +117,16 @@ const ChatScreen = ({route, navigation}) => {
                   {
                     backgroundColor:
                       item.sendBy == route.params.profsData.patientEmail
-                        ? colors.primary
-                        : '#dddddd',
+                        ? '#e8daf7'
+                        : '#fff8ea',
                   },
                 ]}>
                 <Text
                   style={[styles.text, {color: user.uid ? 'black' : 'white'}]}>
                   {item.message}
                 </Text>
-
               </View>
             </View>
-
           )}
           inverted
         />
@@ -162,8 +159,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   action: {
     flexDirection: 'row',
@@ -177,9 +172,6 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    // flex: 1,
-    // paddingLeft: 10,
-    // color: colors.text,
     paddingRight: 10,
     lineHeight: 23,
     flex: 2,
@@ -195,7 +187,7 @@ const styles = StyleSheet.create({
   notMine: {alignSelf: 'flex-end', marginRight: 20, paddingBottom: 5},
 
   cloud: {
-    maxWidth: moderateScale(250, 2),
+    maxWidth: moderateScale(200, 2),
     paddingHorizontal: moderateScale(10, 2),
     paddingTop: moderateScale(5, 2),
     paddingBottom: moderateScale(7, 2),
