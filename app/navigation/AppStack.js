@@ -1,10 +1,11 @@
-import React from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
+import React, {useContext} from 'react';
+import {View, Image, TouchableOpacity, Text, Animated} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import {AuthContext} from './AuthProvider';
 
 import HomeScreen from '../patient/screens/HomeScreen';
 import PostScreen from '../patient/screens/PostScreen';
@@ -212,7 +213,41 @@ const FeedStack = ({navigation, route}) => (
 
 const MessageStack = () => (
   <Stack.Navigator initialRouteName={'Messages'}>
-    <Stack.Screen name={'Messages'} component={MessageScreen} />
+    <Stack.Screen
+      name={'Messages'}
+      component={MessageScreen}
+      options={({route, navigation}) => ({
+        title: 'Messages',
+        headerBackTitleVisible: false,
+        tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        headerStyle: {
+          backgroundColor: '#ffefca',
+          height: 80,
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontSize: 27,
+          fontFamily: font.title,
+          color: colors.text,
+        },
+        headerRight: () => (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{marginRight: 20, marginTop: 5, paddingLeft: 5}}
+              onPress={() => {
+                navigation.navigate('Home');
+              }}>
+              <Ionicons
+                name="add-circle-outline"
+                size={25}
+                color={colors.subtext}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
+    />
     <Stack.Screen
       name={'Chat'}
       component={ChatScreen}
@@ -255,15 +290,54 @@ const MessageStack = () => (
   </Stack.Navigator>
 );
 
-const ProfileStack = ({navigation, route}) => (
+const ProfileStack = () => (
   <Stack.Navigator>
     <Stack.Screen
       name="Profiles"
       component={ProfileScreen}
-      options={{
-        headerShown: false,
-      }}
+      options={({route, navigation}) => ({
+        title: 'Profile',
+        headerBackTitleVisible: false,
+        tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        headerStyle: {
+          backgroundColor: '#6D768E',
+          height: 80,
+        },
+        headerTintColor: colors.text,
+        headerTitleAlign: 'center',
+
+        headerTitleStyle: {
+          fontSize: 20,
+          fontFamily: font.title,
+          color: colors.empty,
+        },
+        headerRight: () => (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{marginRight: 20, marginTop: 5, paddingLeft: 5}}
+              onPress={() => {
+                navigation.navigate('EditProfile');
+              }}>
+              <Ionicons name="create-outline" size={25} color={colors.w} />
+            </TouchableOpacity>
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{paddingLeft: 20, marginTop: 5, marginRight: 5}}
+              onPress={() => {
+                navigation.navigate('EditProfile');
+              }}>
+              <Ionicons name="add-circle-outline" size={25} color={colors.w} />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
     />
+
+    
     <Stack.Screen
       name="EditProfile"
       component={EditProfileScreen}

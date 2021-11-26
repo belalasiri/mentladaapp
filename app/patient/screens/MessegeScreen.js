@@ -155,8 +155,9 @@ const MessageScreen = ({navigation, route}) => {
     fetchUsers();
     fetchPendingUsers();
     fetchapprovedUsers();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading, profData]);
+    // navigation.addListener('focus', () => setLoading(!loading));
+    // }, [navigation, loading, profData]);
+  }, [profData]);
 
   if (loading == true) {
     return (

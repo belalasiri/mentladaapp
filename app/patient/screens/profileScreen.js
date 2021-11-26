@@ -231,46 +231,7 @@ const ProfileScreen = ({navigation, route}) => {
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
-          {route.params ? (
-            <>
-              <View
-                style={{
-                  marginTop: -15,
-                }}></View>
-            </>
-          ) : (
-            <>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: 15,
-                }}>
-                <Text style={{color: colors.text, fontFamily: font.subtitle}}>
-                  Hello, Dear!
-                </Text>
-                <Feather.Button
-                  name="credit-card"
-                  //name="edit-2"
-                  size={22}
-                  backgroundColor="#fff"
-                  color={colors.subtext}
-                  onPress={() => {
-                    navigation.navigate('EditProfile');
-                  }}
-                />
-                {/* <Feather.Button
-                  name="plus-square"
-                  size={22}
-                  backgroundColor="#fff"
-                  color={colors.subtext}
-                  onPress={() => navigation.navigate('AddPost')}
-                /> */}
-              </View>
-            </>
-          )}
-
+          
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1.4, alignItems: 'flex-start'}}>
               <Image
@@ -361,14 +322,9 @@ const ProfileScreen = ({navigation, route}) => {
             {route.params ? (
               <>
                 {route.params.userId !== auth().currentUser.uid ? (
-                  <View>
-                    {Following ? (
-                      <Button title="Following" onPress={() => onUnfollow()} />
-                    ) : (
-                      <Button title="Follow" onPress={() => onFollow()} />
-                    )}
-                  </View>
-                ) : null}
+                 null
+                ) 
+                : null}
               </>
             ) : (
               <>

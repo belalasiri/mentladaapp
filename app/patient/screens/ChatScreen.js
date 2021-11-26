@@ -6,18 +6,22 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Pressable,
   Text,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {AuthContext} from '../../navigation/AuthProvider';
-
+import moment from 'moment';
 import {moderateScale} from 'react-native-size-matters';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import font from '../../config/font';
-const ChatScreen = ({route, navigation}) => {
+import MessageInput from '../../config/components/MessageInput';
+const ChatScreen = ({route, profsData, navigation}) => {
   const {user} = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState(null);
@@ -84,15 +88,13 @@ const ChatScreen = ({route, navigation}) => {
       }
     }
   }
-
   useEffect(() => {
     fetcMessages();
+    navigation.addListener('focus', () => setLoading(!loading));
   }, [allMessages]);
-  //   navigation.addListener('focus', () => setLoading(!loading));
-  // }, [navigation, loading]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View
         style={{
           flex: 1,
@@ -100,6 +102,7 @@ const ChatScreen = ({route, navigation}) => {
           justifyContent: 'flex-end',
           alignSelf: 'center',
         }}>
+        <View style={{marginTop: 10}} />
         <FlatList
           data={allMessages}
           keyExtractor={item => item.id}
@@ -117,20 +120,41 @@ const ChatScreen = ({route, navigation}) => {
                   {
                     backgroundColor:
                       item.sendBy == route.params.profsData.patientEmail
-                        ? '#e8daf7'
-                        : '#fff8ea',
+                        ? colors.primary
+                        : '#ededed',
+                    // : '#fff8ea',
                   },
                 ]}>
                 <Text
-                  style={[styles.text, {color: user.uid ? 'black' : 'white'}]}>
+                  style={[
+                    styles.text,
+                    {
+                      color:
+                        item.sendBy == route.params.profsData.patientEmail
+                          ? 'white'
+                          : colors.text,
+                    },
+                  ]}>
                   {item.message}
+                </Text>
+                <Text
+                  style={[
+                    styles.Timetext,
+                    {
+                      color:
+                        item.sendBy == route.params.profsData.patientEmail
+                          ? 'white'
+                          : colors.text,
+                    },
+                  ]}>
+                  {moment(item.time).fromNow()}
                 </Text>
               </View>
             </View>
           )}
           inverted
         />
-        <View style={styles.action}>
+        {/* <View style={styles.action}>
           <TextInput
             value={message}
             onChangeText={message => setMessage(message)}
@@ -147,9 +171,15 @@ const ChatScreen = ({route, navigation}) => {
             onPress={() => sendMessage()}>
             <Icon name="ios-send" color={colors.secoundary} size={20} />
           </TouchableOpacity>
-        </View>
+        </View> */}
+        <MessageInput
+          onPress={sendMessage}
+          placeholderText="Type your message"
+          labelValue={message}
+          SetlabelValue={setMessage}
+        />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -163,7 +193,7 @@ const styles = StyleSheet.create({
   action: {
     flexDirection: 'row',
     marginTop: 10,
-    borderColor: '#ffefca',
+    borderColor: '#fff8ea',
     borderWidth: 2,
     borderRadius: 7,
     backgroundColor: '#fff8ea',
@@ -198,6 +228,13 @@ const styles = StyleSheet.create({
     paddingTop: 3,
     fontSize: 14,
     lineHeight: 22,
+    fontFamily: font.subtitle,
+  },
+  Timetext: {
+    paddingTop: 3,
+    fontSize: 12,
+    lineHeight: 12,
+    alignSelf: 'flex-end',
     fontFamily: font.subtitle,
   },
 
