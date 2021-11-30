@@ -143,7 +143,7 @@ const Profrequests = ({navigation, route}) => {
           <View>
             <View
               style={{
-                flexDirection: 'row', 
+                flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: 10,

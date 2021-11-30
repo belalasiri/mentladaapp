@@ -12,7 +12,7 @@ export const Card = styled.View`
   border-radius: 10px;
 `;
 
-export const UserInfo = styled.View`
+export const UserInfo = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: flex-start;
   padding: 15px;

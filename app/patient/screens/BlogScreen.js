@@ -7,10 +7,13 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import colors from '../../config/colors';
 
 const BlogScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -51,9 +54,9 @@ const BlogScreen = ({navigation, route}) => {
 
   useEffect(() => {
     fetchProf();
-     getUser();
+    getUser();
     navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, [navigation, loading, userData, Profdata, user]);
 
   const getUser = async () => {
     await firestore()
@@ -68,10 +71,18 @@ const BlogScreen = ({navigation, route}) => {
       });
   };
 
+  if (loading == true) {
+    return (
+      <View style={[styles.containerLoading, styles.horizontal]}>
+        <ActivityIndicator size="large" color={colors.post} />
+      </View>
+    );
+  }
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {/* <StatusBar barStyle="dark-content" backgroundColor={colors.post} /> */}
       <Text>BlogScreen Screen </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -82,5 +93,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  containerLoading: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
   },
 });

@@ -1,16 +1,86 @@
-import React, {useEffect, useState, useContext} from 'react';
-import {FlatList, Alert, SafeAreaView, ScrollView} from 'react-native';
+import React, {useEffect, useState, useContext, useLayoutEffect} from 'react';
+import {
+  FlatList,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../../navigation/AuthProvider';
 
 import PostCard from '../../config/components/PostCard';
 import {Container} from '../styles/FeedStyles';
 import storage from '@react-native-firebase/storage';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import colors from '../../config/colors';
+import font from '../../config/font';
+
+import Feather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Avatar} from 'react-native-elements';
 
 const PostScreen = ({navigation, route}) => {
+  const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Mentlada Social',
+      headerStyle: {backgroundColor: '#f7f3fc', elevation: 0},
+      headerTitleStyle: {
+        color: colors.text,
+        fontFamily: font.title,
+        textTransform: 'uppercase',
+      },
+      headerTitleAlign: 'center',
+      headerTintColor: '#000',
+      headerLeft: () => (
+        <View style={{marginLeft: 20}}>
+          <TouchableOpacity activeOpacity={0.5}>
+            <Avatar
+              rounded
+              source={{
+                uri: userData
+                  ? userData.userImg ||
+                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginRight: 20}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate('AddPost');
+            }}>
+            <Feather name="plus-square" size={25} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [userData]);
+
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
 
   const fetchPosts = async () => {
     try {
@@ -49,9 +119,9 @@ const PostScreen = ({navigation, route}) => {
     }
   };
 
-
   useEffect(() => {
     fetchPosts();
+    getUser();
     setDeleted(false);
   }, [deleted, posts]);
 

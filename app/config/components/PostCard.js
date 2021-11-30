@@ -64,7 +64,7 @@ const PostCard = ({item, onDelete, onPress}) => {
 
   return (
     <Card>
-      <UserInfo>
+      <UserInfo onPress={onPress}>
         <UserImg
           source={{
             uri: userData
@@ -73,7 +73,7 @@ const PostCard = ({item, onDelete, onPress}) => {
               : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
           }}
         />
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity>
           <UserInfoText>
             <UserName>
               {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}

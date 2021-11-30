@@ -1,24 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Pressable,
-  Text,
-  FlatList,
-  SafeAreaView,
-  ActivityIndicator,
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import moment from 'moment';
 import {moderateScale} from 'react-native-size-matters';
 
-import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import font from '../../config/font';
 import MessageInput from '../../config/components/MessageInput';
@@ -91,16 +78,8 @@ const ChatScreen = ({route, profsData, navigation}) => {
   }
   useEffect(() => {
     fetcMessages();
-    // navigation.addListener('focus', () => setLoading(!loading));
+    navigation.addListener('focus', () => setLoading(!loading));
   }, [allMessages]);
-
-  // if (loading == true) {
-  //   return (
-  //     <View style={[styles.containerLoading, styles.horizontal]}>
-  //       <ActivityIndicator size="large" color={colors.primary} />
-  //     </View>
-  //   );
-  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -163,24 +142,7 @@ const ChatScreen = ({route, profsData, navigation}) => {
           )}
           inverted
         />
-        {/* <View style={styles.action}>
-          <TextInput
-            value={message}
-            onChangeText={message => setMessage(message)}
-            placeholder="Type your message"
-            placeholderTextColor="#707070"
-            autoCorrect={true}
-            style={styles.textInput}
-          />
-          <TouchableOpacity
-            style={{
-              paddingRight: 15,
-              alignSelf: 'center',
-            }}
-            onPress={() => sendMessage()}>
-            <Icon name="ios-send" color={colors.secoundary} size={20} />
-          </TouchableOpacity>
-        </View> */}
+
         <MessageInput
           onPress={sendMessage}
           placeholderText="Type your message"
@@ -264,18 +226,4 @@ const styles = StyleSheet.create({
   arrowLeft: {left: moderateScale(-6, 0.5)},
 
   arrowRight: {right: moderateScale(-6, 0.5)},
-  containerLoading: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  horizontal: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-  },
 });

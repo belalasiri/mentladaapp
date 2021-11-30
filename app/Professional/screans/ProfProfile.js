@@ -95,15 +95,7 @@ const ProfProfile = ({route, item, navigation}) => {
           <View style={styles.userBtnWrapper}>
             {route.params ? (
               <>
-                {route.params.userId !== auth().currentUser.uid ? (
-                  <View>
-                    {Following ? (
-                      <Button title="Following" onPress={() => onUnfollow()} />
-                    ) : (
-                      <Button title="Follow" onPress={() => onFollow()} />
-                    )}
-                  </View>
-                ) : null}
+                {route.params.userId !== auth().currentUser.uid ? null : null}
               </>
             ) : (
               <>
@@ -243,21 +235,9 @@ const ProfProfile = ({route, item, navigation}) => {
                 <SpecialityCard
                   text={profData ? profData.Specialty || ' ' : ' '}
                 />
-                {/* <SpecialityCard text="Anxiety" />
-                <SpecialityCard text="Addictions" />
-                <SpecialityCard text="Family conflicts" />
-                <SpecialityCard text="Anger management" />
-                <SpecialityCard text="Self-Esteem" />
-                <SpecialityCard text="Depression" /> */}
               </ScrollView>
             </View>
           </View>
-          {/* <View style={{paddingBottom: 30, paddingTop: 10}}>
-            <FormButton
-              buttonTitle="+ Book counselling session"
-              onPress={() => navigation.navigate('Home')}
-            />
-          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

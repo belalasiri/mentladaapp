@@ -1,5 +1,13 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  StatusBar,
+  SafeAreaView,
+} from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
 
 import colors from '../config/colors';
@@ -33,64 +41,67 @@ const Done = ({...props}) => (
 
 const OnboardingScreen = ({navigation}) => {
   return (
-    <Onboarding
-      SkipButtonComponent={Skip}
-      NextButtonComponent={Next}
-      DoneButtonComponent={Done}
-      DotComponent={Dots}
-      onSkip={() => navigation.navigate('Routes')}
-      onDone={() => navigation.navigate('Routes')}
-      pages={[
-        {
-          backgroundColor: colors.primary,
-          image: (
-            <Image source={require('../assets/image/Onboarding-img3.png')} />
-          ),
-          title: 'Psychological helth',
-          subtitle: 'Done with React Native Onboarding Swiper',
-          titleStyles: {
-            color: colors.text,
-            fontFamily: font.title,
+    <>
+      <StatusBar hidden />
+      <Onboarding
+        SkipButtonComponent={Skip}
+        NextButtonComponent={Next}
+        DoneButtonComponent={Done}
+        DotComponent={Dots}
+        onSkip={() => navigation.navigate('Routes')}
+        onDone={() => navigation.navigate('Routes')}
+        pages={[
+          {
+            backgroundColor: colors.primary,
+            image: (
+              <Image source={require('../assets/image/Onboarding-img3.png')} />
+            ),
+            title: 'Psychological helth',
+            subtitle: 'Done with React Native Onboarding Swiper',
+            titleStyles: {
+              color: colors.text,
+              fontFamily: font.title,
+            },
+            subTitleStyles: {
+              color: colors.text,
+              fontFamily: font.subtitle,
+            },
           },
-          subTitleStyles: {
-            color: colors.text,
-            fontFamily: font.subtitle,
+          {
+            backgroundColor: colors.secoundary,
+            image: (
+              <Image source={require('../assets/image/Onboarding-img3.png')} />
+            ),
+            title: 'Psychological helth',
+            subtitle: 'Done with React Native Onboarding Swiper',
+            titleStyles: {
+              color: colors.text,
+              fontFamily: font.title,
+            },
+            subTitleStyles: {
+              color: colors.text,
+              fontFamily: font.subtitle,
+            },
           },
-        },
-        {
-          backgroundColor: colors.secoundary,
-          image: (
-            <Image source={require('../assets/image/Onboarding-img3.png')} />
-          ),
-          title: 'Psychological helth',
-          subtitle: 'Done with React Native Onboarding Swiper',
-          titleStyles: {
-            color: colors.text,
-            fontFamily: font.title,
+          {
+            backgroundColor: colors.primary,
+            image: (
+              <Image source={require('../assets/image/Onboarding-img3.png')} />
+            ),
+            title: 'Psychological helth',
+            subtitle: 'Done with React Native Onboarding Swiper',
+            titleStyles: {
+              color: colors.text,
+              fontFamily: font.title,
+            },
+            subTitleStyles: {
+              color: colors.subtext,
+              fontFamily: font.subtitle,
+            },
           },
-          subTitleStyles: {
-            color: colors.text,
-            fontFamily: font.subtitle,
-          },
-        },
-        {
-          backgroundColor: colors.primary,
-          image: (
-            <Image source={require('../assets/image/Onboarding-img3.png')} />
-          ),
-          title: 'Psychological helth',
-          subtitle: 'Done with React Native Onboarding Swiper',
-          titleStyles: {
-            color: colors.text,
-            fontFamily: font.title,
-          },
-          subTitleStyles: {
-            color: colors.subtext,
-            fontFamily: font.subtitle,
-          },
-        },
-      ]}
-    />
+        ]}
+      />
+    </>
   );
 };
 

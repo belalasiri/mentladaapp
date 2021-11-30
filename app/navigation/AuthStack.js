@@ -14,7 +14,7 @@ import Patient_Login from '../screens/Pati_Login';
 import Home from '../patient/screens/Testing';
 
 const Stack = createNativeStackNavigator();
- 
+
 const AuthStack = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   let routName;

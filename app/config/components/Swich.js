@@ -21,7 +21,6 @@ export default function CustomSwitch({
       style={{
         height: 44,
         width: '100%',
-        // backgroundColor: colors.w,
         borderRadius: 7,
         borderColor: colors.primary,
         flexDirection: 'row',
@@ -32,14 +31,16 @@ export default function CustomSwitch({
         onPress={() => updateSwitchData(1)}
         style={{
           flex: 1,
-          backgroundColor: getSelectionMode == 1 ? colors.secoundary : colors.w,
-          borderRadius: 7,
+          backgroundColor:  '#fff5df',
           justifyContent: 'center',
+          borderBottomColor:
+            getSelectionMode == 1 ? colors.subtext :  '#fff5df',
+          borderBottomWidth: 2,
           alignItems: 'center',
         }}>
         <Text
           style={{
-            color: getSelectionMode == 1 ? colors.text : colors.primary,
+            color: getSelectionMode == 1 ? colors.subtext : colors.subtext,
             fontSize: 14,
             fontFamily: font.title,
           }}>
@@ -50,16 +51,18 @@ export default function CustomSwitch({
         activeOpacity={1}
         onPress={() => updateSwitchData(2)}
         style={{
-           activeOpacity: 0.6,
+          activeOpacity: 0.6,
           flex: 1,
-          backgroundColor: getSelectionMode == 2 ? colors.secoundary : colors.w,
-          borderRadius: 7,
+          backgroundColor: '#fff5df',
+          borderBottomColor:
+            getSelectionMode == 2 ? colors.subtext : '#fff5df',
+          borderBottomWidth: 2,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         <Text
           style={{
-            color: getSelectionMode == 2 ? colors.text : colors.primary,
+            color: getSelectionMode == 2 ? colors.subtext : colors.subtext,
             fontSize: 14,
             fontFamily: font.title,
           }}>

@@ -1,13 +1,11 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
   FlatList,
-  Image,
+  StatusBar,
   Alert,
-  SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -19,26 +17,56 @@ import {
   UserImg,
   UserInfoText,
   UserName,
-  PostTime,
   MessageText,
   TextSection,
 } from '../styles/MessageStyles';
 
 import colors from '../../config/colors';
 import font from '../../config/font';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Swich from '../../config/components/Swich';
-import firestore, {firebase} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
+import {Avatar} from 'react-native-elements';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const MessageScreen = ({navigation, route}) => {
-  const {user, Proflogout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(true);
   const [approved, setApproved] = useState(true);
   const [requests, setRequests] = useState(true);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'MESSAGE',
+      headerStyle: {
+        backgroundColor: '#fff5df',
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTitleStyle: {color: '#000', fontFamily: font.title},
+
+      headerTitleAlign: 'center',
+
+      headerLeft: () => (
+        <View style={{marginLeft: 20}}>
+          <TouchableOpacity activeOpacity={0.5}>
+            <Avatar
+              rounded
+              source={{
+                uri: userData
+                  ? userData.userImg ||
+                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [userData]);
 
   let approvedList = [];
   const fetchapprovedUsers = async () => {
@@ -104,34 +132,16 @@ const MessageScreen = ({navigation, route}) => {
     }
   };
 
-  let userList = [];
-  const fetchUsers = async () => {
+  const getUser = async () => {
     await firestore()
       .collection('users')
-      .orderBy('createdAt', 'desc')
+      .doc(route.params ? route.params.userId : user.uid)
       .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          // console.log(querySnapshot);
-          userList.push({
-            id: doc.id,
-            fname: doc.data().fname,
-            lname: doc.data().lname,
-            email: doc.data().email,
-            about: doc.data().about,
-            userImg: doc.data().userImg,
-            role: doc.data().role,
-          });
-        });
-      })
-      .catch(e => {
-        console.log(e);
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUserData(documentSnapshot.data());
+        }
       });
-    setUserData(userList);
-
-    if (loading) {
-      setLoading(false);
-    }
   };
 
   const getProf = async () => {
@@ -152,30 +162,117 @@ const MessageScreen = ({navigation, route}) => {
 
   useEffect(() => {
     getProf();
-    fetchUsers();
+    getUser();
     fetchPendingUsers();
     fetchapprovedUsers();
     // navigation.addListener('focus', () => setLoading(!loading));
     // }, [navigation, loading, profData]);
-  }, [profData]);
+  }, [profData, requests]);
 
   if (loading == true) {
     return (
       <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={colors.secoundary} />
       </View>
     );
   }
 
   return (
-    <Container>
+    <View style={{flex: 1, alignItems: 'center'}}>
+      {/* <StatusBar barStyle="dark-content" backgroundColor={colors.secoundary} /> */}
+
       <Swich
         selectionMode={1}
-        option1="approved"
-        option2="pending"
+        option1="APPROVED"
+        option2="PENDING"
         onSelectSwitch={onSelectSwitch}
       />
-      <View style={{marginVertical: 20}}>
+
+      <View style={{marginVertical: 20, paddingHorizontal: 20}}>
+        {requests == 1 && (
+          <View>
+            <Text>APPROVED</Text>
+          </View>
+        )}
+        {requests == 2 && (
+          <View>
+            <Text>PENDING</Text>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+};
+
+export default MessageScreen;
+
+const styles = StyleSheet.create({
+  containerss: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  containerLoading: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+  },
+  Card: {
+    backgroundColor: '#F5F7F9',
+    width: '100%',
+    marginTop: 10,
+    borderRadius: 7,
+  },
+  ProfInfo: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 15,
+    alignItems: 'center',
+    // marginLeft: 10,
+  },
+  ProfImg: {
+    width: 50,
+    height: 50,
+    borderRadius: 70,
+  },
+  ProfInfoText: {
+    marginLef: 10,
+    fontSize: 12,
+  },
+  ProfName: {
+    fontSize: 16,
+    fontFamily: font.title,
+  },
+  ProfDes: {
+    fontSize: 12,
+    fontFamily: font.title,
+  },
+  ProfNameCont: {
+    flexDirection: 'column',
+    paddingLeft: 7,
+    marginTop: -4,
+  },
+  ProfCont: {
+    flex: 3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingBottom: 15,
+    alignItems: 'center',
+    // marginLeft: 10,
+  },
+});
+{
+  /* <View style={{marginVertical: 20, paddingHorizontal: 20}}>
         {requests == 1 && (
           <View>
             <Text>Professional who approved your request</Text>
@@ -254,81 +351,5 @@ const MessageScreen = ({navigation, route}) => {
             />
           </View>
         )}
-      </View>
-    </Container>
-  );
-};
-
-export default MessageScreen;
-
-const styles = StyleSheet.create({
-  containerss: {
-    flex: 1,
-    backgroundColor: '#fff',
-
-    // justifyContent: 'center',
-    // padding: 20,
-  },
-  containerLoading: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  horizontal: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    // marginVertical: 20,
-    paddingHorizontal: 20,
-  },
-  Card: {
-    backgroundColor: '#F5F7F9',
-    // backgroundColor: colors.w,
-    width: '100%',
-    // marginBottom: 20,
-    marginTop: 10,
-    borderRadius: 7,
-  },
-  ProfInfo: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    padding: 15,
-    alignItems: 'center',
-    // marginLeft: 10,
-  },
-  ProfImg: {
-    width: 50,
-    height: 50,
-    borderRadius: 70,
-  },
-  ProfInfoText: {
-    marginLef: 10,
-    fontSize: 12,
-  },
-  ProfName: {
-    fontSize: 16,
-    fontFamily: font.title,
-  },
-  ProfDes: {
-    fontSize: 12,
-    fontFamily: font.title,
-  },
-  ProfNameCont: {
-    flexDirection: 'column',
-    paddingLeft: 7,
-    marginTop: -4,
-  },
-  ProfCont: {
-    flex: 3,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingRight: 15,
-    paddingLeft: 15,
-    paddingBottom: 15,
-    alignItems: 'center',
-    // marginLeft: 10,
-  },
-});
+      </View> */
+}

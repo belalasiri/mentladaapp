@@ -7,6 +7,7 @@ export default {
   empty: '#f0e6fa',
   w: '#f7f3fc',
   post: '#61EDEA',
+  green: '#67d8af',
   postL: '#effdfd',
 };
 

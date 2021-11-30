@@ -24,7 +24,7 @@ import storage from '@react-native-firebase/storage';
 import FormButton from '../../config/components/FormButton';
 import colors from '../../config/colors';
 
-const EditProfileScreen = ({}) => {
+const EditProfileScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -70,6 +70,7 @@ const EditProfileScreen = ({}) => {
           'Profile Updated!',
           'Your profile has been updated successfully.',
         );
+        navigation.goBack();
       });
   };
 
@@ -125,18 +126,6 @@ const EditProfileScreen = ({}) => {
     getUser();
   }, []);
 
-  // const takePhotoFromCamera = () => {
-  //   ImagePicker.openCamera({
-  //     compressImageMaxWidth: 300,
-  //     compressImageMaxHeight: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
       width: 300,
@@ -150,18 +139,6 @@ const EditProfileScreen = ({}) => {
       // this.bs.current.snapTo(1);
     });
   };
-  // const choosePhotoFromLibrary = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
 
   return (
     <ScrollView>
@@ -319,7 +296,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   panel: {
-    padding: 20, 
+    padding: 20,
     backgroundColor: '#FFFFFF',
     paddingTop: 20,
     width: '100%',

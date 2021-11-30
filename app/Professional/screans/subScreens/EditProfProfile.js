@@ -159,8 +159,8 @@ const EditProfProfile = () => {
                       ? image
                       : ProfData
                       ? ProfData.userImg ||
-                        'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                      : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                        'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                      : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
                   }}
                   style={{height: 100, width: 100}}
                   blurRadius={1}

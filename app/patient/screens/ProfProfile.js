@@ -33,6 +33,7 @@ const ProfProfile = ({navigation, route}) => {
   const fetchProf = async () => {
     await firestore()
       .collection('Professional')
+      .where('patientEmail', '==', user.email)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -85,8 +86,8 @@ const ProfProfile = ({navigation, route}) => {
     checkApproval();
     getUser();
     fetchProf();
-  }, []);
-  
+  }, [isApproved, user, loading]);
+
   const getUser = async () => {
     await firestore()
       .collection('users')
@@ -98,7 +99,6 @@ const ProfProfile = ({navigation, route}) => {
         }
       });
   };
-
 
   const onRequest = () => {
     firebase
@@ -116,8 +116,8 @@ const ProfProfile = ({navigation, route}) => {
         professionalAvatar: route.params.profAvatar,
       })
       .then(() => {
-        console.log('Request Sent!');
         setLoading(true);
+        console.log('Request Sent!');
         Alert.alert(
           'Request Sent!',
           'Your Request has sent successfully. please wait for the profissinal to approve you request. Thank you',
@@ -158,8 +158,8 @@ const ProfProfile = ({navigation, route}) => {
               source={{
                 uri: Profdata
                   ? route.params.profAvatar ||
-                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                    'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                  : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
               }}
               // source={require('../../assets/image/users/user_1.jpg')}
             />
@@ -181,7 +181,7 @@ const ProfProfile = ({navigation, route}) => {
                   fontFamily: font.subtitle,
                   color: colors.primary,
                 }}>
-                Cognitive psychologist
+                {route.params.profSpecialty}
               </Text>
             </View>
           </View>
@@ -206,7 +206,7 @@ const ProfProfile = ({navigation, route}) => {
               icon="checkmark-done-circle"
               iconColor="#61edea"
               backgroundColor="#dffbfb"
-              Title1="10 years"
+              Title1={route.params.profExperience}
               Title2="Experience"
             />
           </View>
@@ -226,9 +226,9 @@ const ProfProfile = ({navigation, route}) => {
                 color: colors.subtext,
                 paddingTop: 5,
               }}>
-              I am a Licensed Professional Counselor in Malaysia - Kuala Lumpur,
-              practising as a Clinical Case Manager at Ampang Hospital –
-              Behavioral Health
+              {route.params.profAbout
+                ? route.params.profAbout || 'No deteiles are provided..'
+                : 'No deteiles are provided..'}
             </Text>
           </View>
           <View
@@ -248,7 +248,7 @@ const ProfProfile = ({navigation, route}) => {
                     color: '#B283E4',
                     fontFamily: font.title,
                   }}>
-                  2016017861
+                  {route.params.profLicense}
                 </Text>
               </View>
               <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
@@ -267,13 +267,7 @@ const ProfProfile = ({navigation, route}) => {
             </Text>
             <View style={{flexDirection: 'row'}}>
               <ScrollView horizontal>
-                <SpecialityCard text="Stress" />
-                <SpecialityCard text="Anxiety" />
-                <SpecialityCard text="Addictions" />
-                <SpecialityCard text="Family conflicts" />
-                <SpecialityCard text="Anger management" />
-                <SpecialityCard text="Self-Esteem" />
-                <SpecialityCard text="Depression" />
+                <SpecialityCard text={route.params.profSpecialty} />
               </ScrollView>
             </View>
           </View>
@@ -294,7 +288,7 @@ const ProfProfile = ({navigation, route}) => {
             <View style={{paddingBottom: 10}}>
               <FormButton
                 buttonTitle="Chat"
-                onPress={() => navigation.navigate('Messages')}
+                onPress={() => navigation.navigate('Message')}
               />
             </View>
           ) : (
@@ -339,8 +333,7 @@ const styles = StyleSheet.create({
   },
   Hedercontainer: {
     alignItems: 'center',
-    paddingTop: 15,
-    
+    paddingTop: 70,
   },
   ProfileImage: {
     width: 100,

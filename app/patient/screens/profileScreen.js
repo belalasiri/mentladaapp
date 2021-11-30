@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import auth from '@react-native-firebase/auth';
 
 import Feather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {AuthContext} from '../../navigation/AuthProvider';
@@ -26,6 +27,8 @@ import colors from '../../config/colors';
 import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
+import {Avatar} from 'react-native-elements';
+import {StatusBar} from 'react-native';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -36,6 +39,42 @@ const ProfileScreen = ({navigation, route}) => {
   const [Following, setFollowing] = useState(false);
 
   // const [image, setImage] = useState(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'profile',
+      headerStyle: {backgroundColor: '#f7f3fc', elevation: 0},
+      headerTitleStyle: {
+        color: colors.text,
+        fontFamily: font.title,
+        textTransform: 'uppercase',
+      },
+      headerTitleAlign: 'center',
+      headerTintColor: '#000',
+      headerLeft: () => (
+        <View style={{marginLeft: 20}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate('AddPost');
+            }}>
+            <Icon name="add-circle-outline" size={25} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginRight: 20}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate('EditProfile');
+            }}>
+            <MaterialIcons name="edit" size={25} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [userData, loading]);
 
   const fetchUserFollowing = async () => {
     console.log('hi baby');
@@ -85,11 +124,6 @@ const ProfileScreen = ({navigation, route}) => {
               comments,
             });
           });
-        })
-        .then(result => {
-          if (loading == false) {
-            setLoading(true);
-          }
         });
 
       setPosts(list);
@@ -114,17 +148,11 @@ const ProfileScreen = ({navigation, route}) => {
       });
   };
 
-  // useEffect(() => {
-  //   getUser();
-  //   fetchPosts();
-  //   navigation.addListener('focus', () => setLoading(!loading));
-  // }, [navigation, loading, user]);
-
   useEffect(() => {
     getUser();
     fetchPosts();
     setDeleted(false);
-  }, [deleted, user]);
+  }, [deleted, user, userData]);
 
   const handleDelete = postId => {
     Alert.alert(
@@ -227,11 +255,19 @@ const ProfileScreen = ({navigation, route}) => {
       .set({});
   };
 
+  if (loading == true) {
+    return (
+      <View style={[styles.containerLoading, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#f7f3fc" />
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#f7f3fc" /> */}
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
-          
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1.4, alignItems: 'flex-start'}}>
               <Image
@@ -321,10 +357,7 @@ const ProfileScreen = ({navigation, route}) => {
           <View style={styles.userBtnWrapper}>
             {route.params ? (
               <>
-                {route.params.userId !== auth().currentUser.uid ? (
-                 null
-                ) 
-                : null}
+                {route.params.userId !== auth().currentUser.uid ? null : null}
               </>
             ) : (
               <>
@@ -502,5 +535,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     color: colors.text,
     paddingBottom: 1,
+  },
+  containerLoading: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
 });
