@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -48,6 +49,11 @@ const ProfProfile = ({route, item, navigation}) => {
       }}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
+        <StatusBar
+          barStyle='dark-content'
+          translucent
+          backgroundColor="rgba(0,0,0,0)"
+        />
         <View style={styles.Heder}>
           <View style={styles.Left} />
           <View style={styles.Right} />
@@ -242,7 +248,7 @@ const ProfProfile = ({route, item, navigation}) => {
       </ScrollView>
     </SafeAreaView>
   );
-}; 
+};
 
 export default ProfProfile;
 

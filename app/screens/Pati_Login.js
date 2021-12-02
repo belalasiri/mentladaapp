@@ -44,6 +44,8 @@ const LoginScreen = () => {
       </TouchableOpacity>
 
       <FormButton
+        disabled={!email}
+        disabled={!password}
         buttonTitle="Login to account"
         onPress={() => login(email, password)}
       />

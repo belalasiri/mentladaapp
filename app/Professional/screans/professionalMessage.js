@@ -2,23 +2,25 @@ import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
   View,
   StyleSheet,
+  Text,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
 
-import firestore from '@react-native-firebase/firestore';
 import {Avatar} from 'react-native-elements';
 
 import {AuthContext} from '../../navigation/AuthProvider';
-import Swich from '../../config/components/Swich';
+import firestore from '@react-native-firebase/firestore';
+
+import CustomList from '../../config/components/CustomPatientList';
 import font from '../../config/font';
+import colors from '../../config/colors';
+import Swich from '../../config/components/Swich';
 
-import CustomProfList from '../../config/components/CustomProfList';
-
-const MessageScreen = ({navigation, route}) => {
+const professionalMessage = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
-  const [userData, setUserData] = useState(null);
+  const [professionalData, setUProfessionalData] = useState(null);
   const [requests, setRequests] = useState(true);
   const [ApprovedChats, setApprovedChats] = useState([]);
   const [PendingChats, setPendingChats] = useState([]);
@@ -45,8 +47,8 @@ const MessageScreen = ({navigation, route}) => {
             <Avatar
               rounded
               source={{
-                uri: userData
-                  ? userData.userImg ||
+                uri: professionalData
+                  ? professionalData.userImg ||
                     'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
                   : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
               }}
@@ -55,25 +57,13 @@ const MessageScreen = ({navigation, route}) => {
         </View>
       ),
     });
-  }, [userData]);
-
-  const getUser = async () => {
-    await firestore()
-      .collection('users')
-      .doc(route.params ? route.params.userId : user.uid)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          setUserData(documentSnapshot.data());
-        }
-      });
-  };
+  }, [professionalData]);
 
   useEffect(() => {
     getUser();
     const APPROVED = firestore()
       .collection('session')
-      .where('patientEmail', '==', user.email)
+      .where('profEmail', '==', user.email)
       .where('approved', '==', 'approved')
       .onSnapshot(snapshot =>
         setApprovedChats(
@@ -82,7 +72,7 @@ const MessageScreen = ({navigation, route}) => {
       );
     const PENDING = firestore()
       .collection('session')
-      .where('patientEmail', '==', user.email)
+      .where('profEmail', '==', user.email)
       .where('approved', '==', 'pending')
       .onSnapshot(snapshot =>
         setPendingChats(
@@ -91,6 +81,18 @@ const MessageScreen = ({navigation, route}) => {
       );
     return APPROVED, PENDING;
   }, [navigation]);
+
+  const getUser = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUProfessionalData(documentSnapshot.data());
+        }
+      });
+  };
 
   const enterChat = (
     id,
@@ -101,6 +103,7 @@ const MessageScreen = ({navigation, route}) => {
     patientAvatar,
     patientName,
   ) => {
+      
     navigation.navigate('Chat', {
       id,
       professionalName,
@@ -127,14 +130,14 @@ const MessageScreen = ({navigation, route}) => {
               id,
               data: {
                 professionalName,
-                professionalAvatar,
+                professionalAvatar, 
                 profEmail,
                 patientEmail,
                 patientAvatar,
                 patientName,
               },
             }) => (
-              <CustomProfList
+              <CustomList
                 key={id}
                 id={id}
                 professionalName={professionalName}
@@ -163,7 +166,7 @@ const MessageScreen = ({navigation, route}) => {
                 patientName,
               },
             }) => (
-              <CustomProfList
+              <CustomList
                 key={id}
                 id={id}
                 professionalName={professionalName}
@@ -182,7 +185,7 @@ const MessageScreen = ({navigation, route}) => {
   );
 };
 
-export default MessageScreen;
+export default professionalMessage;
 
 const styles = StyleSheet.create({
   container: {height: '100%'},

@@ -14,7 +14,7 @@ import ChatScreen from '../patient/screens/ChatScreen';
 import ProfileScreen from '../patient/screens/profileScreen';
 import EditProfileScreen from '../patient/screens/EditProfileScreen';
 import ProfProfile from '../patient/screens/ProfProfile';
-
+import patientChat from '../patient/screens/patientChat';
 import colors from '../config/colors';
 
 const Stack = createNativeStackNavigator();
@@ -77,10 +77,17 @@ export default function AppStack() {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Homes" component={HomeStack} />
         <Stack.Screen name="ProfProfile" component={ProfProfile} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        {/* <Stack.Screen name="Chat" component={ChatScreen} /> */}
         <Stack.Screen name="AddPost" component={AddPostScreen} />
         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen
+          name="Chat"
+          component={patientChat}
+          options={() => ({
+            headerShown: true,
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

@@ -87,7 +87,7 @@ const HomeScreen = ({navigation, route}) => {
     fetchProf();
     getUser();
     // navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, [navigation, loading, userData, user]);
 
   if (loading == true) {
     return (
@@ -319,7 +319,6 @@ const HomeScreen = ({navigation, route}) => {
               <TouchableOpacity style={styles.buttonContainer}>
                 <Text style={styles.buttonText}>Start a conversation</Text>
               </TouchableOpacity>
-
             </View>
           </View>
         </View>
