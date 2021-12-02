@@ -133,7 +133,7 @@ const ProfMessage = ({navigation, route}) => {
     if (loading) {
       setLoading(false);
     }
-  };
+  }; 
 
   async function approvePaitent(item) {
     await firestore()

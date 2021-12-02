@@ -8,6 +8,7 @@ import {
   Image,
   SafeAreaView,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 
 import font from '../../config/font';
@@ -136,7 +137,12 @@ const ProfHome = ({navigation, route}) => {
 
   return (
     <View style={styles.containerss}>
-      <Text>Home screen</Text>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <Text>Home scbn6523reen</Text>
     </View>
   );
 };

@@ -26,6 +26,7 @@ function HomeStack() {
     <Tab.Navigator
       initialRouteName="Homes"
       screenOptions={({route}) => ({
+        headerShown: false,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
@@ -57,14 +58,14 @@ function HomeStack() {
           backgroundColor: '#fff',
         },
       })}>
-      <Tab.Screen
-        name="Home"
-        component={ProfHome}
-        options={() => ({headerShown: false})}
-      />
+      <Tab.Screen name="Home" component={ProfHome} />
       <Tab.Screen name="Feed" component={Profrequests} />
       <Tab.Screen name="Blog" component={ProfBlog} />
-      <Tab.Screen name="Message" component={professionalMessage} />
+      <Tab.Screen
+        name="Message"
+        component={professionalMessage}
+        options={() => ({headerShown: true})}
+      />
       <Tab.Screen name="Profile" component={ProfProfile} />
     </Tab.Navigator>
   );
@@ -79,17 +80,8 @@ export default function AppStack() {
         <Stack.Screen
           name="Chat"
           component={ProfessionalChat}
-          options={() => ({
-            headerShown: true,
-          })}
+          options={() => ({headerShown: true})}
         />
-        {/* <Stack.Screen
-          name="Chat"
-          component={ProfChat}
-          options={() => ({
-            headerShown: true,
-          })}
-        /> */}
       </Stack.Navigator>
     </SafeAreaProvider>
   );

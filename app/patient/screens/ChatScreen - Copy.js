@@ -115,7 +115,7 @@ const ChatScreen = ({route, profsData, navigation}) => {
                 ]}>
                 <Text
                   style={[
-                    styles.text,
+                    styles.text, 
                     {
                       color:
                         item.sendBy == route.params.profsData.patientEmail

@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,7 +21,6 @@ import SpecialityCard from '../../config/components/SpecialityCard';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import {NavigationActions} from '@react-navigation/native';
 
 const ProfProfile = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -114,6 +114,7 @@ const ProfProfile = ({navigation, route}) => {
         professionalName: route.params.profName,
         profEmail: route.params.profEmail,
         professionalAvatar: route.params.profAvatar,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(true);
@@ -146,6 +147,11 @@ const ProfProfile = ({navigation, route}) => {
       }}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="rgba(0,0,0,0)"
+        />
         <View style={styles.Heder}>
           <View style={styles.Left} />
           <View style={styles.Right} />

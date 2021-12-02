@@ -17,13 +17,12 @@ import {Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import font from '../../config/font';
-import {AuthContext} from '../../navigation/AuthProvider';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {moderateScale} from 'react-native-size-matters';
+import moment from 'moment';
 
 const patientChat = ({navigation, route}) => {
-  const {user} = useContext(AuthContext);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -96,13 +95,13 @@ const patientChat = ({navigation, route}) => {
         ProfEmail: route.params.profEmail,
         patientAvatar: route.params.patientAvatar,
         professionalAvatar: route.params.professionalAvatar,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        timestamp: firestore.Timestamp.fromDate(new Date()),
       });
     setInput('');
   };
 
   useLayoutEffect(() => {
-    const unsubscribe = firestore()
+    const fetcMessages = firestore()
       .collection('session')
       .doc(route.params.patientEmail + route.params.profEmail)
       .collection('chats')
@@ -111,7 +110,7 @@ const patientChat = ({navigation, route}) => {
         setMessages(
           snapshot.docs.map(doc => ({
             id: doc.id,
-            // data: doc.data(),
+            data: doc.data(),
             ProfEmail: doc.data().ProfEmail,
             displayName: doc.data().displayName,
             message: doc.data().message,
@@ -124,90 +123,146 @@ const patientChat = ({navigation, route}) => {
           })),
         ),
       );
-    return unsubscribe;
+    return fetcMessages;
   }, [route]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <StatusBar style="Light" />
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={80}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
-            <FlatList
-              inverted
-              data={messages}
-              keyExtractor={item => item.id}
-              renderItem={({id, item}) =>
-                item.sendBy === auth().currentUser.email ? (
-                  <View key={id} style={styles.reciver}>
-                    <Avatar
-                      rounded
-                      position="absolute"
-                      size={25}
-                      bottom={-15}
-                      right={-5}
-                      // for the web in case anything happend
-                      containerStyle={{
-                        position: 'absolute',
-                        bottom: -15,
-                        right: -5,
-                      }}
-                      source={{uri: item.patientAvatar}}
-                    />
-                    <Text style={styles.reciverText}>{item.message}</Text>
-                  </View>
-                ) : (
-                  <View key={id} style={styles.sender}>
-                    <Avatar
-                      rounded
-                      position="absolute"
-                      size={25}
-                      bottom={-15}
-                      right={-5}
-                      // for the web in case anything happend
-                      containerStyle={{
-                        position: 'absolute',
-                        bottom: -15,
-                        right: -5,
-                      }}
-                      source={{uri: item.professionalAvatar}}
-                    />
-                    <Text style={styles.senderText}>{item.message}</Text>
-                    <Text style={styles.senderName}>{item.patientName}</Text>
-                  </View>
-                )
-              }
-            />
+            <View style={styles.container}>
+              <View
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  justifyContent: 'flex-end',
+                  alignSelf: 'center',
+                }}>
+                <FlatList
+                  inverted
+                  initialNumToRender={7}
+                  ListFooterComponent={() => (
+                    <View style={{padding: 20, alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          fontFamily: font.subtitle,
+                          color: colors.subtext,
+                        }}>
+                        Consultation session with{' '}
+                        {route.params.professionalName}
+                      </Text>
+                    </View>
+                  )}
+                  data={messages}
+                  keyExtractor={item => item.id}
+                  renderItem={({id, item}) =>
+                    item.sendBy === auth().currentUser.email ? (
+                      <View key={id} style={[styles.Message, styles.patient]}>
+                        <View
+                          style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
+                          {/* <Avatar
+                            rounded
+                            position="absolute"
+                            size={25}
+                            bottom={-15}
+                            right={-5}
+                            // for the web in case anything happend
+                            containerStyle={{
+                              position: 'absolute',
+                              bottom: -15,
+                              right: -5,
+                            }}
+                            source={{uri: item.patientAvatar}}
+                          /> */}
 
-           
-            <View style={styles.footer}>
-              <TextInput
-                value={input}
-                onChangeText={text => setInput(text)}
-                onSubmitEditing={sendMessage}
-                placeholder="Type your message"
-                style={styles.textInput}
-              />
-              <TouchableOpacity onPress={sendMessage} activeOpacity={0.5}>
-                {input ? (
-                  <Icon
-                    name="send"
-                    size={20}
-                    color={colors.subtext}
-                    style={styles.icon}
+                          <Text style={[styles.text, {color: 'black'}]}>
+                            {item.message}
+                          </Text>
+
+                          <Text
+                            style={[
+                              styles.Timetext,
+                              {alignSelf: 'flex-start'},
+                            ]}>
+                            {/* {moment(item.timestamp.toDate()).fromNow()} */}
+                            {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
+                              'LT',
+                            )}
+                          </Text>
+                        </View>
+                      </View>
+                    ) : (
+                      <View
+                        key={id}
+                        style={[styles.Message, styles.professional]}>
+                        <View
+                          style={[styles.cloud, {backgroundColor: '#ececec'}]}>
+                          <Text style={[styles.text, {color: 'black'}]}>
+                            {item.message}
+                          </Text>
+                          <Text
+                            style={[styles.Timetext, {alignSelf: 'flex-end'}]}>
+                            {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
+                              'LT',
+                            )}
+                          </Text>
+                          {/* <View style={{alignSelf: 'flex-start'}}>
+                            <Avatar
+                              rounded
+                              position="absolute"
+                              size={25}
+                              justifyContent="center"
+                              bottom={-15}
+                              right={-5}
+                              source={{uri: item.professionalAvatar}}
+                            />
+                          </View> */}
+                        </View>
+                      </View>
+                    )
+                  }
+                />
+
+                <View style={styles.footer}>
+                  <TextInput
+                    value={input}
+                    multiline
+                    onChangeText={text => setInput(text)}
+                    onSubmitEditing={sendMessage}
+                    placeholder="Type your message"
+                    style={styles.textInput}
                   />
-                ) : (
-                  <Icon
-                    name="add"
-                    size={25}
-                    color={colors.subtext}
-                    style={styles.icon}
-                  />
-                )}
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    disabled={!input}
+                    onPress={sendMessage}
+                    activeOpacity={0.5}>
+                    {input ? (
+                      <Icon
+                        name="send"
+                        size={20}
+                        color={colors.subtext}
+                        style={styles.icon}
+                      />
+                    ) : (
+                      <Icon
+                        name="add"
+                        size={25}
+                        color={colors.subtext}
+                        style={styles.icon}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </>
         </TouchableWithoutFeedback>
@@ -226,58 +281,78 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    padding: 10,
+    padding: 15,
   },
   textInput: {
-    bottom: 0,
-    height: 40,
     flex: 1,
+    flexDirection: 'row',
+    borderRadius: 5,
+    fontSize: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: 0,
+    paddingLeft: 10,
+    paddingTop: 8,
     marginRight: 15,
+    marginHorizontal: 10,
+    textAlign: 'left',
+    lineHeight: 20,
     backgroundColor: '#ececec',
-    padding: 10,
-    color: 'grey',
-    borderRadius: 30,
-  },
-  reciver: {
-    padding: 10,
-    backgroundColor: '#ececec',
-    alignSelf: 'flex-end',
-    borderRadius: 20,
-    marginRight: 15,
-    marginBottom: 20,
-    maxWidth: '70%',
-    position: 'relative',
-  },
-  sender: {
-    padding: 10,
-    backgroundColor: '#2b68e6',
-    alignSelf: 'flex-start',
-    borderRadius: 20,
-    margin: 15,
-    maxWidth: '80%',
-    position: 'relative',
-  },
-  senderText: {
-    fontFamily: font.title,
-    color: '#fff',
-    marginLeft: 10,
-    marginBottom: 15,
-  },
-  senderName: {
-    left: 10,
-    paddingRight: 10,
-    fontSize: 10,
-    color: '#fff',
-  },
-  reciverText: {
-    fontFamily: font.title,
     color: colors.text,
-    marginLeft: 10,
+    overflow: 'hidden',
+    flexWrap: 'wrap',
+  },
+
+  time: {
+    paddingRight: 10,
+    fontSize: 9,
+    color: '#fff',
+    paddingTop: 2,
+  },
+
+  message: {
+    flexDirection: 'row',
+    marginVertical: moderateScale(7, 2),
+  },
+
+  professional: {marginLeft: 20, paddingBottom: 5, position: 'relative'},
+
+  patient: {
+    alignSelf: 'flex-end',
+    marginRight: 20,
+    paddingBottom: 5,
+    position: 'relative',
+  },
+
+  cloud: {
+    maxWidth: moderateScale(230, 2),
+    paddingHorizontal: moderateScale(10, 2),
+    paddingTop: moderateScale(5, 2),
+    paddingBottom: moderateScale(7, 2),
+    borderRadius: 7,
+    marginBottom: 5,
+    // marginBottom: 20,
+    // maxWidth: '70%',
+    position: 'relative',
+  },
+
+  text: {
+    paddingTop: 3,
+    fontSize: 14,
+    lineHeight: 22,
+    fontFamily: font.subtitle,
+  },
+  Timetext: {
+    paddingTop: 3,
+    fontSize: 12,
+    lineHeight: 12,
+    alignSelf: 'flex-end',
+    fontFamily: font.subtitle,
   },
 });
 
- {
-   /* <ScrollView contentContainerStyle={{paddingTop: 15}}>
+{
+  /* <ScrollView contentContainerStyle={{paddingTop: 15}}>
               {messages.map(({id, data}) =>
                 data.sendBy === auth().currentUser.email ? (
                   <View key={id} style={styles.reciver}>
@@ -319,4 +394,4 @@ const styles = StyleSheet.create({
                 ),
               )}
             </ScrollView> */
- }
+}

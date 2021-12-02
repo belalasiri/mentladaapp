@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 
 import {
@@ -74,10 +75,16 @@ const AddPostScreen = ({navigation, route}) => {
       })
       .then(() => {
         // console.log('Post Added!');
-        Alert.alert(
-          'Post published!',
-          'Your post has been published Successfully!',
+        navigation.goBack();
+        ToastAndroid.showWithGravity(
+          'Your post has been published Successfully',
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
         );
+        // Alert.alert(
+        //   'Post published!',
+        //   'Your post has been published Successfully!',
+        // );
         setPost(null);
       })
       .catch(error => {

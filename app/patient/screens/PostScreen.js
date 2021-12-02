@@ -181,9 +181,14 @@ const PostScreen = ({navigation, route}) => {
       .doc(postId)
       .delete()
       .then(() => {
-        Alert.alert(
-          'Post deleted!',
+        // Alert.alert(
+        //   'Post deleted!',
+        //   'Your post has been deleted successfully!',
+        // );
+        ToastAndroid.showWithGravity(
           'Your post has been deleted successfully!',
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
         );
         setDeleted(true);
       })

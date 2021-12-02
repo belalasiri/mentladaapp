@@ -185,7 +185,7 @@ const HomeScreen = ({navigation, route}) => {
                 disabled={activeCardIndex != index}
                 activeOpacity={1}
                 onPress={() =>
-                  navigation.navigate('ProfProfile', {
+                  navigation.navigate('ProfProfile', { 
                     profName: item.fname + ' ' + item.lname,
                     profEmail: item.email,
                     profAvatar: item.userImg,

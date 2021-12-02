@@ -5,9 +5,13 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Alert,
+  ToastAndroid,
+  StatusBar,
 } from 'react-native';
 
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import {Avatar} from 'react-native-elements';
 
 import {AuthContext} from '../../navigation/AuthProvider';
@@ -15,6 +19,7 @@ import Swich from '../../config/components/Swich';
 import font from '../../config/font';
 
 import CustomProfList from '../../config/components/CustomProfList';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const MessageScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -22,6 +27,7 @@ const MessageScreen = ({navigation, route}) => {
   const [requests, setRequests] = useState(true);
   const [ApprovedChats, setApprovedChats] = useState([]);
   const [PendingChats, setPendingChats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const onSelectSwitch = value => {
     setRequests(value);
@@ -112,14 +118,63 @@ const MessageScreen = ({navigation, route}) => {
     });
   };
 
+  const onPendingDelete = (
+    id,
+    professionalName,
+    professionalAvatar,
+    profEmail,
+  ) => {
+    Alert.alert(
+      'Cancel consultation request',
+      'By confurming you are going to cancel the consultation request with the professional',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            ToastAndroid.showWithGravity(
+              'No Action has been made, Thank you',
+              ToastAndroid.LONG,
+              ToastAndroid.CENTER,
+            );
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => {
+            firebase
+              .firestore()
+              .collection('session')
+              .doc(auth().currentUser.email + profEmail)
+              .delete()
+              .then(() => {
+                ToastAndroid.showWithGravity(
+                  'Request canceled successfully',
+                  ToastAndroid.LONG,
+                  ToastAndroid.CENTER,
+                );
+              });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Swich
         selectionMode={1}
         option1="APPROVED"
         option2="PENDING"
         onSelectSwitch={onSelectSwitch}
       />
+
       {requests == 1 && (
         <ScrollView style={styles.container}>
           {ApprovedChats.map(
@@ -172,7 +227,7 @@ const MessageScreen = ({navigation, route}) => {
                 profEmail={profEmail}
                 patientEmail={patientEmail}
                 patientName={patientName}
-                enterChat={enterChat}
+                enterChat={onPendingDelete}
               />
             ),
           )}

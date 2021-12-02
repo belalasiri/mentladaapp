@@ -81,7 +81,7 @@ const BlogScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* <StatusBar barStyle="dark-content" backgroundColor={colors.post} /> */}
-      <Text>BlogScreen Screen </Text>
+      <Text>BlogScreen Scrsseen </Text>
     </SafeAreaView>
   );
 };

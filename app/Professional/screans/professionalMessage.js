@@ -6,16 +6,20 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Alert,
+  ToastAndroid,
+  StatusBar,
 } from 'react-native';
 
 import {Avatar} from 'react-native-elements';
 
 import {AuthContext} from '../../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
 
-import CustomList from '../../config/components/CustomPatientList';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
+import CustomPatientList from '../../config/components/CustomPatientList';
 import font from '../../config/font';
-import colors from '../../config/colors';
 import Swich from '../../config/components/Swich';
 
 const professionalMessage = ({navigation, route}) => {
@@ -74,6 +78,7 @@ const professionalMessage = ({navigation, route}) => {
       .collection('session')
       .where('profEmail', '==', user.email)
       .where('approved', '==', 'pending')
+
       .onSnapshot(snapshot =>
         setPendingChats(
           snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})),
@@ -103,7 +108,6 @@ const professionalMessage = ({navigation, route}) => {
     patientAvatar,
     patientName,
   ) => {
-      
     navigation.navigate('Chat', {
       id,
       professionalName,
@@ -115,8 +119,59 @@ const professionalMessage = ({navigation, route}) => {
     });
   };
 
+  const onPendingApproved = (
+    id,
+    professionalName,
+    professionalAvatar,
+    profEmail,
+    patientEmail,
+  ) => {
+    Alert.alert(
+      'Approve patient',
+      'This patient has requested to start a consultation session with you? Do you accsept to be his profitional',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            ToastAndroid.showWithGravity(
+              'No Action has been made',
+              ToastAndroid.SHORT,
+              ToastAndroid.CENTER,
+            );
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Accsept',
+          onPress: () => {
+            firebase
+              .firestore()
+              .collection('session')
+              .doc(patientEmail + auth().currentUser.email)
+              .update({
+                approved: 'approved',
+              })
+              .then(() => {
+                ToastAndroid.showWithGravity(
+                  'The request has been approved, Thank you.',
+                  ToastAndroid.LONG,
+                  ToastAndroid.CENTER,
+                );
+              });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Swich
         selectionMode={1}
         option1="APPROVED"
@@ -130,14 +185,14 @@ const professionalMessage = ({navigation, route}) => {
               id,
               data: {
                 professionalName,
-                professionalAvatar, 
+                professionalAvatar,
                 profEmail,
                 patientEmail,
                 patientAvatar,
                 patientName,
               },
             }) => (
-              <CustomList
+              <CustomPatientList
                 key={id}
                 id={id}
                 professionalName={professionalName}
@@ -166,7 +221,7 @@ const professionalMessage = ({navigation, route}) => {
                 patientName,
               },
             }) => (
-              <CustomList
+              <CustomPatientList
                 key={id}
                 id={id}
                 professionalName={professionalName}
@@ -175,7 +230,7 @@ const professionalMessage = ({navigation, route}) => {
                 profEmail={profEmail}
                 patientEmail={patientEmail}
                 patientName={patientName}
-                enterChat={enterChat}
+                enterChat={onPendingApproved}
               />
             ),
           )}
@@ -203,3 +258,42 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+// <View style={{flexDirection: 'row'}}>
+//   <TouchableOpacity
+//     style={{
+//       backgroundColor: colors.primary,
+//       padding: 10,
+//       margin: 2,
+//       borderRadius: 10,
+//     }}
+//     onPress={() => approvePaitent()}>
+//     <Text
+//       style={{
+//         color: colors.w,
+//         textAlign: 'center',
+//         fontFamily: font.subtitle,
+//         fontSize: 12,
+//       }}>
+//       Approve
+//     </Text>
+//   </TouchableOpacity>
+//   <TouchableOpacity
+//     style={{
+//       backgroundColor: colors.thirdly,
+//       padding: 10,
+//       borderRadius: 10,
+//       margin: 2,
+//     }}
+//     onPress={() => {}}>
+//     <Text
+//       style={{
+//         color: colors.subtext,
+//         textAlign: 'center',
+//         fontFamily: font.subtitle,
+//         fontSize: 12,
+//       }}>
+//       Reject
+//     </Text>
+//   </TouchableOpacity>
+// </View>;

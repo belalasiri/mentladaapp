@@ -9,7 +9,9 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  StatusBar,
   Button,
+  ToastAndroid,
 } from 'react-native';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -28,7 +30,6 @@ import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
 import {Avatar} from 'react-native-elements';
-import {StatusBar} from 'react-native';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -191,7 +192,7 @@ const ProfileScreen = ({navigation, route}) => {
             imageRef
               .delete()
               .then(() => {
-                console.log(`${postImg} has been deleted successfully.`);
+                // console.log(`${postImg} has been deleted successfully.`);
                 deleteFirestoreData(postId);
               })
               .catch(e => {
@@ -211,9 +212,14 @@ const ProfileScreen = ({navigation, route}) => {
       .doc(postId)
       .delete()
       .then(() => {
-        Alert.alert(
-          'Post deleted!',
+        // Alert.alert(
+        //   'Post deleted!',
+        //   'Your post has been deleted successfully!',
+        // );
+        ToastAndroid.showWithGravity(
           'Your post has been deleted successfully!',
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
         );
         setDeleted(true);
       })

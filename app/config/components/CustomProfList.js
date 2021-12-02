@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Avatar, ListItem, Icon, List} from 'react-native-elements';
 import font from '../font';
-const CustomList = ({
+
+import firestore from '@react-native-firebase/firestore';
+
+const CustomProfList = ({
   enterChat,
   profEmail,
   patientEmail,
@@ -12,8 +15,24 @@ const CustomList = ({
   patientAvatar,
   patientName,
 }) => {
+  const [lastMessages, setLastMessages] = useState([]);
+
+  useEffect(() => {
+    const fetcLastMessages = firestore()
+      .collection('session')
+      .doc(patientEmail + profEmail)
+      .collection('chats')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot =>
+        setLastMessages(snapshot.docs.map(doc => doc.data())),
+      );
+
+    return fetcLastMessages;
+  });
+
   return (
     <ListItem
+      key={id}
       onPress={() =>
         enterChat(
           id,
@@ -25,7 +44,6 @@ const CustomList = ({
           patientName,
         )
       }
-      key={id}
       bottomDivider>
       <Avatar
         rounded
@@ -41,7 +59,8 @@ const CustomList = ({
           style={styles.SubTitle}
           numberOfLines={1}
           ellipsizeMode="tail">
-          cacacascac
+          {lastMessages?.[0]?.displayName}:
+          {lastMessages?.[0]?.message || 'Need an approval first!'}
         </ListItem.Subtitle>
       </ListItem.Content>
       <ListItem.Chevron />
@@ -49,7 +68,7 @@ const CustomList = ({
   );
 };
 
-export default CustomList;
+export default CustomProfList;
 
 const styles = StyleSheet.create({
   container: {

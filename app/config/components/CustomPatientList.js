@@ -1,7 +1,13 @@
-import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Avatar, ListItem, Icon, List} from 'react-native-elements';
 import font from '../font';
+
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import colors from '../colors';
+import moment from 'moment';
+
 const CustomPatientList = ({
   enterChat,
   profEmail,
@@ -12,6 +18,20 @@ const CustomPatientList = ({
   patientAvatar,
   patientName,
 }) => {
+  const [lastMessages, setLastMessages] = useState([]);
+
+  useEffect(() => {
+    const fetcLastMessages = firestore()
+      .collection('session')
+      .doc(patientEmail + profEmail)
+      .collection('chats')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot =>
+        setLastMessages(snapshot.docs.map(doc => doc.data())),
+      );
+    return fetcLastMessages;
+  });
+
   return (
     <ListItem
       key={id}
@@ -40,7 +60,8 @@ const CustomPatientList = ({
           style={styles.SubTitle}
           numberOfLines={1}
           ellipsizeMode="tail">
-          cacacascac
+          {lastMessages?.[0]?.displayName}:
+          {lastMessages?.[0]?.message || 'No messages'}
         </ListItem.Subtitle>
       </ListItem.Content>
       <ListItem.Chevron />
