@@ -81,9 +81,9 @@ export default function AppStack() {
         <Stack.Screen
           name="AddPost"
           component={AddPostScreen}
-          options={() => ({
-            headerShown: true,
-          })}
+          // options={() => ({
+          //   headerShown: true,
+          // })}
         />
         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />

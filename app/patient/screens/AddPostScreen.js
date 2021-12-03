@@ -4,19 +4,17 @@ import {
   Text,
   Platform,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   ToastAndroid,
+  StatusBar,
+  TouchableOpacity,
+  SafeAreaView,
+  TextInput,
+  Image,
+  ScrollView,
 } from 'react-native';
 
-import {
-  InputField,
-  InputWrapper,
-  AddImage,
-  SubmitBtn,
-  SubmitBtnText,
-  StatusWrapper,
-} from '../styles/AddPost';
+import {StatusWrapper, AddImage} from '../styles/AddPost';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import ActionButton from 'react-native-action-button';
@@ -24,7 +22,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import font from '../../config/font';
+import {Avatar} from 'react-native-elements';
+import {windowHeight} from '../../utils/Dimentions';
 
 const AddPostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -36,32 +37,46 @@ const AddPostScreen = ({navigation, route}) => {
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
-      width: 1200,
-      height: 780,
       cropping: true,
-    }).then(image => {
-      console.log(image);
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUri);
-    });
+    })
+      .then(image => {
+        console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to Take the imag you taked. Please try again',
+          );
+        }
+      });
   };
 
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
-      width: 1200,
-      height: 780,
       cropping: true,
-    }).then(image => {
-      console.log(image);
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUri);
-    });
+      mediaType: 'photo',
+      includeBase64: true,
+    })
+      .then(image => {
+        console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to get the image/video you selected. Please try again',
+          );
+        }
+      });
   };
 
   const submitPost = async () => {
     const imageUrl = await uploadImage();
-    // console.log('Image Url: ', imageUrl);
-    // console.log('Post: ', post);
 
     firestore()
       .collection('posts')
@@ -69,22 +84,18 @@ const AddPostScreen = ({navigation, route}) => {
         userId: user.uid,
         post: post,
         postImg: imageUrl,
+        // postTime: firebase.firestore.FieldValue.serverTimestamp(),
         postTime: firestore.Timestamp.fromDate(new Date()),
         likes: null,
         comments: null,
       })
       .then(() => {
-        // console.log('Post Added!');
         navigation.goBack();
         ToastAndroid.showWithGravity(
           'Your post has been published Successfully',
           ToastAndroid.LONG,
           ToastAndroid.CENTER,
         );
-        // Alert.alert(
-        //   'Post published!',
-        //   'Your post has been published Successfully!',
-        // );
         setPost(null);
       })
       .catch(error => {
@@ -116,9 +127,9 @@ const AddPostScreen = ({navigation, route}) => {
 
     // Seting transferred state in cmd
     task.on('state_changed', taskSnapshot => {
-      console.log(
-        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-      );
+      // console.log(
+      //   `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+      // );
 
       setTransferred(
         Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
@@ -155,26 +166,163 @@ const AddPostScreen = ({navigation, route}) => {
     getUser();
   }, []);
 
-  return (
-    <View style={styles.Container}>
-      {/* <UserInfo>
-        <UserImg
-          source={{
-            uri: userData
-              ? userData.userImg ||
-                'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-              : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-          }}
-        />
-        <UserInfoText>
-          <UserName>
-            {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
-            {userData ? userData.lname || 'Patient' : 'Patient'}
-          </UserName>
-        </UserInfoText>
-      </UserInfo> */}
+  const onCancel = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'Cancel pressd',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      0,
+      300,
+    );
+  };
 
-      <InputWrapper>
+  return (
+    <SafeAreaView style={styles.Container}>
+      <ScrollView>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="rgba(0,0,0,0)"
+        />
+
+        <View style={styles.headerContainer}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+          {uploading ? (
+            <StatusWrapper>
+              <ActivityIndicator size="large" color="#b283e4" />
+              <Text>{transferred} % completed!</Text>
+            </StatusWrapper>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={submitPost}>
+              <Text style={styles.buttonText}>Post</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <View style={styles.newPostContainer}>
+          <Avatar
+            rounded
+            size={50}
+            source={{
+              uri: userData
+                ? userData.userImg ||
+                  'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+            }}
+          />
+
+          <View style={styles.textInputContainer}>
+            <TextInput
+              placeholder="What's on your mind?"
+              multiline
+              value={post}
+              onChangeText={content => setPost(content)}
+              style={styles.postInput}
+            />
+
+            {image != null ? (
+              <Image
+                source={{uri: image}}
+                style={{
+                  height: windowHeight / 2,
+                  // height: 500,
+                  width: '100%',
+                  resizeMode: 'cover',
+                  borderRadius: 10,
+                }}
+              />
+            ) : null}
+          </View>
+        </View>
+      </ScrollView>
+      <ActionButton buttonColor={colors.primary}>
+        <ActionButton.Item
+          buttonColor="#4ebebb"
+          title="Take Photo"
+          onPress={takePhotoFromCamera}>
+          <Icon name="camera-outline" style={styles.actionButtonIcon} />
+        </ActionButton.Item>
+        <ActionButton.Item
+          buttonColor="#48977a"
+          title="Choose Photo"
+          onPress={choosePhotoFromLibrary}>
+          <Icon name="md-images-outline" style={styles.actionButtonIcon} />
+        </ActionButton.Item>
+      </ActionButton>
+    </SafeAreaView>
+  );
+};
+
+export default AddPostScreen;
+
+const styles = StyleSheet.create({
+  Container: {
+    flex: 1,
+    // alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 15,
+  },
+  headerContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+  },
+  button: {
+    backgroundColor: colors.primary,
+    borderRadius: 40,
+  },
+  cancelButton: {
+    borderRadius: 40,
+  },
+  text: {
+    fontFamily: font.title,
+    color: colors.text,
+  },
+  cancelText: {
+    paddingVertical: 5,
+    color: colors.text,
+    fontFamily: font.title,
+    paddingBottom: 7,
+    fontSize: 15,
+  },
+  buttonText: {
+    paddingHorizontal: 30,
+    paddingVertical: 5,
+    color: colors.empty,
+    fontFamily: font.title,
+    paddingBottom: 7,
+    fontSize: 15,
+  },
+  newPostContainer: {
+    flex: 1,
+    paddingTop: 30,
+    flexDirection: 'row',
+  },
+  textInputContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 10,
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  postInput: {
+    fontSize: 16,
+    textAlign: 'left',
+    color: colors.subtext,
+  },
+
+  // actionButtonIcon: {
+  //   fontSize: 20,
+  //   height: 22,
+  //   color: 'white',
+  // },
+});
+
+{
+  /* <InputWrapper>
         {image != null ? <AddImage source={{uri: image}} /> : null}
         <InputField
           placeholder="What's on your mind?"
@@ -208,23 +356,5 @@ const AddPostScreen = ({navigation, route}) => {
           onPress={choosePhotoFromLibrary}>
           <Icon name="md-images-outline" style={styles.actionButtonIcon} />
         </ActionButton.Item>
-      </ActionButton>
-    </View>
-  );
-};
-
-export default AddPostScreen;
-
-const styles = StyleSheet.create({
-  Container: {
-    // backgroundColor: '#fff',
-    // justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: 'white',
-  },
-});
+      </ActionButton> */
+}
