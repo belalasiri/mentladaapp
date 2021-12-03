@@ -143,7 +143,6 @@ const ProfProfile = ({navigation, route}) => {
       style={{
         flex: 1,
         backgroundColor: '#fff',
-        // paddingHorizontal: 15,
       }}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>

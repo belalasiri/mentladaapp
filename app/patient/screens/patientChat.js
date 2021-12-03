@@ -169,21 +169,7 @@ const patientChat = ({navigation, route}) => {
                       <View key={id} style={[styles.Message, styles.patient]}>
                         <View
                           style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
-                          {/* <Avatar
-                            rounded
-                            position="absolute"
-                            size={25}
-                            bottom={-15}
-                            right={-5}
-                            // for the web in case anything happend
-                            containerStyle={{
-                              position: 'absolute',
-                              bottom: -15,
-                              right: -5,
-                            }}
-                            source={{uri: item.patientAvatar}}
-                          /> */}
-
+     
                           <Text style={[styles.text, {color: 'black'}]}>
                             {item.message}
                           </Text>
@@ -193,7 +179,6 @@ const patientChat = ({navigation, route}) => {
                               styles.Timetext,
                               {alignSelf: 'flex-start'},
                             ]}>
-                            {/* {moment(item.timestamp.toDate()).fromNow()} */}
                             {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
                               'LT',
                             )}
@@ -215,17 +200,6 @@ const patientChat = ({navigation, route}) => {
                               'LT',
                             )}
                           </Text>
-                          {/* <View style={{alignSelf: 'flex-start'}}>
-                            <Avatar
-                              rounded
-                              position="absolute"
-                              size={25}
-                              justifyContent="center"
-                              bottom={-15}
-                              right={-5}
-                              source={{uri: item.professionalAvatar}}
-                            />
-                          </View> */}
                         </View>
                       </View>
                     )

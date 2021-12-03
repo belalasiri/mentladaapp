@@ -12,6 +12,9 @@ import {
   TextInput,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 
 import {StatusWrapper, AddImage} from '../styles/AddPost';
@@ -164,79 +167,90 @@ const AddPostScreen = ({navigation, route}) => {
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [user]);
 
   const onCancel = () => {
+    navigation.goBack();
     ToastAndroid.showWithGravityAndOffset(
-      'Cancel pressd',
+      'Add post Canceled',
       ToastAndroid.LONG,
       ToastAndroid.BOTTOM,
       0,
-      300,
+      200,
     );
   };
 
   return (
     <SafeAreaView style={styles.Container}>
-      <ScrollView>
-        <StatusBar
-          barStyle="dark-content"
-          translucent
-          backgroundColor="rgba(0,0,0,0)"
-        />
-
-        <View style={styles.headerContainer}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-          {uploading ? (
-            <StatusWrapper>
-              <ActivityIndicator size="large" color="#b283e4" />
-              <Text>{transferred} % completed!</Text>
-            </StatusWrapper>
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={submitPost}>
-              <Text style={styles.buttonText}>Post</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        <View style={styles.newPostContainer}>
-          <Avatar
-            rounded
-            size={50}
-            source={{
-              uri: userData
-                ? userData.userImg ||
-                  'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-            }}
-          />
-
-          <View style={styles.textInputContainer}>
-            <TextInput
-              placeholder="What's on your mind?"
-              multiline
-              value={post}
-              onChangeText={content => setPost(content)}
-              style={styles.postInput}
-            />
-
-            {image != null ? (
-              <Image
-                source={{uri: image}}
-                style={{
-                  height: windowHeight / 2,
-                  // height: 500,
-                  width: '100%',
-                  resizeMode: 'cover',
-                  borderRadius: 10,
-                }}
+      <KeyboardAvoidingView
+        style={styles.container}
+        keyboardVerticalOffset={80}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <>
+            <ScrollView>
+              <StatusBar
+                barStyle="dark-content"
+                translucent
+                backgroundColor="rgba(0,0,0,0)"
               />
-            ) : null}
-          </View>
-        </View>
-      </ScrollView>
+
+              <View style={styles.headerContainer}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={onCancel}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+                {uploading ? (
+                  <StatusWrapper>
+                    <ActivityIndicator size="large" color="#b283e4" />
+                    <Text>{transferred} % completed!</Text>
+                  </StatusWrapper>
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={submitPost}>
+                    <Text style={styles.buttonText}>Post</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <View style={styles.newPostContainer}>
+                <Avatar
+                  rounded
+                  size={50}
+                  source={{
+                    uri: userData
+                      ? userData.userImg ||
+                        'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                      : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                  }}
+                />
+
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                    placeholder="What's on your mind?"
+                    multiline
+                    value={post}
+                    onChangeText={content => setPost(content)}
+                    style={styles.postInput}
+                  />
+
+                  {image != null ? (
+                    <Image
+                      source={{uri: image}}
+                      style={{
+                        height: windowHeight / 2,
+                        // height: 500,
+                        width: '100%',
+                        resizeMode: 'cover',
+                        borderRadius: 10,
+                      }}
+                    />
+                  ) : null}
+                </View>
+              </View>
+            </ScrollView>
+          </>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
       <ActionButton buttonColor={colors.primary}>
         <ActionButton.Item
           buttonColor="#4ebebb"

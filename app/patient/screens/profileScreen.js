@@ -29,7 +29,7 @@ import colors from '../../config/colors';
 import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
-import {Avatar} from 'react-native-elements';
+import CustomPost from '../../config/components/CustomPost';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -37,9 +37,6 @@ const ProfileScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [Following, setFollowing] = useState(false);
-
-  // const [image, setImage] = useState(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -76,28 +73,6 @@ const ProfileScreen = ({navigation, route}) => {
       ),
     });
   }, [userData, loading]);
-
-  const fetchUserFollowing = async () => {
-    console.log('hi baby');
-    try {
-      const followings = [];
-
-      await firestore()
-        .collection('Following')
-        .doc('h2aH2YRqnIPZIbwmYv87WmtY6Lo1')
-        .collection('userFollowing')
-        .onSnapshot(Snapshot => {
-          Snapshot.docs.map(doc => {
-            followings.push(doc.id);
-          });
-          let countFollowings = 0;
-          countFollowings = followings.length;
-          console.log(countFollowings);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const fetchPosts = async () => {
     try {
@@ -148,12 +123,6 @@ const ProfileScreen = ({navigation, route}) => {
         }
       });
   };
-
-  useEffect(() => {
-    getUser();
-    fetchPosts();
-    setDeleted(false);
-  }, [deleted, user, userData]);
 
   const handleDelete = postId => {
     Alert.alert(
@@ -242,24 +211,11 @@ const ProfileScreen = ({navigation, route}) => {
     }
   };
 
-  const onUnfollow = () => {
-    firebase
-      .firestore()
-      .collection('following')
-      .doc(auth().currentUser.uid)
-      .collection('userFollowing')
-      .doc(route.params.userId)
-      .delete({});
-  };
-  const onFollow = () => {
-    firebase
-      .firestore()
-      .collection('following')
-      .doc(auth().currentUser.uid)
-      .collection('userFollowing')
-      .doc(route.params.userId)
-      .set({});
-  };
+  useEffect(() => {
+    getUser();
+    fetchPosts();
+    setDeleted(false);
+  }, [deleted, user, userData]);
 
   if (loading == true) {
     return (
@@ -271,6 +227,16 @@ const ProfileScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {/* <StatusBar barStyle="dark-content" backgroundColor="#f7f3fc" /> */}
+
+      <View style={styles.userBtnWrapper}>
+        {route.params ? (
+          <>
+            {route.params.userId !== auth().currentUser.uid ? (
+              <View style={{paddingTop: 30}} />
+            ) : null}
+          </>
+        ) : null}
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
@@ -296,11 +262,11 @@ const ProfileScreen = ({navigation, route}) => {
                   <Text style={styles.userInfoSubTitle}>Posts</Text>
                 </View>
                 <View style={styles.userInfoItem}>
-                  <Text style={styles.userInfoTitle}>34</Text>
+                  <Text style={styles.userInfoTitle}>0</Text>
                   <Text style={styles.userInfoSubTitle}>Followers</Text>
                 </View>
                 <View style={styles.userInfoItem}>
-                  <Text style={styles.userInfoTitle}>212</Text>
+                  <Text style={styles.userInfoTitle}>0</Text>
                   <Text style={styles.userInfoSubTitle}>Folowing</Text>
                 </View>
               </View>
@@ -436,7 +402,7 @@ const ProfileScreen = ({navigation, route}) => {
 
         {/* mapping the user post */}
         {posts.map(item => (
-          <PostCard key={item.id} item={item} onDelete={handleDelete} />
+          <CustomPost key={item.id} item={item} onDelete={handleDelete} />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -552,3 +518,44 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+// const onUnfollow = () => {
+//   firebase
+//     .firestore()
+//     .collection('following')
+//     .doc(auth().currentUser.uid)
+//     .collection('userFollowing')
+//     .doc(route.params.userId)
+//     .delete({});
+// };
+// const onFollow = () => {
+//   firebase
+//     .firestore()
+//     .collection('following')
+//     .doc(auth().currentUser.uid)
+//     .collection('userFollowing')
+//     .doc(route.params.userId)
+//     .set({});
+// };
+
+// const fetchUserFollowing = async () => {
+//   console.log('hi baby');
+//   try {
+//     const followings = [];
+
+//     await firestore()
+//       .collection('Following')
+//       .doc('h2aH2YRqnIPZIbwmYv87WmtY6Lo1')
+//       .collection('userFollowing')
+//       .onSnapshot(Snapshot => {
+//         Snapshot.docs.map(doc => {
+//           followings.push(doc.id);
+//         });
+//         let countFollowings = 0;
+//         countFollowings = followings.length;
+//         console.log(countFollowings);
+//       });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };

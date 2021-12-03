@@ -78,13 +78,7 @@ export default function AppStack() {
         <Stack.Screen name="Homes" component={HomeStack} />
         <Stack.Screen name="ProfProfile" component={ProfProfile} />
         {/* <Stack.Screen name="Chat" component={ChatScreen} /> */}
-        <Stack.Screen
-          name="AddPost"
-          component={AddPostScreen}
-          // options={() => ({
-          //   headerShown: true,
-          // })}
-        />
+        <Stack.Screen name="AddPost" component={AddPostScreen} />
         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen

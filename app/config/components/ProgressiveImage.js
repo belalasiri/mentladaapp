@@ -46,6 +46,7 @@ export default ProgressiveImage;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#e1e4e8',
+    borderRadius: 10,
   },
   imageOverlay: {
     position: 'absolute',

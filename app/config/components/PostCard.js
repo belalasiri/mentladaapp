@@ -84,6 +84,7 @@ const PostCard = ({item, onDelete, onPress}) => {
         </TouchableOpacity>
       </UserInfo>
       <PostText>{item.post}</PostText>
+     
       {item.postImg != null ? (
         <ProgressiveImage
           defaultImageSource={require('../../assets/image/default-img.jpg')}
