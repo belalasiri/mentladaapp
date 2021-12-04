@@ -3,7 +3,7 @@ import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import Bell from '../../../assets/bell.svg';
 import colors from '../../colors';
 
-const Header = ({Userimage, UserName, ...rest}) => {
+const Header = ({Userimage, UserName, onNotificationPress, ...rest}) => {
   const [currentDate, setCurrentDate] = useState('');
 
   useEffect(() => {
@@ -80,7 +80,8 @@ const Header = ({Userimage, UserName, ...rest}) => {
             width: 30,
             marginBottom: 10,
             alignSelf: 'flex-end',
-          }}>
+          }}
+          onPress={onNotificationPress}>
           <Bell height={'90%'} width={'90%'} fill={colors.primary} />
         </TouchableOpacity>
       </View>

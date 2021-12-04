@@ -151,17 +151,18 @@ const ProfessionalChat = ({navigation, route}) => {
                 }}>
                 <FlatList
                   inverted
-                  ListFooterComponent={() => (
-                    <View style={{padding: 20, alignItems: 'center'}}>
-                      <Text
-                        style={{
-                          fontFamily: font.subtitle,
-                          color: colors.subtext,
-                        }}>
-                        Consultation session with {route.params.patientName}
-                      </Text>
-                    </View>
-                  )}
+                  initialNumToRender={7}
+                  // ListFooterComponent={() => (
+                  //   <View style={{padding: 20, alignItems: 'center'}}>
+                  //     <Text
+                  //       style={{
+                  //         fontFamily: font.subtitle,
+                  //         color: colors.subtext,
+                  //       }}>
+                  //       Consultation session with {route.params.patientName}
+                  //     </Text>
+                  //   </View>
+                  // )}
                   data={messages}
                   keyExtractor={item => item.id}
                   renderItem={({id, item}) =>

@@ -150,18 +150,18 @@ const patientChat = ({navigation, route}) => {
                 <FlatList
                   inverted
                   initialNumToRender={7}
-                  ListFooterComponent={() => (
-                    <View style={{padding: 20, alignItems: 'center'}}>
-                      <Text
-                        style={{
-                          fontFamily: font.subtitle,
-                          color: colors.subtext,
-                        }}>
-                        Consultation session with{' '}
-                        {route.params.professionalName}
-                      </Text>
-                    </View>
-                  )}
+                  // ListFooterComponent={() => (
+                  //   <View style={{padding: 20, alignItems: 'center'}}>
+                  //     <Text
+                  //       style={{
+                  //         fontFamily: font.subtitle,
+                  //         color: colors.subtext,
+                  //       }}>
+                  //       Consultation session with{' '}
+                  //       {route.params.professionalName}
+                  //     </Text>
+                  //   </View>
+                  // )}
                   data={messages}
                   keyExtractor={item => item.id}
                   renderItem={({id, item}) =>
@@ -169,7 +169,6 @@ const patientChat = ({navigation, route}) => {
                       <View key={id} style={[styles.Message, styles.patient]}>
                         <View
                           style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
-     
                           <Text style={[styles.text, {color: 'black'}]}>
                             {item.message}
                           </Text>

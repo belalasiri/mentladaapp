@@ -2,6 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -15,10 +16,18 @@ import ProfileScreen from '../patient/screens/profileScreen';
 import EditProfileScreen from '../patient/screens/EditProfileScreen';
 import ProfProfile from '../patient/screens/ProfProfile';
 import patientChat from '../patient/screens/patientChat';
+import professionalList from '../patient/screens/professionalList';
+import TermsAndPrivacy from '../patient/screens/TermsAndPrivacy';
+import Help from '../patient/screens/Help';
+import sessionPlan from '../patient/screens/sessionPlan';
+
 import colors from '../config/colors';
+import Notification from '../patient/screens/Notification';
+import CustomDrawer from './CustomDrawer';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 function HomeStack() {
   return (
@@ -88,7 +97,118 @@ export default function AppStack() {
             headerShown: true,
           })}
         />
+        <Stack.Screen name="professionaList" component={professionalList} />
+        <Stack.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="sessionPlan" component={sessionPlan} />
+        <Stack.Screen name="Notification" component={Notification} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );
 }
+
+//recap optien
+// export default function AppStack() {
+//   return (
+//     <SafeAreaProvider>
+//       <Stack.Navigator screenOptions={{headerShown: false}}>
+//         <Stack.Screen name="Homes" component={HomeStack} />
+//         <Stack.Screen name="ProfProfile" component={ProfProfile} />
+//         {/* <Stack.Screen name="Chat" component={ChatScreen} /> */}
+//         <Stack.Screen name="AddPost" component={AddPostScreen} />
+//         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
+//         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+//         <Stack.Screen
+//           name="Chat"
+//           component={patientChat}
+//           options={() => ({
+//             headerShown: true,
+//           })}
+//         />
+//         <Stack.Screen name="professionaList" component={professionalList} />
+//       </Stack.Navigator>
+//     </SafeAreaProvider>
+//   );
+// }
+// <SafeAreaProvider>
+//   <Drawer.Navigator
+//     drawerContent={props => {
+//       return <CustomDrawer navigation={props.navigation} />;
+//     }}
+//     screenOptions={{headerShown: false}}
+//     drwerType="slide"
+//     overlayColor="transparent"
+//     drawerStyle={{
+//       flex: 1,
+//       width: '65%',
+//       paddingRight: 20,
+//       backgroundColor: 'transparent',
+//     }}
+//     initialRouteName="Homes">
+//     <Drawer.Screen
+//       name="Chat"
+//       component={patientChat}
+//       options={() => ({
+//         headerShown: true,
+//       })}
+//     />
+//     <Drawer.Screen
+//       name="Notifications"
+//       component={Notification}
+//       options={() => ({
+//         headerShown: true,
+//       })}
+//     />
+//     <Drawer.Screen name="Homes" component={HomeStack} />
+//     <Drawer.Screen name="ProfProfile" component={ProfProfile} />
+//     <Drawer.Screen name="AddPost" component={AddPostScreen} />
+//     <Drawer.Screen name="HomeProfile" component={ProfileScreen} />
+//     <Drawer.Screen name="EditProfile" component={EditProfileScreen} />
+//     <Drawer.Screen name="professionaList" component={professionalList} />
+//     <Drawer.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
+//     <Drawer.Screen name="Help" component={Help} />
+//     <Drawer.Screen name="sessionPlan" component={sessionPlan} />
+//   </Drawer.Navigator>
+// </SafeAreaProvider>;
+// function DrawerStack() {
+//   return (
+//     <Drawer.Navigator
+//       drawerContent={props => {
+//         return <CustomDrawer navigation={props.navigation} />;
+//       }}
+//       screenOptions={{headerShown: false}}
+//       drwerType="slide"
+//       overlayColor="transparent"
+//       drawerStyle={{
+//         flex: 1,
+//         width: '65%',
+//         paddingRight: 20,
+//         backgroundColor: 'transparent',
+//       }}
+//       initialRouteName="HomeScreen">
+//       <Drawer.Screen name="HomeScreen" component={HomeScreen} />
+//       <Drawer.Screen
+//         name="Chat"
+//         component={patientChat}
+//         options={() => ({
+//           headerShown: true,
+//         })}
+//       />
+//       <Drawer.Screen
+//         name="Notifications"
+//         component={Notification}
+//         options={() => ({
+//           headerShown: true,
+//         })}
+//       />
+//       <Drawer.Screen name="ProfProfile" component={ProfProfile} />
+//       <Drawer.Screen name="AddPost" component={AddPostScreen} />
+//       <Drawer.Screen name="HomeProfile" component={ProfileScreen} />
+//       <Drawer.Screen name="EditProfile" component={EditProfileScreen} />
+//       <Drawer.Screen name="professionaList" component={professionalList} />
+//       <Drawer.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
+//       <Drawer.Screen name="Help" component={Help} />
+//       <Drawer.Screen name="sessionPlan" component={sessionPlan} />
+//     </Drawer.Navigator>
+//   );
+// }

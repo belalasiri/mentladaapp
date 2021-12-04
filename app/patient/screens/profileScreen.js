@@ -185,10 +185,12 @@ const ProfileScreen = ({navigation, route}) => {
         //   'Post deleted!',
         //   'Your post has been deleted successfully!',
         // );
-        ToastAndroid.showWithGravity(
+        ToastAndroid.showWithGravityAndOffset(
           'Your post has been deleted successfully!',
           ToastAndroid.LONG,
-          ToastAndroid.CENTER,
+          ToastAndroid.BOTTOM,
+          0,
+          200,
         );
         setDeleted(true);
       })

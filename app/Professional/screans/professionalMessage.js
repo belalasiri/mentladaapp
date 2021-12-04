@@ -133,10 +133,12 @@ const professionalMessage = ({navigation, route}) => {
         {
           text: 'Cancel',
           onPress: () => {
-            ToastAndroid.showWithGravity(
+            ToastAndroid.showWithGravityAndOffset(
               'No Action has been made',
-              ToastAndroid.SHORT,
-              ToastAndroid.CENTER,
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              0,
+              200,
             );
           },
           style: 'cancel',
@@ -152,10 +154,12 @@ const professionalMessage = ({navigation, route}) => {
                 approved: 'approved',
               })
               .then(() => {
-                ToastAndroid.showWithGravity(
+                ToastAndroid.showWithGravityAndOffset(
                   'The request has been approved, Thank you.',
                   ToastAndroid.LONG,
-                  ToastAndroid.CENTER,
+                  ToastAndroid.BOTTOM,
+                  0,
+                  200,
                 );
               });
           },

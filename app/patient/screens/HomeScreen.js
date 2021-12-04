@@ -116,6 +116,7 @@ const HomeScreen = ({navigation, route}) => {
                 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
               : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
           }}
+          onNotificationPress={() => navigation.navigate('Notification')}
         />
         <Spacer size={10} />
 
@@ -136,7 +137,8 @@ const HomeScreen = ({navigation, route}) => {
             }}>
             Professional's for you
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('professionaList')}>
             <Text
               style={{
                 fontFamily: font.title,
@@ -185,7 +187,7 @@ const HomeScreen = ({navigation, route}) => {
                 disabled={activeCardIndex != index}
                 activeOpacity={1}
                 onPress={() =>
-                  navigation.navigate('ProfProfile', { 
+                  navigation.navigate('ProfProfile', {
                     profName: item.fname + ' ' + item.lname,
                     profEmail: item.email,
                     profAvatar: item.userImg,
@@ -316,7 +318,9 @@ const HomeScreen = ({navigation, route}) => {
                 }}>
                 Contact a personal therapist
               </Text>
-              <TouchableOpacity style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => navigation.navigate('professionaList')}>
                 <Text style={styles.buttonText}>Start a conversation</Text>
               </TouchableOpacity>
             </View>

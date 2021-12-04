@@ -18,6 +18,7 @@ const MainContainer = ({
   itemuserId,
   onPress,
   onDelete,
+  onImagePress,
 }) => {
   return (
     <View style={styles.Container}>
@@ -36,7 +37,7 @@ const MainContainer = ({
         ) : null}
       </View>
       <Text style={styles.Content}>{PostContent}</Text>
-      <View style={{marginVertical: 10}}>
+      <TouchableOpacity style={{marginVertical: 10}} onPress={onImagePress}>
         {conPostImage != null ? (
           <ProgressiveImage
             defaultImageSource={require('../../../assets/image/default-img.jpg')}
@@ -50,7 +51,7 @@ const MainContainer = ({
             resizeMode="cover"
           />
         ) : null}
-      </View>
+      </TouchableOpacity>
       <Footer />
     </View>
   );

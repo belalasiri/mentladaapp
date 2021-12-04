@@ -47,7 +47,11 @@ const MessageScreen = ({navigation, route}) => {
 
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
-          <TouchableOpacity activeOpacity={0.5}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              // navigation.openDrawer();
+            }}>
             <Avatar
               rounded
               source={{
@@ -131,10 +135,12 @@ const MessageScreen = ({navigation, route}) => {
         {
           text: 'Cancel',
           onPress: () => {
-            ToastAndroid.showWithGravity(
+            ToastAndroid.showWithGravityAndOffset(
               'No Action has been made, Thank you',
               ToastAndroid.LONG,
-              ToastAndroid.CENTER,
+              ToastAndroid.BOTTOM,
+              0,
+              200,
             );
           },
           style: 'cancel',
@@ -148,10 +154,12 @@ const MessageScreen = ({navigation, route}) => {
               .doc(auth().currentUser.email + profEmail)
               .delete()
               .then(() => {
-                ToastAndroid.showWithGravity(
+                ToastAndroid.showWithGravityAndOffset(
                   'Request canceled successfully',
                   ToastAndroid.LONG,
-                  ToastAndroid.CENTER,
+                  ToastAndroid.BOTTOM,
+                  0,
+                  200,
                 );
               });
           },

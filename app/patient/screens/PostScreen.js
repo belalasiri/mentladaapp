@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Text,
   StatusBar,
+  Modal,
+  Button,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
@@ -26,7 +28,11 @@ const PostScreen = ({navigation, route}) => {
   const [posts, setPosts] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Mentlada Social',
@@ -40,7 +46,11 @@ const PostScreen = ({navigation, route}) => {
       headerTintColor: '#000',
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
-          <TouchableOpacity activeOpacity={0.5}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              // navigation.openDrawer();
+            }}>
             <Avatar
               rounded
               source={{
@@ -111,12 +121,6 @@ const PostScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="rgba(0,0,0,0)"
-      />
-
       <FlatList
         initialNumToRender={7}
         data={posts}
