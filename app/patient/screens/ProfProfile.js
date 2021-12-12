@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -21,6 +22,7 @@ import SpecialityCard from '../../config/components/SpecialityCard';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import {ToastAndroid} from 'react-native';
 
 const ProfProfile = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -28,6 +30,7 @@ const ProfProfile = ({navigation, route}) => {
   const [isApproved, setIsApproveddata] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [profPationts, setprofPationts] = useState();
 
   let profList = [];
   const fetchProf = async () => {
@@ -85,6 +88,7 @@ const ProfProfile = ({navigation, route}) => {
   useEffect(() => {
     checkApproval();
     getUser();
+    fetchapprovedPatients();
     fetchProf();
   }, [isApproved, user, loading]);
 
@@ -138,6 +142,43 @@ const ProfProfile = ({navigation, route}) => {
       });
   };
 
+  const onCancel = () => {
+    navigation.goBack();
+    ToastAndroid.showWithGravityAndOffset(
+      'Add post Canceled',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      0,
+      200,
+    );
+  };
+
+  let approvedPatientsList = [];
+  const fetchapprovedPatients = async () => {
+    await firestore()
+      .collection('session')
+      .where('approved', '==', 'approved')
+      .where('profEmail', '==', route.params.profEmail)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const {isRequested} = doc.data();
+          approvedPatientsList.push({
+            id: doc.id,
+            isRequested,
+          });
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setprofPationts(approvedPatientsList);
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -151,10 +192,23 @@ const ProfProfile = ({navigation, route}) => {
           translucent
           backgroundColor="rgba(0,0,0,0)"
         />
+
         <View style={styles.Heder}>
           <View style={styles.Left} />
           <View style={styles.Right} />
         </View>
+
+        <View style={styles.headerContainer}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+            <Icon
+              name="chevron-back"
+              size={25}
+              color={colors.subtext}
+              style={{paddingVertical: 10}}
+            />
+          </TouchableOpacity>
+        </View>
+
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.Hedercontainer}>
             {/* Profile pic */}
@@ -204,7 +258,7 @@ const ProfProfile = ({navigation, route}) => {
               icon="person"
               iconColor="#67d8af"
               backgroundColor="#e1f7ef"
-              Title1="122"
+              Title1={profPationts ? profPationts.length || '0' : null}
               Title2="Patients"
             />
             <ProfInfo
@@ -338,7 +392,7 @@ const styles = StyleSheet.create({
   },
   Hedercontainer: {
     alignItems: 'center',
-    paddingTop: 70,
+    paddingTop: 20,
   },
   ProfileImage: {
     width: 100,
@@ -365,5 +419,16 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 14,
+  },
+  headerContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingLeft: 20,
+  },
+
+  cancelButton: {
+    borderRadius: 40,
   },
 });

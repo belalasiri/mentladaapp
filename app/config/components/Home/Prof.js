@@ -26,7 +26,6 @@ const profCard = ({navigation, route, onPress}) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
 
-  
   let profList = [];
 
   const fetchProf = async () => {

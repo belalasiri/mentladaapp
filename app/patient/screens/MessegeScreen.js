@@ -8,6 +8,8 @@ import {
   Alert,
   ToastAndroid,
   StatusBar,
+  Text,
+  Image,
 } from 'react-native';
 
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -20,6 +22,8 @@ import font from '../../config/font';
 
 import CustomProfList from '../../config/components/CustomProfList';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import colors from '../../config/colors';
 
 const MessageScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -170,7 +174,7 @@ const MessageScreen = ({navigation, route}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+    <SafeAreaView style={{backgroundColor: '#fff', flex: 1}}>
       <StatusBar
         barStyle="dark-content"
         translucent
@@ -184,62 +188,144 @@ const MessageScreen = ({navigation, route}) => {
       />
 
       {requests == 1 && (
-        <ScrollView style={styles.container}>
-          {ApprovedChats.map(
-            ({
-              id,
-              data: {
-                professionalName,
-                professionalAvatar,
-                profEmail,
-                patientEmail,
-                patientAvatar,
-                patientName,
-              },
-            }) => (
-              <CustomProfList
-                key={id}
-                id={id}
-                professionalName={professionalName}
-                professionalAvatar={professionalAvatar}
-                patientAvatar={patientAvatar}
-                profEmail={profEmail}
-                patientEmail={patientEmail}
-                patientName={patientName}
-                enterChat={enterChat}
+        <View style={{flex: 1}}>
+          {ApprovedChats?.[0] ? (
+            <ScrollView>
+              {ApprovedChats.map(
+                ({
+                  id,
+                  data: {
+                    professionalName,
+                    professionalAvatar,
+                    profEmail,
+                    patientEmail,
+                    patientAvatar,
+                    patientName,
+                  },
+                }) => (
+                  <CustomProfList
+                    key={id}
+                    id={id}
+                    professionalName={professionalName}
+                    professionalAvatar={professionalAvatar}
+                    patientAvatar={patientAvatar}
+                    profEmail={profEmail}
+                    patientEmail={patientEmail}
+                    patientName={patientName}
+                    enterChat={enterChat}
+                  />
+                ),
+              )}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={require('../../assets/image/illustrationOk1.png')}
+                style={{
+                  height: 170,
+                  width: 170,
+                }}
               />
-            ),
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontFamily: font.title,
+                  color: colors.text,
+                }}>
+                Your professionals list
+              </Text>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                    textAlign: 'center',
+                    width: windowWidth - 50,
+                    lineHeight: 27,
+                  }}>
+                  When any professional approved your request for a
+                  consultation, they will appear here.
+                </Text>
+              </View>
+            </View>
           )}
-        </ScrollView>
+        </View>
       )}
       {requests == 2 && (
-        <ScrollView style={styles.container}>
-          {PendingChats.map(
-            ({
-              id,
-              data: {
-                professionalName,
-                professionalAvatar,
-                profEmail,
-                patientEmail,
-                patientAvatar,
-                patientName,
-              },
-            }) => (
-              <CustomProfList
-                key={id}
-                id={id}
-                professionalName={professionalName}
-                professionalAvatar={professionalAvatar}
-                patientAvatar={patientAvatar}
-                profEmail={profEmail}
-                patientEmail={patientEmail}
-                patientName={patientName}
-                enterChat={onPendingDelete}
+        <View style={{flex: 1}}>
+          {PendingChats?.[0] ? (
+            <ScrollView>
+              {PendingChats.map(
+                ({
+                  id,
+                  data: {
+                    professionalName,
+                    professionalAvatar,
+                    profEmail,
+                    patientEmail,
+                    patientAvatar,
+                    patientName,
+                  },
+                }) => (
+                  <CustomProfList
+                    key={id}
+                    id={id}
+                    professionalName={professionalName}
+                    professionalAvatar={professionalAvatar}
+                    patientAvatar={patientAvatar}
+                    profEmail={profEmail}
+                    patientEmail={patientEmail}
+                    patientName={patientName}
+                    enterChat={onPendingDelete}
+                  />
+                ),
+              )}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={require('../../assets/image/illustrationOk1.png')}
+                style={{
+                  height: 170,
+                  width: 170,
+                }}
               />
-            ),
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontFamily: font.title,
+                  color: colors.text,
+                }}>
+                Your pending professionals list
+              </Text>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                    textAlign: 'center',
+                    width: windowWidth - 50,
+                    lineHeight: 27,
+                  }}>
+                  When you request a professional consultation, they will appear
+                  here until the status of the request changes.
+                </Text>
+              </View>
+            </View>
           )}
-        </ScrollView>
+        </View>
       )}
     </SafeAreaView>
   );

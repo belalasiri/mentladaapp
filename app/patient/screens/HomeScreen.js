@@ -17,6 +17,7 @@ import {
 
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 
 import {AuthContext} from '../../navigation/AuthProvider';
@@ -25,6 +26,7 @@ import Spacer from '../../config/components/Home/Spacer';
 import colors from '../../config/colors';
 import font from '../../config/font';
 import Conversation from '../../assets/conversation.svg';
+import LinearGradient from 'react-native-linear-gradient';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.6;
@@ -119,7 +121,40 @@ const HomeScreen = ({navigation, route}) => {
           onNotificationPress={() => navigation.navigate('Notification')}
         />
         <Spacer size={10} />
-
+        <LinearGradient
+          colors={['#f7f3fc', '#fff']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={{
+            flexDirection: 'row',
+            marginHorizontal: 15,
+            marginVertical: 5,
+            alignItems: 'center',
+            borderRadius: 7,
+            padding: 10,
+            paddingVertical: 20,
+          }}>
+          <Icon name="trophy-outline" size={35} color={colors.subtext} />
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              marginHorizontal: 20,
+            }}>
+            <View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: colors.subtext,
+                  fontFamily: font.title,
+                }}>
+                If it's out of your hands, it deserves freedom from your mind
+                too.
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
         {/* Prof List */}
         <View
           style={{
@@ -207,9 +242,9 @@ const HomeScreen = ({navigation, route}) => {
                   <View style={styles.Tag}>
                     <Text
                       style={{
-                        color: colors.w,
-                        fontSize: 16,
-                        fontFamily: font.subtitle,
+                        color: colors.primary,
+                        fontSize: 14,
+                        fontFamily: font.title,
                       }}>
                       {item.Experience}
                     </Text>
@@ -281,6 +316,89 @@ const HomeScreen = ({navigation, route}) => {
           }}
           snapToInterval={cardWidth}
         />
+        <Spacer size={10} />
+        {/* setions plan */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 20,
+            alignItems: 'center',
+            paddingTop: 10,
+          }}>
+          <Text
+            style={{
+              fontFamily: font.title,
+              color: colors.text,
+              fontSize: 16,
+            }}>
+            Book consultation session
+          </Text>
+        </View>
+
+        <TouchableOpacity onPress={() => navigation.navigate('sessionPlan')}>
+          <LinearGradient
+            colors={['#e8daf7', '#f7f3fc']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={{
+              flexDirection: 'row',
+              marginHorizontal: 15,
+              marginVertical: 5,
+              alignItems: 'center',
+              borderRadius: 7,
+              padding: 10,
+              paddingVertical: 20,
+            }}>
+            <MaterialIcons
+              name="book-online"
+              size={40}
+              color={colors.subtext}
+            />
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                marginHorizontal: 20,
+              }}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: colors.text,
+                    fontFamily: font.title,
+                  }}>
+                  Get started now
+                </Text>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: colors.subtext,
+                      fontFamily: font.subtitle,
+                      paddingRight: 5,
+                    }}>
+                    Choose your professional
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              style={{
+                // flex: 1,
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+              }}>
+              <Icon name="chevron-forward" size={26} color="#a076cd" />
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+
         <Spacer size={10} />
 
         <View
@@ -378,9 +496,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 7,
   },
   Tag: {
-    height: 60,
-    width: 80,
-    backgroundColor: colors.primary,
+    height: 40,
+    width: 60,
+    backgroundColor: colors.w,
     position: 'absolute',
     zIndex: 1,
     right: 0,

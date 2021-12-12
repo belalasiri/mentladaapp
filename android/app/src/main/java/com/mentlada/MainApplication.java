@@ -8,8 +8,8 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-  import com.facebook.react.bridge.JSIModulePackage; // <- add
-  import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
+  // import com.facebook.react.bridge.JSIModulePackage; // <- add
+  // import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -36,10 +36,10 @@ public class MainApplication extends Application implements ReactApplication {
           return "index";
         }
       };
- @Override
-      protected JSIModulePackage getJSIModulePackage() {
-        return new ReanimatedJSIModulePackage(); // <- add
-      }
+//  @Override
+//       protected JSIModulePackage getJSIModulePackage() {
+//         return new ReanimatedJSIModulePackage(); // <- add
+//       }
   @Override
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;

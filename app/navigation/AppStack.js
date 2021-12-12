@@ -2,7 +2,6 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -23,11 +22,9 @@ import sessionPlan from '../patient/screens/sessionPlan';
 
 import colors from '../config/colors';
 import Notification from '../patient/screens/Notification';
-import CustomDrawer from './CustomDrawer';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
 
 function HomeStack() {
   return (

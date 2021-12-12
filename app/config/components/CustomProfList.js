@@ -55,6 +55,7 @@ const CustomProfList = ({
       />
       <ListItem.Content>
         <ListItem.Title style={styles.Title}>{professionalName}</ListItem.Title>
+
         <ListItem.Subtitle
           style={styles.SubTitle}
           numberOfLines={1}

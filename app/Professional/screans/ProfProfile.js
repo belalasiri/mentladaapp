@@ -23,6 +23,8 @@ import SpecialityCard from '../../config/components/SpecialityCard';
 const ProfProfile = ({route, item, navigation}) => {
   const {user, Proflogout} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
+  const [profPationts, setprofPationts] = useState();
+  const [loading, setLoading] = useState(true);
 
   const getUser = async () => {
     await firestore()
@@ -37,8 +39,35 @@ const ProfProfile = ({route, item, navigation}) => {
       });
   };
 
+  let approvedPatientsList = [];
+  const fetchapprovedPatients = async () => {
+    await firestore()
+      .collection('session')
+      .where('approved', '==', 'approved')
+      .where('profEmail', '==', user.email)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const {isRequested} = doc.data();
+          approvedPatientsList.push({
+            id: doc.id,
+            isRequested,
+          });
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setprofPationts(approvedPatientsList);
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getUser();
+    fetchapprovedPatients();
   }, [profData]);
 
   return (
@@ -50,7 +79,7 @@ const ProfProfile = ({route, item, navigation}) => {
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <StatusBar
-          barStyle='dark-content'
+          barStyle="dark-content"
           translucent
           backgroundColor="rgba(0,0,0,0)"
         />
@@ -60,11 +89,6 @@ const ProfProfile = ({route, item, navigation}) => {
         </View>
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.Hedercontainer}>
-            {/* Profile pic */}
-            {/* <Image
-            style={styles.ProfileImage}
-            source={require('../../assets/image/users/user_1.jpg')}
-          /> */}
             <Image
               style={styles.ProfileImage}
               source={{
@@ -130,13 +154,15 @@ const ProfProfile = ({route, item, navigation}) => {
               Title1="4.98"
               Title2="Reviews"
             />
+
             <ProfInfo
               icon="person"
               iconColor="#67d8af"
               backgroundColor="#e1f7ef"
-              Title1="122"
+              Title1={profPationts ? profPationts.length || '0' : null}
               Title2="Patients"
             />
+
             <ProfInfo
               icon="checkmark-done-circle"
               iconColor="#61edea"

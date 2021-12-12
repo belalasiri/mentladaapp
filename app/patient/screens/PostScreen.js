@@ -10,8 +10,11 @@ import {
   StatusBar,
   Modal,
   Button,
+  ToastAndroid,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 
 import colors from '../../config/colors';
@@ -20,7 +23,6 @@ import font from '../../config/font';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {Avatar} from 'react-native-elements';
-import auth from '@react-native-firebase/auth';
 import CustomPost from '../../config/components/CustomPost';
 
 const PostScreen = ({navigation, route}) => {
@@ -29,6 +31,8 @@ const PostScreen = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -115,9 +119,84 @@ const PostScreen = ({navigation, route}) => {
     return fetchPosts;
   }, [route, navigation]);
 
+  const handleDelete = postId => {
+    Alert.alert(
+      'Delete post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed!'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => deletePost(postId),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const deletePost = postId => {
+    console.log('Current Post Id: ', postId);
+    setDeleting(true);
+
+    firestore()
+      .collection('posts')
+      .doc(postId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          const {postImg} = documentSnapshot.data();
+
+          if (postImg != null) {
+            const storageRef = storage().refFromURL(postImg);
+            const imageRef = storage().ref(storageRef.fullPath);
+
+            imageRef
+              .delete()
+              .then(() => {
+                // console.log(`${postImg} has been deleted successfully.`);
+                deleteFirestoreData(postId);
+              })
+              .catch(e => {
+                console.log('Error while deleting the image. ', e);
+              });
+            //  If the post image is not available
+          } else {
+            deleteFirestoreData(postId);
+          }
+        }
+      });
+  };
+
+  const deleteFirestoreData = postId => {
+    firestore()
+      .collection('posts')
+      .doc(postId)
+      .delete()
+      .then(() => {
+        // Alert.alert(
+        //   'Post deleted!',
+        //   'Your post has been deleted successfully!',
+        // );
+        setDeleting(false);
+        ToastAndroid.showWithGravityAndOffset(
+          'Your post has been deleted successfully!',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          0,
+          200,
+        );
+        setDeleted(true);
+      })
+      .catch(e => console.log('Error deleting posst.', e));
+  };
+
   useEffect(() => {
     getUser();
-  }, []);
+  }, [deleted]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -130,6 +209,7 @@ const PostScreen = ({navigation, route}) => {
             <CustomPost
               item={item}
               onPress={() => navigation.navigate('Profile')}
+              onDelete={handleDelete}
             />
           ) : (
             <CustomPost

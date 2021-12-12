@@ -1,62 +1,70 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
-  FlatList,
   Image,
-  SafeAreaView,
-  StatusBar,
-  ActivityIndicator,
+  TouchableOpacity,
+  Animated,
 } from 'react-native';
+
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
-import firestore, {firebase} from '@react-native-firebase/firestore';
-import colors from '../../config/colors';
 
+import {Avatar} from 'react-native-elements';
+
+import colors from '../../config/colors';
+import font from '../../config/font';
+import {windowWidth} from '../../utils/Dimentions';
 const BlogScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  const [Profdata, setProfdata] = useState(null);
+  const [requests, setRequests] = useState(true);
+  const [ApprovedChats, setApprovedChats] = useState([]);
+  const [PendingChats, setPendingChats] = useState([]);
   const [loading, setLoading] = useState(true);
-  let profList = [];
 
-  const fetchProf = async () => {
-    await firestore()
-      .collection('Professional')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          profList.push({
-            id: doc.id,
-            fname: doc.data().fname,
-            lname: doc.data().lname,
-            email: doc.data().email,
-            about: doc.data().about,
-            Experience: doc.data().Experience,
-            License: doc.data().License,
-            Specialty: doc.data().Specialty,
-            userImg: doc.data().userImg,
-            role: doc.data().role,
-          });
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-    setProfdata(profList);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'BLOG',
+      headerStyle: {
+        // backgroundColor: 'transparent',
+        backgroundColor: '#e8daf7',
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTitleStyle: {color: '#000', fontFamily: font.title},
 
-    if (loading) {
-      setLoading(false);
-    }
-  };
+      headerTitleAlign: 'center',
 
-  useEffect(() => {
-    fetchProf();
-    getUser();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading, userData, Profdata, user]);
+      headerLeft: () => (
+        <View style={{marginLeft: 20}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              // navigation.openDrawer();
+            }}>
+            <Avatar
+              rounded
+              source={{
+                uri: userData
+                  ? userData.userImg ||
+                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [userData]);
 
   const getUser = async () => {
     await firestore()
@@ -65,24 +73,28 @@ const BlogScreen = ({navigation, route}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          // console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
   };
 
-  if (loading == true) {
-    return (
-      <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color={colors.post} />
-      </View>
-    );
-  }
+  useEffect(() => {
+    getUser();
+  }, [navigation]);
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <StatusBar barStyle="dark-content" backgroundColor={colors.post} /> */}
-      <Text>BlogScreen Scrsseen </Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Image
+        source={require('../../assets/image/illustrationOk1.png')}
+        style={{height: 170, width: 170}}
+      />
+      <Text style={styles.text}>Professionals blog list</Text>
+      <View>
+        <Text style={styles.subText}>
+          When any professional published Blog, they will appear here.
+        </Text>
+      </View>
+    </View>
   );
 };
 
@@ -94,18 +106,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  containerLoading: {
-    flex: 1,
-    justifyContent: 'center',
+  text: {
+    fontSize: 18,
+    fontFamily: font.title,
+    color: colors.text,
   },
-  horizontal: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
+  subText: {
+    fontSize: 12,
+    fontFamily: font.subtitle,
+    color: colors.subtext,
+    textAlign: 'center',
+    width: windowWidth - 50,
+    lineHeight: 27,
   },
 });
