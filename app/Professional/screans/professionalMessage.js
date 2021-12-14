@@ -15,7 +15,6 @@ import {
 import {Avatar} from 'react-native-elements';
 
 import {AuthContext} from '../../navigation/AuthProvider';
-
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 

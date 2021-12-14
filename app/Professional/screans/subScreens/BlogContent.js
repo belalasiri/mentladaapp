@@ -62,10 +62,9 @@ const BlogContent = ({navigation, route}) => {
 
       .update({
         likes: firebase.firestore.FieldValue.increment(1),
-      });
-
-    // .collection('likes')
-    // .doc(firebase.auth().currentUser.uid);
+      })
+      .collection('likes')
+      .doc(firebase.auth().currentUser.uid);
   };
 
   return (
@@ -151,22 +150,7 @@ const BlogContent = ({navigation, route}) => {
                 <Text style={styles.text}>Last updated {blogTime}</Text>
               </View>
             </View>
-            <TouchableOpacity
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: 25,
-                backgroundColor: 'rgba(0,0,0,0.2)',
-              }}>
-              <Icon
-                name="arrow-back"
-                size={22}
-                color={colors.w}
-                onPress={() => onLikePress()}
-              />
-            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => onLikePress()}
               style={{
@@ -175,7 +159,7 @@ const BlogContent = ({navigation, route}) => {
                 width: 40,
                 height: 40,
                 borderRadius: 25,
-                backgroundColor: 'rgba(0,0,0,0.2)',
+                // backgroundColor: 'rgba(0,0,0,0.2)',
               }}>
               <Icon name="heart-outline" size={25} color={colors.subtext} />
             </TouchableOpacity>

@@ -23,13 +23,13 @@ import {
   TextSection,
 } from '../../patient/styles/MessageStyles';
 
+import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
+
+import {windowWidth} from '../../utils/Dimentions';
 import Swich from '../../config/components/Swich';
 import colors from '../../config/colors';
 import font from '../../config/font';
-import {windowWidth} from '../../utils/Dimentions';
-
-import firestore, {firebase} from '@react-native-firebase/firestore';
 
 const ProfMessage = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -133,7 +133,7 @@ const ProfMessage = ({navigation, route}) => {
     if (loading) {
       setLoading(false);
     }
-  }; 
+  };
 
   async function approvePaitent(item) {
     await firestore()
@@ -172,7 +172,6 @@ const ProfMessage = ({navigation, route}) => {
     setRequests(value);
   };
 
-
   useEffect(() => {
     getProf();
     fetchProf();
@@ -180,8 +179,6 @@ const ProfMessage = ({navigation, route}) => {
     fetchapprovedUsers();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
-
-
 
   if (loading == true) {
     return (

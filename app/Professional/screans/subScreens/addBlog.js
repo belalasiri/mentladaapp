@@ -1,4 +1,10 @@
-import React, {useState, useContext, useEffect, useLayoutEffect} from 'react';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import {
   View,
   Text,
@@ -22,6 +28,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
+import {Picker} from '@react-native-picker/picker';
 
 import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import colors from '../../../config/colors';
@@ -37,6 +44,10 @@ const addBlog = ({navigation, route}) => {
   const [content, setContent] = useState(null);
   const [profData, setProfData] = useState(null);
   const [allPosts, setAllPost] = useState(null);
+  const [category, setCategory] = useState();
+  const [pickerFocused, setPickerFocused] = useState(false);
+
+  const handleValueChange = itemValue => setCategory(itemValue);
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -110,6 +121,7 @@ const addBlog = ({navigation, route}) => {
         professionalName: profData.fname + ' ' + profData.lname,
         professionalEmail: profData.email,
         Blog: blog,
+        Category: category,
         Content: content,
         blogtImg: imageUrl,
         blogTime: firestore.Timestamp.fromDate(new Date()),
@@ -219,50 +231,97 @@ const addBlog = ({navigation, route}) => {
           </View>
 
           <Spacer size={10} />
+
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Blog Title */}
-            <View style={{paddingTop: 10, paddingLeft: 3}}>
-              <Text
-                style={{
-                  fontFamily: font.title,
-                  color: colors.text,
-                  fontSize: 16,
-                }}>
-                Title
-              </Text>
-            </View>
-            <View style={styles.newPostContainer}>
-              <View style={styles.textInputContainer}>
-                <TextInput
-                  placeholder="Blog title"
-                  multiline
-                  value={blog}
-                  onChangeText={text => setBlog(text)}
-                  style={styles.postInput}
-                />
+            <View>
+              <View style={{paddingTop: 10, paddingLeft: 3}}>
+                <Text
+                  style={{
+                    fontFamily: font.title,
+                    color: colors.text,
+                    fontSize: 16,
+                  }}>
+                  Title
+                </Text>
+              </View>
+              <View style={styles.newPostContainer}>
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                    placeholder="Blog title"
+                    multiline
+                    value={blog}
+                    onChangeText={text => setBlog(text)}
+                    style={styles.postInput}
+                  />
+                </View>
               </View>
             </View>
 
             {/* Blog Text */}
-            <View style={{paddingTop: 10, paddingLeft: 3}}>
-              <Text
-                style={{
-                  fontFamily: font.title,
-                  color: colors.text,
-                  fontSize: 16,
-                }}>
-                Content
-              </Text>
+            <View>
+              <View style={{paddingTop: 10, paddingLeft: 3}}>
+                <Text
+                  style={{
+                    fontFamily: font.title,
+                    color: colors.text,
+                    fontSize: 16,
+                  }}>
+                  Content
+                </Text>
+              </View>
+              <View style={styles.newPostContainer}>
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                    placeholder="Blog content"
+                    multiline
+                    value={content}
+                    onChangeText={text => setContent(text)}
+                    style={styles.postInput}
+                  />
+                </View>
+              </View>
             </View>
-            <View style={styles.newPostContainer}>
-              <View style={styles.textInputContainer}>
-                <TextInput
-                  placeholder="Blog content"
-                  multiline
-                  value={content}
-                  onChangeText={text => setContent(text)}
-                  style={styles.postInput}
-                />
+
+            {/* Blog Category */}
+            <View>
+              <View style={{paddingTop: 10, paddingLeft: 3}}>
+                <Text
+                  style={{
+                    fontFamily: font.title,
+                    color: colors.text,
+                    fontSize: 16,
+                  }}>
+                  Blog Category
+                </Text>
+              </View>
+              <View style={styles.sellectContainer}>
+                <Picker
+                  mode={'dialog'}
+                  dropdownIconColor={colors.primary}
+                  style={[
+                    styles.pickerStyles,
+                    {color: category ? colors.subtext : '#c19ce9'},
+                  ]}
+                  selectedValue={category}
+                  onValueChange={handleValueChange}
+                  onFocus={() => setPickerFocused(true)}
+                  onBlur={() => setPickerFocused(false)}>
+                  <Picker.Item
+                    value=""
+                    label="Choose the blog category"
+                    enabled={!pickerFocused}
+                  />
+                  <Picker.Item
+                    label="BIPOLAR DISORDER"
+                    value="BIPOLAR DISORDER"
+                  />
+                  <Picker.Item label="STRESS" value="STRESS" />
+                  <Picker.Item label="DEMENTIA" value="DEMENTIA" />
+                  <Picker.Item label="INSOMNIA" value="INSOMNIA" />
+                  <Picker.Item label="ANXIETY" value="ANXIETY" />
+                  <Picker.Item label="SCHIZOPHRENIA" value="SCHIZOPHRENIA" />
+                </Picker>
               </View>
             </View>
 
@@ -385,6 +444,30 @@ const addBlog = ({navigation, route}) => {
 export default addBlog;
 
 const styles = StyleSheet.create({
+  sellectContainer: {
+    // flex: 1,
+    // backgroundColor: '#fff',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // marginVertical: 10,
+    flex: 1,
+    marginTop: 10,
+    flexDirection: 'row',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: colors.empty,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  pickerStyles: {
+    width: '100%',
+    // color: colors.subtext,
+  },
+  pickerStylesTest: {
+    width: '100%',
+    color: colors.w,
+  },
+
   Container: {
     flex: 1,
     backgroundColor: '#fff',
