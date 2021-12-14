@@ -6,13 +6,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Image,
   Animated,
   ActivityIndicator,
-  TouchableHighlight,
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
@@ -105,7 +103,6 @@ const HomeScreen = ({navigation, route}) => {
         backgroundColor: '#fff',
       }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <StatusBar hidden /> */}
         <Header
           UserName={[
             userData ? userData.fname || 'Mentlada' : 'Mentlada',

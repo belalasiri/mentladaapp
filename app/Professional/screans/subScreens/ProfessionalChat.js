@@ -131,7 +131,7 @@ const ProfessionalChat = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar
-        barStyle="dark-content"
+        barStyle="light-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />

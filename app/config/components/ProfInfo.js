@@ -14,7 +14,7 @@ const ProfInfo = ({
   let bg = backgroundColor;
 
   return (
-    <View style={{flex: 1, margin:5}}>
+    <View style={{flex: 1, margin: 5}}>
       <View style={[styles.container, {backgroundColor: bg}]} {...rest}>
         <Icon name={icon} size={20} color={iconColor} />
         <Text style={{fontSize: 16, fontFamily: font.title}}>{Title1}</Text>

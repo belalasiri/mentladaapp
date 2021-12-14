@@ -181,11 +181,7 @@ const ProfMessage = ({navigation, route}) => {
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading]);
 
-  // useEffect(() => {
-  //   fetchSessions();
-  //   fetchMessages();
-  //   navigation.addListener('focus', () => setLoading(!loading));
-  // }, [navigation, loading]);
+
 
   if (loading == true) {
     return (

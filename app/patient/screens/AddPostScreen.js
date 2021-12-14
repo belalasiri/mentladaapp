@@ -87,7 +87,6 @@ const AddPostScreen = ({navigation, route}) => {
         userId: user.uid,
         post: post,
         postImg: imageUrl,
-        // postTime: firebase.firestore.FieldValue.serverTimestamp(),
         postTime: firestore.Timestamp.fromDate(new Date()),
         likes: null,
         comments: null,
@@ -97,7 +96,7 @@ const AddPostScreen = ({navigation, route}) => {
         ToastAndroid.showWithGravity(
           'Your post has been published Successfully',
           ToastAndroid.LONG,
-          ToastAndroid.CENTER, 
+          ToastAndroid.CENTER,
         );
         setPost(null);
       })

@@ -1,24 +1,37 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
+  Dimensions,
   FlatList,
-  Image,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Animated,
   ActivityIndicator,
-  StatusBar,
 } from 'react-native';
-
-import font from '../../config/font';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import font from '../../config/font';
 import colors from '../../config/colors';
 import ListCard from '../../config/components/ListCard';
-import {windowWidth} from '../../utils/Dimentions';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import Header from '../../config/components/Home/Header';
+import Spacer from '../../config/components/Home/Spacer';
+import Conversation from '../../assets/conversation.svg';
+import {Avatar} from 'react-native-elements';
+import LinearGradient from 'react-native-linear-gradient';
+
+const {width} = Dimensions.get('screen');
+const cardWidth = width / 1.6;
+const footerWidth = width;
 
 const ProfHome = ({navigation, route}) => {
   const {user, Proflogout} = useContext(AuthContext);
@@ -26,6 +39,8 @@ const ProfHome = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(true);
+  const [pendingNew, setPendingNew] = useState(true);
+  const [fetchPending, setFetchPending] = useState(false);
 
   let pendingList = [];
   const fetchPendingUsers = async () => {
@@ -59,8 +74,21 @@ const ProfHome = ({navigation, route}) => {
     }
   };
 
+  useEffect(() => {
+    const PENDING = firestore()
+      .collection('session')
+      .where('profEmail', '==', user.email)
+      .where('approved', '==', 'pending')
+      .onSnapshot(snapshot =>
+        setPendingNew(
+          snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})),
+        ),
+      );
+    return PENDING;
+  }, [navigation]);
+
   let userList = [];
-  const fetchProf = async () => {
+  const fetchUsers = async () => {
     await firestore()
       .collection('users')
       .orderBy('createdAt', 'desc')
@@ -88,7 +116,9 @@ const ProfHome = ({navigation, route}) => {
       setLoading(false);
     }
   };
+
   async function approvePaitent(item) {
+    setFetchPending(true);
     await firestore()
       .collection('session')
       .doc(item.patientEmail + item.profEmail)
@@ -107,6 +137,7 @@ const ProfHome = ({navigation, route}) => {
     if (loading) {
       setLoading(false);
     }
+    setFetchPending(false);
   }
   const getProf = async () => {
     await firestore()
@@ -122,35 +153,227 @@ const ProfHome = ({navigation, route}) => {
 
   useEffect(() => {
     getProf();
-    fetchProf();
+    fetchUsers();
     fetchPendingUsers();
     navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading]);
-
-  if (loading == true) {
-    return (
-      <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  }, [navigation, pending]);
 
   return (
-    <View style={styles.containerss}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="rgba(0,0,0,0)"
-      />
-      <Text>Home scbn6523reen</Text>
-    </View>
+    <SafeAreaView
+      style={{
+        paddingTop: 10,
+        flex: 1,
+        backgroundColor: '#fff',
+      }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Header
+          UserName={[
+            profData ? profData.fname || 'Mentlada' : 'Mentlada',
+            ' ',
+            profData ? profData.lname || 'Professional' : 'Professional',
+          ]}
+          Userimage={{
+            uri: profData
+              ? profData.userImg ||
+                'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+              : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+          }}
+          onNotificationPress={() => navigation.navigate('Notification')}
+        />
+        <Spacer size={10} />
+
+        {/* Prof List */}
+        {/* Title */}
+        {pendingNew?.[0] ? (
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 20,
+                alignItems: 'center',
+                paddingTop: 10,
+              }}>
+              <Text
+                style={{
+                  fontFamily: font.title,
+                  color: colors.text,
+                  fontSize: 16,
+                }}>
+                Session requests
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
+                <Text
+                  style={{
+                    fontFamily: font.title,
+                    color: colors.primary,
+                    fontSize: 12,
+                  }}>
+                  See all
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              horizontal
+              data={pending}
+              keyExtractor={item => item.id}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({item}) => (
+                <View
+                  style={{
+                    width: windowWidth / 1 - 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <LinearGradient
+                    colors={[colors.w, '#fffcf4']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    style={{
+                      flexDirection: 'row',
+                      marginHorizontal: 15,
+                      marginVertical: 5,
+                      alignItems: 'center',
+                      borderRadius: 7,
+                      padding: 10,
+                    }}>
+                    <Avatar
+                      rounded
+                      size={70}
+                      source={{
+                        uri: userData
+                          ? item.patientAvatar ||
+                            'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                          : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                      }}
+                    />
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        marginLeft: 15,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          justifyContent: 'flex-start',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            color: colors.subtext,
+                            fontFamily: font.title,
+                          }}>
+                          {item.patientName}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row', marginVertical: 10}}>
+                        <TouchableOpacity
+                          style={{
+                            flex: 1,
+                            backgroundColor: colors.primary,
+                            padding: 7,
+                            marginRight: 3,
+                            borderRadius: 7,
+                          }}
+                          onPress={() => approvePaitent(item)}>
+                          {fetchPending ? (
+                            <View
+                              style={{
+                                alignSelf: 'center',
+                                justifyContent: 'center',
+                                paddingTop: 2,
+                              }}>
+                              <ActivityIndicator
+                                size="small"
+                                color={colors.w}
+                              />
+                            </View>
+                          ) : (
+                            <Text
+                              style={{
+                                color: colors.w,
+                                textAlign: 'center',
+                                fontFamily: font.title,
+                                fontSize: 14,
+                                marginBottom: 1,
+                              }}>
+                              Approve
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            flex: 1,
+                            backgroundColor: colors.empty,
+                            padding: 7,
+                            marginLeft: 5,
+                            borderRadius: 7,
+                          }}
+                          onPress={() => {}}>
+                          <Text
+                            style={{
+                              color: colors.subtext,
+                              textAlign: 'center',
+                              fontFamily: font.subtitle,
+                              fontSize: 14,
+                              marginBottom: 1,
+                            }}>
+                            Reject
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </View>
+              )}
+            />
+          </View>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: font.title,
+                color: colors.text,
+              }}>
+              Your pending consultation list
+            </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: font.subtitle,
+                  color: colors.subtext,
+                  textAlign: 'center',
+                  width: windowWidth - 50,
+                  lineHeight: 27,
+                }}>
+                When a consultation session request made, they will appear here
+                until the status of the request changes.
+              </Text>
+            </View>
+          </View>
+        )}
+        <Spacer size={10} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default ProfHome;
 
 const styles = StyleSheet.create({
-  containerss: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
@@ -163,58 +386,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    // marginVertical: 20,
-    paddingHorizontal: 20,
-  },
-  Card: {
-    backgroundColor: '#F5F7F9',
-    // backgroundColor: colors.w,
-    width: '100%',
-    // marginBottom: 20,
-    marginTop: 10,
-    borderRadius: 7,
-  },
-  ProfInfo: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    padding: 15,
-    alignItems: 'center',
-    // marginLeft: 10,
-  },
-  ProfImg: {
-    width: 50,
-    height: 50,
-    borderRadius: 70,
-  },
-  ProfInfoText: {
-    marginLef: 10,
-    fontSize: 12,
-  },
-  ProfName: {
-    fontSize: 16,
-    fontFamily: font.title,
-  },
-  ProfDes: {
-    fontSize: 12,
-    fontFamily: font.title,
-  },
-  ProfNameCont: {
-    flexDirection: 'column',
-    paddingLeft: 7,
-    marginTop: -4,
-  },
-  ProfCont: {
-    flex: 3,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingRight: 15,
-    paddingLeft: 15,
-    paddingBottom: 15,
-    alignItems: 'center',
-    // marginLeft: 10,
   },
 });

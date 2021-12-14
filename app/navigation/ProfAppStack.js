@@ -14,7 +14,10 @@ import EditProfProfile from '../Professional/screans/subScreens/EditProfProfile'
 import Profrequests from '../Professional/screans/Profrequests';
 import ProfessionalChat from '../Professional/screans/subScreens/ProfessionalChat';
 import professionalMessage from '../Professional/screans/professionalMessage';
-
+import Notification from '../Professional/screans/Notification';
+import profileScreen from '../patient/screens/profileScreen';
+import BlogContent from '../Professional/screans/subScreens/BlogContent';
+import addBlog from '../Professional/screans/subScreens/addBlog';
 import font from '../config/font';
 import colors from '../config/colors';
 
@@ -35,7 +38,7 @@ function HomeStack() {
 
             color = '#67D8AF';
             // size = 30;
-          } else if (route.name === 'Feed') {
+          } else if (route.name === 'Requests') {
             iconName = focused ? 'layers' : 'layers-outline';
             color = colors.primary;
           } else if (route.name === 'Blog') {
@@ -59,8 +62,12 @@ function HomeStack() {
         },
       })}>
       <Tab.Screen name="Home" component={ProfHome} />
-      <Tab.Screen name="Feed" component={Profrequests} />
-      <Tab.Screen name="Blog" component={ProfBlog} />
+      <Tab.Screen name="Requests" component={Profrequests} />
+      <Tab.Screen
+        name="Blog"
+        component={ProfBlog}
+        options={() => ({headerShown: true})}
+      />
       <Tab.Screen
         name="Message"
         component={professionalMessage}
@@ -82,6 +89,10 @@ export default function AppStack() {
           component={ProfessionalChat}
           options={() => ({headerShown: true})}
         />
+        <Stack.Screen name="Notification" component={Notification} />
+        <Stack.Screen name="profileScreen" component={profileScreen} />
+        <Stack.Screen name="BlogContent" component={BlogContent} />
+        <Stack.Screen name="addBlog" component={addBlog} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

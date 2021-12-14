@@ -215,7 +215,7 @@ const MessageScreen = ({navigation, route}) => {
                     enterChat={enterChat}
                   />
                 ),
-              )}
+              )} 
             </ScrollView>
           ) : (
             <View

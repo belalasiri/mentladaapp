@@ -134,110 +134,92 @@ const patientChat = ({navigation, route}) => {
         backgroundColor="rgba(0,0,0,0)"
       />
       <KeyboardAvoidingView
-        // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={80}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <>
-            <View style={styles.container}>
-              <View
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  justifyContent: 'flex-end',
-                  alignSelf: 'center',
-                }}>
-                <FlatList
-                  inverted
-                  initialNumToRender={7}
-                  // ListFooterComponent={() => (
-                  //   <View style={{padding: 20, alignItems: 'center'}}>
-                  //     <Text
-                  //       style={{
-                  //         fontFamily: font.subtitle,
-                  //         color: colors.subtext,
-                  //       }}>
-                  //       Consultation session with{' '}
-                  //       {route.params.professionalName}
-                  //     </Text>
-                  //   </View>
-                  // )}
-                  data={messages}
-                  keyExtractor={item => item.id}
-                  renderItem={({id, item}) =>
-                    item.sendBy === auth().currentUser.email ? (
-                      <View key={id} style={[styles.Message, styles.patient]}>
-                        <View
-                          style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
-                          <Text style={[styles.text, {color: 'black'}]}>
-                            {item.message}
-                          </Text>
-
-                          <Text
-                            style={[
-                              styles.Timetext,
-                              {alignSelf: 'flex-start'},
-                            ]}>
-                            {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
-                              'LT',
-                            )}
-                          </Text>
-                        </View>
-                      </View>
-                    ) : (
+          <View style={styles.container}>
+            <View
+              style={{
+                flex: 1,
+                width: '100%',
+                justifyContent: 'flex-end',
+                alignSelf: 'center',
+              }}>
+              <FlatList
+                inverted
+                initialNumToRender={7}
+                data={messages}
+                keyExtractor={item => item.id}
+                renderItem={({id, item}) =>
+                  item.sendBy === auth().currentUser.email ? (
+                    <View key={id} style={[styles.Message, styles.patient]}>
                       <View
-                        key={id}
-                        style={[styles.Message, styles.professional]}>
-                        <View
-                          style={[styles.cloud, {backgroundColor: '#ececec'}]}>
-                          <Text style={[styles.text, {color: 'black'}]}>
-                            {item.message}
-                          </Text>
-                          <Text
-                            style={[styles.Timetext, {alignSelf: 'flex-end'}]}>
-                            {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
-                              'LT',
-                            )}
-                          </Text>
-                        </View>
-                      </View>
-                    )
-                  }
-                />
+                        style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
+                        <Text style={[styles.text, {color: 'black'}]}>
+                          {item.message}
+                        </Text>
 
-                <View style={styles.footer}>
-                  <TextInput
-                    value={input}
-                    multiline
-                    onChangeText={text => setInput(text)}
-                    onSubmitEditing={sendMessage}
-                    placeholder="Type your message"
-                    style={styles.textInput}
-                  />
-                  <TouchableOpacity
-                    disabled={!input}
-                    onPress={sendMessage}
-                    activeOpacity={0.5}>
-                    {input ? (
-                      <Icon
-                        name="send"
-                        size={20}
-                        color={colors.subtext}
-                        style={styles.icon}
-                      />
-                    ) : (
-                      <Icon
-                        name="add"
-                        size={25}
-                        color={colors.subtext}
-                        style={styles.icon}
-                      />
-                    )}
-                  </TouchableOpacity>
-                </View>
+                        <Text
+                          style={[styles.Timetext, {alignSelf: 'flex-start'}]}>
+                          {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
+                            'LT',
+                          )}
+                        </Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <View
+                      key={id}
+                      style={[styles.Message, styles.professional]}>
+                      <View
+                        style={[styles.cloud, {backgroundColor: '#ececec'}]}>
+                        <Text style={[styles.text, {color: 'black'}]}>
+                          {item.message}
+                        </Text>
+                        <Text
+                          style={[styles.Timetext, {alignSelf: 'flex-end'}]}>
+                          {moment(item.timestamp.toDate(), 'HH:mm:ss').format(
+                            'LT',
+                          )}
+                        </Text>
+                      </View>
+                    </View>
+                  )
+                }
+              />
+
+              <View style={styles.footer}>
+                <TextInput
+                  value={input}
+                  multiline
+                  onChangeText={text => setInput(text)}
+                  onSubmitEditing={sendMessage}
+                  placeholder="Type your message"
+                  style={styles.textInput}
+                />
+                <TouchableOpacity
+                  disabled={!input}
+                  onPress={sendMessage}
+                  activeOpacity={0.5}>
+                  {input ? (
+                    <Icon
+                      name="send"
+                      size={20}
+                      color={colors.subtext}
+                      style={styles.icon}
+                    />
+                  ) : (
+                    <Icon
+                      name="add"
+                      size={25}
+                      color={colors.subtext}
+                      style={styles.icon}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
-          </>
+          </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>

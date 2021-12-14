@@ -91,16 +91,9 @@ const ChatScreen = ({route, profsData, navigation}) => {
   }
   useEffect(() => {
     fetcMessages();
-    // navigation.addListener('focus', () => setLoading(!loading));
   }, [allMessages]);
 
-  // if (loading == true) {
-  //   return (
-  //     <View style={[styles.containerLoading, styles.horizontal]}>
-  //       <ActivityIndicator size="large" color={colors.primary} />
-  //     </View>
-  //   );
-  // }
+
 
   return (
     <SafeAreaView style={styles.container}>

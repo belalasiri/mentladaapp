@@ -19,7 +19,7 @@ import professionalList from '../patient/screens/professionalList';
 import TermsAndPrivacy from '../patient/screens/TermsAndPrivacy';
 import Help from '../patient/screens/Help';
 import sessionPlan from '../patient/screens/sessionPlan';
-
+import BlogContent from '../patient/screens/BlogContent';
 import colors from '../config/colors';
 import Notification from '../patient/screens/Notification';
 
@@ -90,15 +90,14 @@ export default function AppStack() {
         <Stack.Screen
           name="Chat"
           component={patientChat}
-          options={() => ({
-            headerShown: true,
-          })}
+          options={() => ({headerShown: true})}
         />
         <Stack.Screen name="professionaList" component={professionalList} />
         <Stack.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="sessionPlan" component={sessionPlan} />
         <Stack.Screen name="Notification" component={Notification} />
+        <Stack.Screen name="BlogContent" component={BlogContent} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );
