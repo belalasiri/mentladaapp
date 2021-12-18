@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   FlatList,
+  Alert,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -72,13 +73,17 @@ const patientChat = ({navigation, route}) => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => {}}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => onCall()}>
             <Icon name="videocam-outline" size={25} color={colors.empty} />
           </TouchableOpacity>
         </View>
       ),
     });
   }, [navigation]);
+
+  const onCall = () => {
+    Alert.alert('Patient Prof ID!', ` ${route.params.isRequested}`);
+  };
 
   const sendMessage = () => {
     firestore()

@@ -108,6 +108,7 @@ const professionalMessage = ({navigation, route}) => {
     profEmail,
     patientEmail,
     patientAvatar,
+    isRequested,
     patientName,
   ) => {
     navigation.navigate('Chat', {
@@ -118,6 +119,7 @@ const professionalMessage = ({navigation, route}) => {
       patientEmail,
       patientAvatar,
       patientName,
+      isRequested,
     });
   };
 
@@ -198,6 +200,7 @@ const professionalMessage = ({navigation, route}) => {
                     patientEmail,
                     patientAvatar,
                     patientName,
+                    isRequested,
                   },
                 }) => (
                   <CustomPatientList
@@ -209,6 +212,7 @@ const professionalMessage = ({navigation, route}) => {
                     profEmail={profEmail}
                     patientEmail={patientEmail}
                     patientName={patientName}
+                    isRequested={isRequested}
                     enterChat={enterChat}
                   />
                 ),

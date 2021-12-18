@@ -16,6 +16,7 @@ const CustomPatientList = ({
   professionalName,
   professionalAvatar,
   patientAvatar,
+  isRequested,
   patientName,
 }) => {
   const [lastMessages, setLastMessages] = useState([]);
@@ -43,6 +44,7 @@ const CustomPatientList = ({
           profEmail,
           patientEmail,
           patientAvatar,
+          isRequested,
           patientName,
         )
       }

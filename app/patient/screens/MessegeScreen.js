@@ -114,6 +114,7 @@ const MessageScreen = ({navigation, route}) => {
     patientEmail,
     patientAvatar,
     patientName,
+    isRequested,
   ) => {
     navigation.navigate('Chat', {
       id,
@@ -123,6 +124,7 @@ const MessageScreen = ({navigation, route}) => {
       patientEmail,
       patientAvatar,
       patientName,
+      isRequested,
     });
   };
 
@@ -201,6 +203,7 @@ const MessageScreen = ({navigation, route}) => {
                     patientEmail,
                     patientAvatar,
                     patientName,
+                    isRequested,
                   },
                 }) => (
                   <CustomProfList
@@ -213,9 +216,10 @@ const MessageScreen = ({navigation, route}) => {
                     patientEmail={patientEmail}
                     patientName={patientName}
                     enterChat={enterChat}
+                    isRequested={isRequested}
                   />
                 ),
-              )} 
+              )}
             </ScrollView>
           ) : (
             <View

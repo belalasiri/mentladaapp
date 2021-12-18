@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   FlatList,
+  Alert,
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -74,7 +75,7 @@ const ProfessionalChat = ({navigation, route}) => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => {}}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => onCall()}>
             <Icon name="videocam-outline" size={25} color={colors.empty} />
           </TouchableOpacity>
         </View>
@@ -100,6 +101,9 @@ const ProfessionalChat = ({navigation, route}) => {
         timestamp: firestore.Timestamp.fromDate(new Date()),
       });
     setInput('');
+  };
+  const onCall = () => {
+    Alert.alert('Patient Prof ID!', ` ${route.params.isRequested}`);
   };
 
   useLayoutEffect(() => {
@@ -363,125 +367,3 @@ const styles = StyleSheet.create({
     fontFamily: font.subtitle,
   },
 });
-
-{
-  /* <ScrollView contentContainerStyle={{paddingTop: 15}}>
-              {messages.map(({id, data}) =>
-                data.sendBy === auth().currentUser.email ? (
-                  <View key={id} style={styles.reciver}>
-                    <Avatar
-                      rounded
-                      position="absolute"
-                      size={25}
-                      bottom={-15}
-                      right={-5}
-                      // for the web in case anything happend
-                      containerStyle={{
-                        position: 'absolute',
-                        bottom: -15,
-                        right: -5,
-                      }}
-                      source={{uri: data.professionalAvatar}}
-                    />
-                    <Text style={styles.reciverText}>{data.message}</Text>
-                  </View>
-                ) : (
-                  <View key={id} style={styles.sender}>
-                    <Avatar
-                      rounded
-                      position="absolute"
-                      size={25}
-                      bottom={-15}
-                      right={-5}
-                      // for the web in case anything happend
-                      containerStyle={{
-                        position: 'absolute',
-                        bottom: -15,
-                        right: -5,
-                      }}
-                      source={{uri: data.patientAvatar}}
-                    />
-                    <Text style={styles.senderText}>{data.message}</Text>
-                    <Text style={styles.senderName}>{data.patientName}</Text>
-                  </View>
-                ),
-              )}
-            </ScrollView> */
-}
-
-// <View
-//   key={id}
-//   style={[
-//     styles.Message,
-//     item.sendBy === auth().currentUser.email
-//       ? styles.notMine
-//       : styles.mine,
-//   ]}>
-
-//     <Avatar
-//     rounded
-//     position="absolute"
-//     size={25}
-//     bottom={-15}
-//     right={-5}
-//     source={{uri: item.professionalAvatar}}
-//   />
-//   <View
-//     style={[
-//       styles.cloud,
-//       {
-//         backgroundColor:
-//           item.sendBy === auth().currentUser.email
-//             ? '#e8daf7'
-//             : '#dddddd',
-//       },
-//     ]}>
-//     <Text
-//       style={[
-//         styles.text,
-//         {color: user.uid ? 'black' : 'white'},
-//       ]}>
-//       {item.message}
-//     </Text>
-//   </View>
-// </View>
-// item.sendBy === auth().currentUser.email ? (
-//   <View key={id} style={styles.reciver}>
-//     <Avatar
-//       rounded
-//       position="absolute"
-//       size={25}
-//       bottom={-15}
-//       right={-5}
-//       // for the web in case anything happend
-//       containerStyle={{
-//         position: 'absolute',
-//         bottom: -15,
-//         right: -5,
-//       }}
-//       source={{uri: item.professionalAvatar}}
-//     />
-//     <Text style={styles.reciverText}>{item.message}</Text>
-//   </View>
-// ) : (
-//   <View key={id} style={styles.sender}>
-//     <Avatar
-//       rounded
-//       position="absolute"
-//       size={25}
-//       bottom={-15}
-//       right={-5}
-//       // for the web in case anything happend
-//       containerStyle={{
-//         position: 'absolute',
-//         bottom: -15,
-//         right: -5,
-//       }}
-//       source={{uri: item.patientAvatar}}
-//     />
-//     <View>
-//       <Text style={styles.senderText}>{item.message}</Text>
-//     </View>
-//     <Text style={styles.senderName}>{item.patientName}</Text>
-//   </View>
-// )
