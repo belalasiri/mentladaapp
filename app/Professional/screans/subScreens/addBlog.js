@@ -312,6 +312,7 @@ const addBlog = ({navigation, route}) => {
                     label="Choose the blog category"
                     enabled={!pickerFocused}
                   />
+                  <Picker.Item label="GENERAL" value="GENERAL" />
                   <Picker.Item
                     label="BIPOLAR DISORDER"
                     value="BIPOLAR DISORDER"

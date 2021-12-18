@@ -21,6 +21,14 @@ import addBlog from '../Professional/screans/subScreens/addBlog';
 import font from '../config/font';
 import colors from '../config/colors';
 
+import BipolarDisorder from '../Professional/screans/subScreens/Categories/bipolarDisorder';
+import Stress from '../Professional/screans/subScreens/Categories/stress';
+import Dementia from '../Professional/screans/subScreens/Categories/dementia';
+import Insomnia from '../Professional/screans/subScreens/Categories/insomnia';
+import Anxiety from '../Professional/screans/subScreens/Categories/anxiety';
+import Schizophrenia from '../Professional/screans/subScreens/Categories/schizophrenia';
+
+import Details from '../Professional/screans/subScreens/categoryDetails';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -93,6 +101,13 @@ export default function AppStack() {
         <Stack.Screen name="profileScreen" component={profileScreen} />
         <Stack.Screen name="BlogContent" component={BlogContent} />
         <Stack.Screen name="addBlog" component={addBlog} />
+        <Stack.Screen name="BipolarDisorder" component={BipolarDisorder} />
+        <Stack.Screen name="Stress" component={Stress} />
+        <Stack.Screen name="Dementia" component={Dementia} />
+        <Stack.Screen name="Insomnia" component={Insomnia} />
+        <Stack.Screen name="Anxiety" component={Anxiety} />
+        <Stack.Screen name="Schizophrenia" component={Schizophrenia} />
+        <Stack.Screen name="Details" component={Details} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

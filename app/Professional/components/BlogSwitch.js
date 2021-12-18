@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import colors from '../config/colors';
-import font from '../config/font';
+import colors from '../../config/colors';
+import font from '../../config/font';
 
 export default function BlogSwitch({
   selectionMode,
