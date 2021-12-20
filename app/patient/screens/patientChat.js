@@ -1,4 +1,4 @@
-import React, {useContext, useLayoutEffect, useState} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,67 +24,92 @@ import auth from '@react-native-firebase/auth';
 import {moderateScale} from 'react-native-size-matters';
 import moment from 'moment';
 
+const Heder = ({userImage, onBacePress, onProfilePress, onCall, name}) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        paddingTop: 30,
+        paddingBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.subtext,
+      }}>
+      {/* GoBack */}
+      <TouchableOpacity
+        style={{
+          width: 45,
+          height: 45,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Avatar rounded source={userImage} />
+      </TouchableOpacity>
+      {/* Title */}
+      <View
+        style={{
+          // flex: 1,
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+        }}>
+        <Text
+          style={{
+            color: colors.empty,
+            fontFamily: font.title,
+            marginLeft: 15,
+            textTransform: 'uppercase',
+          }}>
+          {name}
+        </Text>
+      </View>
+      {/* Profile */}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+        }}>
+        <TouchableOpacity activeOpacity={0.5} onPress={onCall}>
+          <Icon name="videocam-outline" size={25} color={colors.w} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 const patientChat = ({navigation, route}) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Chat',
-      headerBackTitleVisible: false,
-      headerTitleAlign: 'Left',
-      headerTintColor: colors.empty,
-      headerStyle: {
-        backgroundColor: colors.subtext,
-        elevation: 0,
-        shadowOpacity: 0,
-      },
-
-      headerTitle: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginHorizontal: -10,
-          }}>
-          <Avatar
-            rounded
-            source={{
-              uri:
-                route.params.professionalAvatar ||
-                'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
-            }}
-          />
-          <Text
-            style={{
-              color: colors.empty,
-              fontFamily: font.title,
-              marginLeft: 15,
-              textTransform: 'uppercase',
-            }}>
-            {route.params.professionalName}
-          </Text>
-        </View>
-      ),
-
-      headerRight: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => onCall()}>
-            <Icon name="videocam-outline" size={25} color={colors.empty} />
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation]);
+  const [currentDate, setCurrentDate] = useState([]);
+  const [packageData, setPackageData] = useState(0);
 
   const onCall = () => {
     Alert.alert('Patient Prof ID!', ` ${route.params.isRequested}`);
   };
+
+  const currentDateFun = () => {
+    var date = new Date();
+    var seconds = date.getTime() / 1000;
+    setCurrentDate(seconds);
+    // console.log(currentDate);
+  };
+
+  useLayoutEffect(() => {
+    firestore()
+      .collection('packages')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setPackageData(documentSnapshot.data().seconds);
+          // console.log(packageData);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }, [packageData]);
 
   const sendMessage = () => {
     firestore()
@@ -104,6 +130,37 @@ const patientChat = ({navigation, route}) => {
       });
     setInput('');
   };
+  const endSetion = () => {
+    navigation.goBack();
+
+    var date = new Date();
+    var seconds = date.getTime() / 1000;
+
+    let countedSeconds = seconds - currentDate;
+
+    //Update Time here
+    //..... countedSeconds
+    firebase
+      .firestore()
+      .collection('packages')
+      .doc(auth().currentUser.uid)
+      .update({
+        seconds: packageData - countedSeconds,
+      })
+
+      .then(() => {
+        ToastAndroid.showWithGravityAndOffset(
+          `You have `,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          0,
+          200,
+        );
+      });
+  };
+  const formatted = moment
+    .utc(packageData * 1000)
+    .format('DD [Days] HH [hours] mm [minutes]:ss [seconds]');
 
   useLayoutEffect(() => {
     const fetcMessages = firestore()
@@ -131,10 +188,24 @@ const patientChat = ({navigation, route}) => {
     return fetcMessages;
   }, [route]);
 
+  useEffect(() => {
+    currentDateFun();
+  }, [packageData]);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <Heder
+        userImage={{
+          uri:
+            route.params.professionalAvatar ||
+            'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+        }}
+        onBacePress={() => navigation.goBack()}
+        onProfilePress={() => navigation.navigate('Profile')}
+        onCall={() => onCall()}
+        name={route.params.professionalName}
+      />
       <StatusBar
-        barStyle="dark-content"
+        barStyle="light-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
@@ -150,6 +221,24 @@ const patientChat = ({navigation, route}) => {
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
               }}>
+              <View style={{alignItems: 'center'}}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                  }}>
+                  Your remining plan time is:
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                  }}>
+                  {formatted}
+                </Text>
+              </View>
               <FlatList
                 inverted
                 initialNumToRender={7}
@@ -194,6 +283,9 @@ const patientChat = ({navigation, route}) => {
               />
 
               <View style={styles.footer}>
+                <TouchableOpacity onPress={endSetion}>
+                  <Text>END</Text>
+                </TouchableOpacity>
                 <TextInput
                   value={input}
                   multiline

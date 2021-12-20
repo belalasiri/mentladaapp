@@ -1,5 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {View, SafeAreaView, TouchableOpacity, Text, Image} from 'react-native';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
+import {
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Text,
+  Image,
+  FlatList,
+  StatusBar,
+} from 'react-native';
 
 // DataBase
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -13,14 +21,15 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-import {windowWidth} from '../../utils/Dimentions';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import moment from 'moment';
 
 const Heder = ({userImage, onBacePress, onProfilePress}) => {
   return (
     <View
       style={{
         flexDirection: 'row',
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         paddingVertical: 20,
         alignItems: 'center',
       }}>
@@ -65,7 +74,7 @@ const Heder = ({userImage, onBacePress, onProfilePress}) => {
   );
 };
 
-const Content = ({HederText, Body, Body2, Price, priceInfo}) => {
+const Content = ({HederText, Body, Body2, Price, priceInfo, onPress}) => {
   return (
     <>
       <View
@@ -132,7 +141,8 @@ const Content = ({HederText, Body, Body2, Price, priceInfo}) => {
               borderRadius: 7,
               padding: 10,
               backgroundColor: '#c19ce9',
-            }}>
+            }}
+            onPress={onPress}>
             <Text
               style={{
                 fontSize: 12,
@@ -148,9 +158,29 @@ const Content = ({HederText, Body, Body2, Price, priceInfo}) => {
   );
 };
 
+const Plans = [
+  {
+    id: 1,
+    HederText: 'Premium',
+    Body: '- 8000 minutes of consulting',
+    Body2: '- Chat',
+    Price: 'RM230',
+    priceInfo: '* VAT & local taxes may apply',
+  },
+  {
+    id: 2,
+    HederText: 'Basic',
+    Body: '- 1000 minutes of consulting',
+    Body2: '- Chat',
+    Price: 'RM50',
+    priceInfo: '* VAT & local taxes may apply',
+  },
+];
+
 const sessionPlan = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [packageData, setPackageData] = useState(0);
 
   const getUser = async () => {
     await firestore()
@@ -164,12 +194,111 @@ const sessionPlan = ({navigation, route}) => {
       });
   };
 
+  useLayoutEffect(() => {
+    firestore()
+      .collection('packages')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setPackageData(documentSnapshot.data().seconds);
+          console.log(packageData);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }, [packageData]);
+
   useEffect(() => {
     getUser();
-  }, [user]);
+    // getPackage();
+    // console.log(formatted);
+  }, [user, packageData]);
 
-  return (
+  const formatted = moment.utc(packageData * 1000).format('DD:HH:mm:ss');
+
+  return packageData >= 1 ? (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <Heder
+        userImage={{
+          uri: userData
+            ? userData.userImg ||
+              'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+            : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+        }}
+        onBacePress={() => navigation.goBack()}
+        onProfilePress={() => navigation.navigate('Profile')}
+      />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 50,
+        }}>
+        <Image
+          source={require('../../assets//image/illustrationOk1.png')}
+          style={{
+            height: windowHeight / 3 + 20,
+            width: windowWidth / 2 + 60,
+          }}
+        />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 10,
+          }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: font.title,
+              color: colors.text,
+            }}>
+            You already have a plan with us
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontFamily: font.subtitle,
+              color: colors.subtext,
+              textAlign: 'center',
+              width: windowWidth - 120,
+              lineHeight: 27,
+            }}>
+            Thank you for choosing to be part of Mentlada.
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              fontFamily: font.title,
+              color: colors.w,
+              textAlign: 'center',
+              width: windowWidth - 120,
+              lineHeight: 27,
+              backgroundColor: colors.primary,
+              paddingBottom: 5,
+              borderRadius: 7,
+              marginTop: 10,
+            }}>
+            You are now have {formatted}{' '}
+          </Text>
+        </View>
+      </View>
+    </SafeAreaView>
+  ) : (
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Heder
         userImage={{
           uri: userData
@@ -198,89 +327,73 @@ const sessionPlan = ({navigation, route}) => {
           Choose your best plan
         </Text>
       </View>
-      <View
-        // onPress={() => navigation.navigate('ProfProfile')}
-        onPress={() => {}}>
-        <LinearGradient
-          colors={['#f7f3fc', '#fff', '#f7f3fc']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={{
-            flexDirection: 'row',
-            marginHorizontal: 15,
-            marginVertical: 5,
-            alignItems: 'center',
-            borderRadius: 7,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              marginHorizontal: 5,
-            }}>
-            <View
+      <FlatList
+        data={Plans}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+        renderItem={({id, item}) => (
+          <View>
+            <LinearGradient
+              colors={['#f7f3fc', '#fff', '#f7f3fc']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               style={{
-                backgroundColor: colors.primary,
-                width: windowWidth / 2 - 20,
-                borderBottomRightRadius: 30,
-                borderTopRightRadius: 30,
-                marginTop: 10,
+                flexDirection: 'row',
+                marginHorizontal: 15,
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
               }}>
-              <Text
+              <View
                 style={{
-                  fontFamily: font.title,
-                  color: colors.w,
-                  fontSize: 16,
-                  paddingLeft: 20,
+                  flex: 1,
+                  justifyContent: 'center',
+                  marginHorizontal: 5,
                 }}>
-                Best value
-              </Text>
-            </View>
-            <View style={{padding: 10}}>
-              <Content
-                HederText="Premium"
-                Body="- 8000 minutes of consulting"
-                Body2="- Chat with video"
-                Price="RM150"
-                priceInfo="* VAT & local taxes may apply"
-              />
-            </View>
-          </View>
-        </LinearGradient>
-      </View>
+                {item.HederText == 'Premium' ? (
+                  <View
+                    style={{
+                      backgroundColor: colors.primary,
+                      width: windowWidth / 2 - 20,
+                      borderBottomRightRadius: 30,
+                      borderTopRightRadius: 30,
+                      marginTop: 10,
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: font.title,
+                        color: colors.w,
+                        fontSize: 16,
+                        paddingLeft: 20,
+                      }}>
+                      Best value
+                    </Text>
+                  </View>
+                ) : null}
 
-      <View
-        // onPress={() => navigation.navigate('ProfProfile')}
-        onPress={() => {}}>
-        <LinearGradient
-          colors={['#f7f3fc', '#fff', '#f7f3fc']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={{
-            flexDirection: 'row',
-            marginHorizontal: 15,
-            marginVertical: 5,
-            alignItems: 'center',
-            borderRadius: 7,
-            padding: 10,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              // alignItems: 'flex-start',
-              justifyContent: 'center',
-              marginHorizontal: 5,
-            }}>
-            <Content
-              HederText="Basic"
-              Body="- 1000 minutes of consulting"
-              Body2="- Chat with video"
-              Price="RM50"
-              priceInfo="* VAT & local taxes may apply"
-            />
+                <View style={{padding: 10}}>
+                  <Content
+                    HederText={item.HederText}
+                    Body={item.Body}
+                    Body2={item.Body2}
+                    Price={item.Price}
+                    priceInfo={item.priceInfo}
+                    onPress={() =>
+                      navigation.navigate('planDetails', {
+                        HederText: item.HederText,
+                        Body: item.Body,
+                        Body2: item.Body2,
+                        Price: item.Price,
+                        priceInfo: item.priceInfo,
+                      })
+                    }
+                  />
+                </View>
+              </View>
+            </LinearGradient>
           </View>
-        </LinearGradient>
-      </View>
+        )}
+      />
     </SafeAreaView>
   );
 };

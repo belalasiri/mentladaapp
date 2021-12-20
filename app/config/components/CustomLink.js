@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   textPrivate: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 35,
+    marginVertical: 20,
+    // marginVertical: 35,
     justifyContent: 'center',
   },
   color_textPrivate: {

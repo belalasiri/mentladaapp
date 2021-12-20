@@ -39,14 +39,29 @@ const Prof_Login = ({navigation}) => {
       />
 
       {/* Forgot Password? */}
-      <TouchableOpacity style={styles.forgotButton}>
+      {/* <TouchableOpacity style={styles.forgotButton}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <FormButton
         buttonTitle="Login to account"
         onPress={() => login(email, password)}
       />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          // marginBottom: 10,
+          marginTop: 20,
+        }}>
+        <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
+        <View>
+          <Text style={{width: 50, textAlign: 'center', color: '#353948'}}>
+            OR
+          </Text>
+        </View>
+        <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
+      </View>
     </View>
   );
 };

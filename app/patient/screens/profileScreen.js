@@ -30,6 +30,7 @@ import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
 import CustomPost from '../../config/components/CustomPost';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -41,14 +42,13 @@ const ProfileScreen = ({navigation, route}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'profile',
-      headerStyle: {backgroundColor: '#f7f3fc', elevation: 0},
+      headerStyle: {elevation: 0},
       headerTitleStyle: {
         color: colors.text,
         fontFamily: font.title,
-        textTransform: 'uppercase',
       },
       headerTitleAlign: 'center',
-      headerTintColor: '#000',
+      headerTintColor: colors.text,
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
           <TouchableOpacity
@@ -56,23 +56,23 @@ const ProfileScreen = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('AddPost');
             }}>
-            <Icon name="add-circle-outline" size={25} color={colors.text} />
+            <Icon name="create-outline" size={25} color={colors.subtext} />
           </TouchableOpacity>
         </View>
       ),
-      headerRight: () => (
-        <View style={{marginRight: 20}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-              navigation.navigate('EditProfile');
-            }}>
-            <MaterialIcons name="edit" size={25} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-      ),
+      // headerRight: () => (
+      //   <View style={{marginRight: 20}}>
+      //     <TouchableOpacity
+      //       activeOpacity={0.5}
+      //       onPress={() => {
+      //         navigation.navigate('EditProfile');
+      //       }}>
+      //       <MaterialIcons name="edit" size={25} color={colors.text} />
+      //     </TouchableOpacity>
+      //   </View>
+      // ),
     });
-  }, [userData, loading]);
+  }, []);
 
   const fetchPosts = async () => {
     try {
@@ -241,7 +241,7 @@ const ProfileScreen = ({navigation, route}) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{marginRight: 15, marginTop: 20, marginLeft: 15}}>
+        <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1.4, alignItems: 'flex-start'}}>
               <Image
@@ -403,9 +403,110 @@ const ProfileScreen = ({navigation, route}) => {
         </View>
 
         {/* mapping the user post */}
-        {posts.map(item => (
-          <CustomPost key={item.id} item={item} onDelete={handleDelete} />
-        ))}
+        {posts?.[0] ? (
+          <View style={{flex: 1}}>
+            {posts.map(item => (
+              <CustomPost key={item.id} item={item} onDelete={handleDelete} />
+            ))}
+          </View>
+        ) : (
+          <>
+            {route.params ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginVertical: 20,
+                  marginBottom: 50,
+                }}>
+                <Image
+                  source={require('../../assets/image/image2.png')}
+                  style={{
+                    height: windowHeight / 3 + 20,
+                    width: windowWidth / 2 + 20,
+                  }}
+                />
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontFamily: font.title,
+                      color: colors.text,
+                    }}>
+                    {userData
+                      ? userData.fname + ' ' + userData.lname || 'Mentlada'
+                      : 'Mentlada'}{' '}
+                    post's list
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: font.subtitle,
+                      color: colors.subtext,
+                      textAlign: 'center',
+                      width: windowWidth - 120,
+                      lineHeight: 27,
+                    }}>
+                    When{' '}
+                    {userData
+                      ? userData.fname + ' ' + userData.lname || 'Mentlada'
+                      : 'Mentlada'}{' '}
+                    post anything, his post will appear here.
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginVertical: 20,
+                  marginBottom: 50,
+                }}>
+                <Image
+                  source={require('../../assets/image/image2.png')}
+                  style={{
+                    height: windowHeight / 3 + 20,
+                    width: windowWidth / 2 + 20,
+                  }}
+                />
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontFamily: font.title,
+                      color: colors.text,
+                    }}>
+                    Your post list
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: font.subtitle,
+                      color: colors.subtext,
+                      textAlign: 'center',
+                      width: windowWidth - 120,
+                      lineHeight: 27,
+                    }}>
+                    When you post anything, your post will appear here.
+                  </Text>
+                </View>
+              </View>
+            )}
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

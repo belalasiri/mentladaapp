@@ -5,7 +5,6 @@ import CustomSwitch from '../../config/components/CustomSwitch';
 import FormButton from '../../config/components/FormButton';
 import CustomLink from '../../config/components/CustomLink';
 
-
 const AppRoutes = ({navigation}) => {
   const [SwitchTab, setSwitchTab] = useState(1);
 
@@ -33,12 +32,12 @@ const AppRoutes = ({navigation}) => {
           <View>
             <FormButton
               buttonTitle="Login"
-              onPress={() => navigation.navigate('PatLogin')}
+              onPress={() => navigation.navigate('Login')}
             />
             <CustomLink
               text="Don’t have an account?  "
               textWithLink="Create here"
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() => navigation.navigate('patientSignup')}
             />
           </View>
         )}
@@ -47,12 +46,12 @@ const AppRoutes = ({navigation}) => {
           <View>
             <FormButton
               buttonTitle="Login"
-              onPress={() => navigation.navigate('PatLogin')}
+              onPress={() => navigation.navigate('Login')}
             />
             <CustomLink
               text="Don’t have an account?  "
               textWithLink="Create here"
-              onPress={() => navigation.navigate('ProfSignup')}
+              onPress={() => navigation.navigate('professionalSignup')}
             />
           </View>
         )}

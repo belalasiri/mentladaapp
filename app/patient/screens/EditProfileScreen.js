@@ -11,6 +11,10 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Keyboard,
+  StatusBar,
+  ToastAndroid,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,10 +31,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
 import colors from '../../config/colors';
-import {ToastAndroid} from 'react-native';
-import {KeyboardAvoidingView} from 'react-native';
-import {Keyboard} from 'react-native';
-import {StatusBar} from 'react-native';
+
 import font from '../../config/font';
 import {windowWidth} from '../../utils/Dimentions';
 

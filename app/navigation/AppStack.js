@@ -23,6 +23,7 @@ import BlogContent from '../patient/screens/BlogContent';
 import colors from '../config/colors';
 import Notification from '../patient/screens/Notification';
 import Details from '../patient/screens/categoryDetails';
+import planDetails from '../patient/screens/planDetails';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -88,18 +89,19 @@ export default function AppStack() {
         <Stack.Screen name="AddPost" component={AddPostScreen} />
         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-        <Stack.Screen
-          name="Chat"
-          component={patientChat}
-          options={() => ({headerShown: true})}
-        />
+        <Stack.Screen name="Chat" component={patientChat} />
         <Stack.Screen name="professionaList" component={professionalList} />
         <Stack.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="sessionPlan" component={sessionPlan} />
         <Stack.Screen name="Notification" component={Notification} />
-        <Stack.Screen name="Details" component={Details} />
+        <Stack.Screen
+          name="Details"
+          component={Details}
+          options={() => ({headerShown: true})}
+        />
         <Stack.Screen name="BlogContent" component={BlogContent} />
+        <Stack.Screen name="planDetails" component={planDetails} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

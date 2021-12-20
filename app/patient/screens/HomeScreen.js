@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -17,6 +17,7 @@ import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import {Avatar, ListItem} from 'react-native-elements';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import Header from '../../config/components/Home/Header';
@@ -35,9 +36,34 @@ const HomeScreen = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [Profdata, setProfdata] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [allPosts, setAllPost] = useState(null);
 
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
+
+  useLayoutEffect(() => {
+    const fetcBlogs = firestore()
+      .collection('Blogs')
+      .orderBy('blogTime', 'desc')
+      .onSnapshot(snapshot =>
+        setAllPost(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data(),
+            professionalId: doc.data().professionalId,
+            professionalAvatar: doc.data().professionalAvatar,
+            professionalName: doc.data().professionalName,
+            Blog: doc.data().Blog,
+            Content: doc.data().Content,
+            blogtImg: doc.data().blogtImg,
+            Category: doc.data().Category,
+            blogTime: doc.data().blogTime,
+          })),
+        ),
+      );
+
+    return fetcBlogs;
+  }, [navigation]);
 
   let profList = [];
 
@@ -289,7 +315,7 @@ const HomeScreen = ({navigation, route}) => {
                         color={colors.primary}
                       />
                     </View>
-                    <View
+                    {/* <View
                       style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
@@ -305,7 +331,7 @@ const HomeScreen = ({navigation, route}) => {
                       <Text style={{fontSize: 10, color: colors.subtext}}>
                         365 reviews
                       </Text>
-                    </View>
+                    </View> */}
                   </View>
                 </Animated.View>
               </TouchableOpacity>
@@ -313,7 +339,6 @@ const HomeScreen = ({navigation, route}) => {
           }}
           snapToInterval={cardWidth}
         />
-        <Spacer size={10} />
         {/* setions plan */}
         <View
           style={{
@@ -398,6 +423,120 @@ const HomeScreen = ({navigation, route}) => {
 
         <Spacer size={10} />
 
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 20,
+            alignItems: 'center',
+            paddingTop: 10,
+          }}>
+          <Text
+            style={{
+              fontFamily: font.title,
+              color: colors.text,
+              fontSize: 16,
+            }}>
+            Most recent blog
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Blog')}>
+            <Text
+              style={{
+                fontFamily: font.title,
+                color: colors.primary,
+                fontSize: 12,
+              }}>
+              See all
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{flex: 1}}>
+          <FlatList
+            horizontal
+            data={allPosts}
+            keyExtractor={item => item.id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({id, item}) => (
+              <ListItem
+                onPress={() =>
+                  navigation.navigate('BlogContent', {
+                    id: item.id,
+                    data: item.data,
+                    Blog: item.Blog,
+                    Content: item.Content,
+                    blogtImg: item.blogtImg,
+                    professionalAvatar: item.professionalAvatar,
+                    professionalName: item.professionalName,
+                    Category: item.Category,
+                    blogTime: item.blogTime,
+                  })
+                }>
+                <View
+                  style={{
+                    width: windowWidth / 1 - 40,
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <LinearGradient
+                    colors={['#f0e6fa', '#fff', '#f7f3fc']}
+                    start={{x: 0, y: 1}}
+                    end={{x: 1, y: 0}}
+                    style={{
+                      flexDirection: 'row',
+                      borderRadius: 7,
+                    }}>
+                    <View style={{width: 100}}>
+                      <Image
+                        source={{
+                          uri:
+                            item.blogtImg ||
+                            'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                        }}
+                        style={{
+                          width: 100,
+                          height: 150,
+                          borderTopLeftRadius: 7,
+                          borderBottomLeftRadius: 7,
+                        }}
+                      />
+                    </View>
+                    <ListItem.Content
+                      style={{
+                        alignItems: 'flex-start',
+                        justifyContent: 'center',
+                        marginLeft: 20,
+                        paddingRight: 3,
+                        paddingVertical: 10,
+                      }}>
+                      <ListItem.Title
+                        style={{
+                          fontSize: 15,
+                          color: colors.text,
+                          fontFamily: font.title,
+                        }}>
+                        {item.Blog}
+                      </ListItem.Title>
+                      <ListItem.Subtitle
+                        style={{
+                          fontSize: 13,
+                          color: colors.subtext,
+                          fontFamily: font.subtitle,
+                          paddingRight: 5,
+                          paddingVertical: 7,
+                        }}
+                        numberOfLines={3}
+                        ellipsizeMode="tail">
+                        {item.Content}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                  </LinearGradient>
+                </View>
+              </ListItem>
+            )}
+          />
+        </View>
         <View
           style={{
             flex: 1,
@@ -505,7 +644,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardDetails: {
-    height: 100,
+    height: 85,
     borderRadius: 15,
     backgroundColor: '#fff',
     position: 'absolute',
@@ -513,7 +652,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 20,
     paddingRight: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingTop: 10,
   },
   cardOverLay: {

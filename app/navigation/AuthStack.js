@@ -10,7 +10,7 @@ import AppRoutes from '../patient/screens/AppRoutes';
 import LoginScreen from '../patient/screens/LoginScreen';
 import ProfLogin from '../Professional/screans/Auth/ProfLogin';
 import ProfSignup from '../Professional/screans/Auth/ProfSignup';
-import Patient_Login from '../screens/Pati_Login';
+import Patient_Login from '../screens/patientLogin';
 import Home from '../patient/screens/Testing';
 
 const Stack = createNativeStackNavigator();
@@ -55,33 +55,19 @@ const AuthStack = () => {
         options={{header: () => null}}
       />
       <Stack.Screen
-        name="PatLogin"
+        name="Login"
         component={LoginScreen}
         options={{header: () => null}}
       />
+
       <Stack.Screen
-        name="ProfLogin"
-        component={ProfLogin}
-        options={{header: () => null}}
-      />
-      <Stack.Screen
-        name="Signup"
+        name="patientSignup"
         component={SignupScreen}
         options={{header: () => null}}
       />
       <Stack.Screen
-        name="ProfSignup"
+        name="professionalSignup"
         component={ProfSignup}
-        options={{header: () => null}}
-      />
-      <Stack.Screen
-        name="Patient_Login"
-        component={Patient_Login}
-        options={{header: () => null}}
-      />
-      <Stack.Screen
-        name="Home"
-        component={Home}
         options={{header: () => null}}
       />
     </Stack.Navigator>

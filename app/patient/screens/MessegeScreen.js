@@ -32,9 +32,27 @@ const MessageScreen = ({navigation, route}) => {
   const [ApprovedChats, setApprovedChats] = useState([]);
   const [PendingChats, setPendingChats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [packageData, setPackageData] = useState(0);
 
   const onSelectSwitch = value => {
     setRequests(value);
+  };
+
+  const getPackage = async () => {
+    // console.log(route.params ? route.params.userId : user.uid);
+    await firestore()
+      .collection('packages')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setPackageData(documentSnapshot.data().seconds);
+          // console.log(packageData);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 
   useLayoutEffect(() => {
@@ -69,7 +87,7 @@ const MessageScreen = ({navigation, route}) => {
         </View>
       ),
     });
-  }, [userData]);
+  }, [userData, packageData]);
 
   const getUser = async () => {
     await firestore()
@@ -85,6 +103,7 @@ const MessageScreen = ({navigation, route}) => {
 
   useEffect(() => {
     getUser();
+    getPackage();
     const APPROVED = firestore()
       .collection('session')
       .where('patientEmail', '==', user.email)
@@ -104,7 +123,7 @@ const MessageScreen = ({navigation, route}) => {
         ),
       );
     return APPROVED, PENDING;
-  }, [navigation]);
+  }, [navigation, packageData]);
 
   const enterChat = (
     id,
@@ -116,16 +135,35 @@ const MessageScreen = ({navigation, route}) => {
     patientName,
     isRequested,
   ) => {
-    navigation.navigate('Chat', {
-      id,
-      professionalName,
-      professionalAvatar,
-      profEmail,
-      patientEmail,
-      patientAvatar,
-      patientName,
-      isRequested,
-    });
+    if (packageData >= 1) {
+      navigation.navigate('Chat', {
+        id,
+        professionalName,
+        professionalAvatar,
+        profEmail,
+        patientEmail,
+        patientAvatar,
+        patientName,
+        isRequested,
+      });
+    } else {
+      Alert.alert(
+        'You need to have a plan',
+        'if you want to choose a session you may press proceed otherwise you can cancel',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed!'),
+            style: 'cancel',
+          },
+          {
+            text: 'Confirm',
+            onPress: () => navigation.navigate('sessionPlan'),
+          },
+        ],
+        {cancelable: false},
+      );
+    }
   };
 
   const onPendingDelete = (

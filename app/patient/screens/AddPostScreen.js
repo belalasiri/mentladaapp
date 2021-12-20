@@ -1,4 +1,10 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import {
   View,
   Text,
@@ -28,7 +34,8 @@ import storage from '@react-native-firebase/storage';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import font from '../../config/font';
 import {Avatar} from 'react-native-elements';
-import {windowHeight} from '../../utils/Dimentions';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import Spacer from '../../config/components/Home/Spacer';
 
 const AddPostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -64,7 +71,7 @@ const AddPostScreen = ({navigation, route}) => {
       includeBase64: true,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
         setImage(imageUri);
       })
@@ -181,89 +188,161 @@ const AddPostScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.Container}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        keyboardVerticalOffset={80}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <>
-            <ScrollView>
-              <StatusBar
-                barStyle="dark-content"
-                translucent
-                backgroundColor="rgba(0,0,0,0)"
-              />
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+          }}>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+            {uploading ? (
+              <StatusWrapper>
+                <ActivityIndicator size="large" color="#b283e4" />
+                <Text>{transferred} % completed!</Text>
+              </StatusWrapper>
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={submitPost}>
+                <Text style={styles.buttonText}>Post</Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
-              <View style={styles.headerContainer}>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={onCancel}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </TouchableOpacity>
-                {uploading ? (
-                  <StatusWrapper>
-                    <ActivityIndicator size="large" color="#b283e4" />
-                    <Text>{transferred} % completed!</Text>
-                  </StatusWrapper>
-                ) : (
-                  <TouchableOpacity style={styles.button} onPress={submitPost}>
-                    <Text style={styles.buttonText}>Post</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+          <Spacer size={10} />
 
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
+              <View style={{paddingTop: 10, paddingLeft: 3}}></View>
               <View style={styles.newPostContainer}>
-                <Avatar
-                  rounded
-                  size={50}
-                  source={{
-                    uri: userData
-                      ? userData.userImg ||
-                        'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                      : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-                  }}
-                />
-
                 <View style={styles.textInputContainer}>
                   <TextInput
-                    placeholder="What's on your mind?"
+                    placeholder="What it is in your mind?"
                     multiline
                     value={post}
                     onChangeText={content => setPost(content)}
                     style={styles.postInput}
                   />
+                </View>
+              </View>
+            </View>
 
-                  {image != null ? (
+            <View style={{justifyContent: 'center', paddingTop: 20}}>
+              {image != null ? (
+                <View
+                  style={{
+                    backgroundColor: colors.w,
+                    width: windowWidth - 40,
+                    height: windowHeight / 4 + 40,
+                    borderRadius: 7,
+                    justifyContent: 'center',
+                  }}>
+                  <View
+                    style={{
+                      width: windowWidth - 60,
+                      alignSelf: 'center',
+                      height: windowHeight / 4 + 20,
+                      borderRadius: 7,
+                    }}>
                     <Image
                       source={{uri: image}}
                       style={{
-                        height: windowHeight / 2,
-                        // height: 500,
-                        width: '100%',
-                        resizeMode: 'cover',
-                        borderRadius: 10,
+                        width: windowWidth - 60,
+                        height: windowHeight / 4 + 20,
+                        borderRadius: 7,
+                        resizeMode: 'contain',
                       }}
                     />
-                  ) : null}
+                  </View>
                 </View>
+              ) : null}
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  marginVertical: 10,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colors.w,
+                    borderRadius: 7,
+                    alignItems: 'center',
+                  }}
+                  onPress={takePhotoFromCamera}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      paddingHorizontal: 33,
+                    }}>
+                    <Icon
+                      name="camera-outline"
+                      style={{
+                        color: '#a076cd',
+                        paddingRight: 10,
+                      }}
+                      size={20}
+                    />
+                    <Text
+                      style={{
+                        paddingVertical: 5,
+                        color: '#a076cd',
+                        fontFamily: font.title,
+                        paddingBottom: 7,
+                        fontSize: 14,
+                      }}>
+                      Take Photo
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colors.w,
+                    borderRadius: 7,
+                    alignItems: 'center',
+                  }}
+                  onPress={choosePhotoFromLibrary}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      paddingHorizontal: 33,
+                    }}>
+                    <Icon
+                      name="cloud-upload-outline"
+                      style={{
+                        color: '#52ad8c',
+                        paddingRight: 10,
+                      }}
+                      size={20}
+                    />
+                    <Text
+                      style={{
+                        paddingVertical: 5,
+                        color: '#52ad8c',
+                        fontFamily: font.title,
+                        paddingBottom: 7,
+                        fontSize: 14,
+                      }}>
+                      From Library
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </ScrollView>
-          </>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-      <ActionButton buttonColor={colors.primary}>
-        <ActionButton.Item
-          buttonColor="#4ebebb"
-          title="Take Photo"
-          onPress={takePhotoFromCamera}>
-          <Icon name="camera-outline" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-        <ActionButton.Item
-          buttonColor="#48977a"
-          title="Choose Photo"
-          onPress={choosePhotoFromLibrary}>
-          <Icon name="md-images-outline" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-      </ActionButton>
+            </View>
+          </ScrollView>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -271,9 +350,32 @@ const AddPostScreen = ({navigation, route}) => {
 export default AddPostScreen;
 
 const styles = StyleSheet.create({
+  sellectContainer: {
+    // flex: 1,
+    // backgroundColor: '#fff',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // marginVertical: 10,
+    flex: 1,
+    marginTop: 10,
+    flexDirection: 'row',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: colors.empty,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  pickerStyles: {
+    width: '100%',
+    // color: colors.subtext,
+  },
+  pickerStylesTest: {
+    width: '100%',
+    color: colors.w,
+  },
+
   Container: {
     flex: 1,
-    // alignItems: 'center',
     backgroundColor: '#fff',
     padding: 15,
   },
@@ -311,8 +413,12 @@ const styles = StyleSheet.create({
   },
   newPostContainer: {
     flex: 1,
-    paddingTop: 30,
+    marginTop: 10,
     flexDirection: 'row',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: colors.empty,
+    alignContent: 'center',
   },
   textInputContainer: {
     flex: 1,
@@ -326,7 +432,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     color: colors.subtext,
   },
-
   // actionButtonIcon: {
   //   fontSize: 20,
   //   height: 22,

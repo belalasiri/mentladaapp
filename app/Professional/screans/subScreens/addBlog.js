@@ -34,6 +34,7 @@ import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import colors from '../../../config/colors';
 import font from '../../../config/font';
 import Spacer from '../../../config/components/Home/Spacer';
+import {StatusWrapper} from '../../../patient/styles/AddPost';
 
 const addBlog = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -88,6 +89,7 @@ const addBlog = ({navigation, route}) => {
         }
       });
   };
+
   const onCancel = () => {
     navigation.goBack();
     ToastAndroid.showWithGravityAndOffset(
@@ -98,6 +100,7 @@ const addBlog = ({navigation, route}) => {
       200,
     );
   };
+
   const getProf = async () => {
     await firestore()
       .collection('Professional')
@@ -225,9 +228,16 @@ const addBlog = ({navigation, route}) => {
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={submitBlog}>
-              <Text style={styles.buttonText}>Post</Text>
-            </TouchableOpacity>
+            {uploading ? (
+              <StatusWrapper>
+                <ActivityIndicator size="large" color="#b283e4" />
+                <Text>{transferred} % completed!</Text>
+              </StatusWrapper>
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={submitBlog}>
+                <Text style={styles.buttonText}>Post</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <Spacer size={10} />

@@ -6,46 +6,143 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  StatusBar,
   SafeAreaView,
+  ImageBackground,
+  TextInput,
 } from 'react-native';
+import {AuthContext} from '../../../navigation/AuthProvider';
+
 import ImagePicker from 'react-native-image-crop-picker';
 
+import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import FormButton from '../../../config/components/FormButton';
 import Input from '../../../config/components/FormInput';
 import colors from '../../../config/colors';
 import font from '../../../config/font';
 
-import {AuthContext} from '../../../navigation/AuthProvider';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ProfSignup = ({navigation}) => {
   const [fname, setfName] = useState();
   const [lname, setlName] = useState();
   const [email, setEmail] = useState();
+  const [specialization, setSpecialization] = useState();
   const [License, setLicense] = useState();
   const [Experience, setExperience] = useState();
   const [Specialty, setSpecialty] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const [image, setImage] = useState();
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
   // const [BirthDate, setBirthDate] = useState();
   // const [certificate, setCertificate] = useState();
 
   const {ProfRegister} = useContext(AuthContext);
 
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to Take the imag you taked. Please try again',
+          );
+        }
+      });
+  };
+
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+      cropping: true,
+      mediaType: 'photo',
+      includeBase64: true,
+    })
+      .then(image => {
+        // console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to get the image/video you selected. Please try again',
+          );
+        }
+      });
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <View style={styles.container}>
         <View style={styles.Heder}>
           <View style={styles.Left} />
           <View style={styles.Right} />
         </View>
-        <View style={{paddingHorizontal: 20}}>
-          <View
-            style={{alignItems: 'center', paddingVertical: 40, paddingTop: 80}}>
-            <Text style={styles.text}>Create account</Text>
-          </View>
+
+        <View style={[styles.fullLogo, {borderRadius: 70}]}>
+          {image ? (
+            <ImageBackground
+              source={{uri: image}}
+              style={{height: 130, width: 130}}
+              blurRadius={2}
+              imageStyle={{borderRadius: 70}}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <TouchableOpacity onPress={choosePhotoFromLibrary}>
+                  <MaterialCommunityIcons
+                    name="camera"
+                    size={35}
+                    color="#fff"
+                    style={{
+                      opacity: 0.7,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      borderRadius: 10,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          ) : (
+            <TouchableOpacity onPress={choosePhotoFromLibrary}>
+              <ImageBackground
+                source={require('../../../assets/image/upload.png')}
+                style={{height: 130, width: 130}}
+                blurRadius={2}
+                imageStyle={{borderRadius: 70}}></ImageBackground>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* </View> */}
+        <View style={{paddingTop: 10}}>
+          <Text style={[styles.text, {width: windowWidth / 1}]}>
+            Create patient account
+          </Text>
           <Input
             labelValue={fname}
             onChangeText={ProfName => setfName(ProfName)}
@@ -69,6 +166,36 @@ const ProfSignup = ({navigation}) => {
             autoCapitalize="none"
             autoCorrect={false}
           />
+
+          <View style={styles.inputContainer}>
+            <View style={styles.iconStyle}>
+              <MaterialCommunityIcons
+                name="certificate-outline"
+                size={24}
+                color="#353948"
+              />
+            </View>
+            <TextInput
+              value={specialization}
+              placeholder="Your Specialization"
+              onChangeText={ProfSpecialization =>
+                setSpecialization(ProfSpecialization)
+              }
+              style={styles.input}
+              numberOfLines={1}
+              placeholderTextColor="#707070"
+            />
+          </View>
+          {/* <Input
+            labelValue={specialization}
+            onChangeText={ProfSpecialization =>
+              setSpecialization(ProfSpecialization)
+            }
+            placeholderText="Your Specialization"
+            iconType="Trophy"
+            keyboardType="default"
+          /> */}
+
           <Input
             labelValue={License}
             onChangeText={ProfLicense => setLicense(ProfLicense)}
@@ -139,18 +266,40 @@ const ProfSignup = ({navigation}) => {
                 fname,
                 lname,
                 email,
+                specialization,
                 License,
                 Experience,
                 Specialty,
                 password,
+                image,
               )
             }
           />
-
+          {/* OR */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 20,
+            }}>
+            <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
+            <View>
+              <Text
+                style={{
+                  width: 50,
+                  textAlign: 'center',
+                  color: '#353948',
+                  fontFamily: font.title,
+                }}>
+                OR
+              </Text>
+            </View>
+            <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
+          </View>
           {/* Have an account? Sign In */}
           <View style={[styles.textPrivate, {marginBottom: 30}]}>
             <Text style={styles.color_textPrivate}>Have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ProfLogin')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text
                 style={[
                   styles.color_textPrivate,
@@ -161,8 +310,8 @@ const ProfSignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -172,6 +321,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    padding: 20,
+    paddingTop: 50,
     backgroundColor: '#fff',
   },
   fullLogo: {
@@ -245,87 +396,35 @@ const styles = StyleSheet.create({
     right: -100,
     top: -200,
   },
+  inputContainer: {
+    marginTop: 5,
+    marginBottom: 10,
+    width: '100%',
+    height: windowHeight / 15,
+    borderColor: 'rgba(158, 150, 150, .5)',
+    borderRadius: 7,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f7f3fc',
+  },
+  iconStyle: {
+    padding: 10,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRightColor: 'rgba(158, 150, 150, .5)',
+    borderRightWidth: 1,
+    width: 50,
+  },
+  input: {
+    padding: 10,
+    paddingBottom: 10,
+    flex: 1,
+    fontSize: 16,
+    color: '#353948',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: font.subtitle,
+  },
 });
-
-// //  <View>
-// const [image, setImage] = useState();
-
-// const choosePhotoFromLibrary = () => {
-//   ImagePicker.openPicker({
-//     width: 1200,
-//     height: 780,
-//     cropping: true,
-//   }).then(image => {
-//     console.log(image);
-//     const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-//     setImage(imageUri);
-//   });
-// };
-
-// const uploadImage = async () => {
-//   if (image == null) {
-//     return null;
-//   }
-//   const uploadUri = image;
-//   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
-//   // Add timestamp to File Name
-//   const extension = filename.split('.').pop();
-//   const name = filename.split('.').slice(0, -1).join('.');
-//   filename = name + Date.now() + '.' + extension;
-
-//   setUploading(true);
-//   setTransferred(0);
-
-//   const storageRef = storage().ref(`photos/${filename}`);
-//   const task = storageRef.putFile(uploadUri);
-
-//   // Set transferred state
-//   task.on('state_changed', taskSnapshot => {
-//     console.log(
-//       `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-//     );
-
-//     setTransferred(
-//       Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
-//         100,
-//     );
-//   });
-
-//   try {
-//     await task;
-
-//     const url = await storageRef.getDownloadURL();
-
-//     setUploading(false);
-//     setImage(null);
-
-//     return url;
-//   } catch (e) {
-//     console.log(e);
-//     return null;
-//   }
-// };
-
-//    {/* <TouchableOpacity
-//           style={styles.ProfilePhotoContainer}
-//           onPress={choosePhotoFromLibrary} >
-//           {image ? (
-//             <Image style={styles.ProfilePhoto} source={{uri: image}} />
-//           ) : (
-//             <View style={styles.DefaultProfilePhoto}>
-//               <Icon name="add" size={25} />
-//             </View>
-//           )}
-//         </TouchableOpacity> */}
-//    {/* <View style={styles.fullLogo}>
-//           <Image
-//             source={{
-//               uri: 'https://i.ibb.co/pv5S0nm/logo.png',
-//             }}
-//             style={styles.logo}
-//             labelValue={avatar}
-//             onChangeText={ProfAvatar => setfavatar(ProfAvatar)}
-//           />
-//         </View> */}
-//  {/* </View>; */}

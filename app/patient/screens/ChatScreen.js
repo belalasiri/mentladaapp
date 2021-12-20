@@ -93,8 +93,6 @@ const ChatScreen = ({route, profsData, navigation}) => {
     fetcMessages();
   }, [allMessages]);
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View

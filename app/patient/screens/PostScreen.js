@@ -11,6 +11,7 @@ import {
   Modal,
   Button,
   ToastAndroid,
+  Image,
 } from 'react-native';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -20,10 +21,12 @@ import {AuthContext} from '../../navigation/AuthProvider';
 import colors from '../../config/colors';
 import font from '../../config/font';
 
+import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {Avatar} from 'react-native-elements';
 import CustomPost from '../../config/components/CustomPost';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
 
 const PostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -40,14 +43,13 @@ const PostScreen = ({navigation, route}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Mentlada Social',
-      headerStyle: {backgroundColor: '#e8daf7', elevation: 0},
+      headerStyle: {elevation: 0},
       headerTitleStyle: {
         color: colors.text,
         fontFamily: font.title,
-        textTransform: 'uppercase',
       },
       headerTitleAlign: 'center',
-      headerTintColor: '#000',
+      headerTintColor: colors.text,
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
           <TouchableOpacity
@@ -74,7 +76,7 @@ const PostScreen = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('AddPost');
             }}>
-            <Feather name="plus-square" size={25} color={colors.text} />
+            <Icon name="create-outline" size={25} color={colors.subtext} />
           </TouchableOpacity>
         </View>
       ),
@@ -84,7 +86,7 @@ const PostScreen = ({navigation, route}) => {
   const getUser = async () => {
     await firestore()
       .collection('users')
-      .doc(route.params ? route.params.userId : user.uid)
+      .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
@@ -200,27 +202,70 @@ const PostScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <FlatList
-        initialNumToRender={7}
-        data={posts}
-        keyExtractor={item => item.id}
-        renderItem={({id, item}) =>
-          item.userId === auth().currentUser.uid ? (
-            <CustomPost
-              item={item}
-              onPress={() => navigation.navigate('Profile')}
-              onDelete={handleDelete}
-            />
-          ) : (
-            <CustomPost
-              item={item}
-              onPress={() =>
-                navigation.navigate('HomeProfile', {userId: item.userId})
-              }
-            />
-          )
-        }
-      />
+      {posts?.[0] ? (
+        <FlatList
+          initialNumToRender={7}
+          data={posts}
+          keyExtractor={item => item.id}
+          renderItem={({id, item}) =>
+            item.userId === auth().currentUser.uid ? (
+              <CustomPost
+                item={item}
+                onPress={() => navigation.navigate('Profile')}
+                onDelete={handleDelete}
+              />
+            ) : (
+              <CustomPost
+                item={item}
+                onPress={() =>
+                  navigation.navigate('HomeProfile', {userId: item.userId})
+                }
+              />
+            )
+          }
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../../assets/image/image.png')}
+            style={{
+              height: windowHeight / 3 + 20,
+              width: windowWidth / 2 + 20,
+            }}
+          />
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: font.title,
+                color: colors.text,
+              }}>
+              Posts list
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                fontFamily: font.subtitle,
+                color: colors.subtext,
+                textAlign: 'center',
+                width: windowWidth - 120,
+                lineHeight: 27,
+              }}>
+              When any patient post a post, that post will appear here.
+            </Text>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

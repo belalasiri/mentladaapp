@@ -18,7 +18,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Login</Text>
+      <Text style={styles.text}>Patient's Login</Text>
 
       <FormInput
         labelValue={email}
@@ -39,9 +39,9 @@ const LoginScreen = () => {
       />
 
       {/* Forgot Password? */}
-      <TouchableOpacity style={styles.forgotButton}>
+      {/* <TouchableOpacity style={styles.forgotButton}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <FormButton
         disabled={!email}
@@ -55,7 +55,7 @@ const LoginScreen = () => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          marginBottom: 10,
+          // marginBottom: 10,
           marginTop: 20,
         }}>
         <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
@@ -66,7 +66,7 @@ const LoginScreen = () => {
         </View>
         <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
       </View>
-
+      {/* 
       {Platform.OS === 'android' ? (
         <View>
           <SocialButton
@@ -85,7 +85,7 @@ const LoginScreen = () => {
             onPress={() => fbLogin()}
           />
         </View>
-      ) : null}
+      ) : null} */}
     </View>
   );
 };
@@ -132,22 +132,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 10,
     color: '#B283E4',
-  },
-  navButtonTextcreateAccount: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 10,
-    color: '#353948',
-  },
-  textPrivate: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 35,
-    justifyContent: 'center',
-  },
-  color_textPrivate: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: 'grey',
   },
 });

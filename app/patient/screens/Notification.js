@@ -104,6 +104,41 @@ const Content = ({HederText, Body, professionalExperience}) => {
 const Notification = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [approved, setApproved] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  //// patients who are aproved for a session
+  let approvedList = [];
+  const fetchapprovedUsers = async () => {
+    await firestore()
+      .collection('session')
+      .where('approved', '==', 'approved')
+      .where('profEmail', '==', user.email)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          approvedList.push({
+            id: doc.id,
+            approved: doc.data().approved,
+            isRequested: doc.data().isRequested,
+            patientName: doc.data().patientName,
+            patientEmail: doc.data().patientEmail,
+            patientAvatar: doc.data().patientAvatar,
+            professionalName: doc.data().professionalName,
+            profEmail: doc.data().profEmail,
+            professionalAvatar: doc.data().professionalAvatar,
+          });
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    setApproved(approvedList);
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
 
   const getUser = async () => {
     await firestore()
@@ -118,6 +153,7 @@ const Notification = ({navigation, route}) => {
   };
 
   useEffect(() => {
+    fetchapprovedUsers();
     getUser();
   }, [user]);
 
@@ -133,8 +169,9 @@ const Notification = ({navigation, route}) => {
         onBacePress={() => navigation.goBack()}
         onProfilePress={() => navigation.navigate('Profile')}
       />
+
       <TouchableOpacity
-        onPress={() => navigation.navigate('ProfProfile')}
+        // onPress={() => navigation.navigate('ProfProfile')}
         onPress={() => navigation.navigate('sessionPlan')}>
         <LinearGradient
           colors={['#f7f3fc', '#fff']}
@@ -170,6 +207,50 @@ const Notification = ({navigation, route}) => {
           </View>
         </LinearGradient>
       </TouchableOpacity>
+
+      <FlatList
+        data={approved}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            // onPress={() => navigation.navigate('ProfProfile')}
+            onPress={() => navigation.navigate('sessionPlan')}>
+            <LinearGradient
+              colors={['#f7f3fc', '#fff']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 15,
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                padding: 10,
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  marginHorizontal: 20,
+                }}>
+                <Content
+                  HederText="You have been approved 🎉"
+                  Body="Your request for a consultation with one of our profitionals has been approved, plese proceed with the payment"
+                />
+              </View>
+              <View
+                style={{
+                  // flex: 1,
+                  alignItems: 'flex-end',
+                  justifyContent: 'center',
+                }}>
+                <Icon name="chevron-forward" size={26} color="#a076cd" />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+      />
     </SafeAreaView>
   );
 };

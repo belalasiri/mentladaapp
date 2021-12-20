@@ -22,8 +22,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import colors from '../../config/colors';
 import font from '../../config/font';
-import {windowWidth} from '../../utils/Dimentions';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import BlogSwitch from '../../config/components/BlogSwitch';
+
 const BlogScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
@@ -106,24 +107,18 @@ const BlogScreen = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'BLOG',
-      headerStyle: {
-        // backgroundColor: 'transparent',
-        backgroundColor: '#e8daf7',
-        elevation: 0,
-        shadowOpacity: 0,
+      title: 'Mentlada Blog',
+      headerStyle: {elevation: 0},
+      headerTitleStyle: {
+        color: colors.text,
+        fontFamily: font.title,
+        // textTransform: 'uppercase',
       },
-      headerTitleStyle: {color: '#000', fontFamily: font.title},
-
       headerTitleAlign: 'center',
-
+      headerTintColor: colors.text,
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-              // navigation.openDrawer();
-            }}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => {}}>
             <Avatar
               rounded
               source={{
@@ -167,6 +162,7 @@ const BlogScreen = ({navigation, route}) => {
             Content: doc.data().Content,
             blogtImg: doc.data().blogtImg,
             blogTime: doc.data().blogTime,
+            Category: doc.data().Category,
           })),
         ),
       );
@@ -191,81 +187,127 @@ const BlogScreen = ({navigation, route}) => {
       />
       {requests == 1 && (
         <View style={{flex: 1}}>
-          <FlatList
-            data={allPosts}
-            keyExtractor={item => item.id}
-            renderItem={({id, item}) => (
-              <ListItem
-                onPress={() =>
-                  navigation.navigate('BlogContent', {
-                    Blog: item.Blog,
-                    Content: item.Content,
-                    blogtImg: item.blogtImg,
-                    professionalAvatar: item.professionalAvatar,
-                    professionalName: item.professionalName,
-                    blogTime: item.blogTime,
-                  })
-                }>
-                <View
-                  style={{
-                    width: windowWidth / 1 - 30,
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <LinearGradient
-                    colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                    start={{x: 0, y: 1}}
-                    end={{x: 1, y: 0}}
+          {allPosts?.[0] ? (
+            <FlatList
+              data={allPosts}
+              keyExtractor={item => item.id}
+              renderItem={({id, item}) => (
+                <ListItem
+                  onPress={() =>
+                    navigation.navigate('BlogContent', {
+                      id: item.id,
+                      data: item.data,
+                      Blog: item.Blog,
+                      Content: item.Content,
+                      blogtImg: item.blogtImg,
+                      professionalAvatar: item.professionalAvatar,
+                      professionalName: item.professionalName,
+                      Category: item.Category,
+                      blogTime: item.blogTime,
+                    })
+                  }>
+                  <View
                     style={{
-                      flexDirection: 'row',
-                      borderRadius: 7,
+                      width: windowWidth / 1 - 30,
+                      alignSelf: 'center',
+                      justifyContent: 'center',
                     }}>
-                    <View style={{width: 100}}>
-                      <Image
-                        source={{uri: item.blogtImg}}
-                        style={{
-                          width: 100,
-                          height: 150,
-                          borderTopLeftRadius: 7,
-                          borderBottomLeftRadius: 7,
-                        }}
-                      />
-                    </View>
-                    <ListItem.Content
+                    <LinearGradient
+                      colors={['#f0e6fa', '#fff', '#f7f3fc']}
+                      start={{x: 0, y: 1}}
+                      end={{x: 1, y: 0}}
                       style={{
-                        alignItems: 'flex-start',
-                        justifyContent: 'center',
-                        marginLeft: 20,
-                        paddingRight: 3,
-                        paddingVertical: 10,
+                        flexDirection: 'row',
+                        borderRadius: 7,
                       }}>
-                      <ListItem.Title
+                      <View style={{width: 100}}>
+                        <Image
+                          source={{uri: item.blogtImg}}
+                          style={{
+                            width: 100,
+                            height: 150,
+                            borderTopLeftRadius: 7,
+                            borderBottomLeftRadius: 7,
+                          }}
+                        />
+                      </View>
+                      <ListItem.Content
                         style={{
-                          fontSize: 15,
-                          color: colors.text,
-                          fontFamily: font.title,
+                          alignItems: 'flex-start',
+                          justifyContent: 'center',
+                          marginLeft: 20,
+                          paddingRight: 3,
+                          paddingVertical: 10,
                         }}>
-                        {item.Blog}
-                      </ListItem.Title>
-                      <ListItem.Subtitle
-                        style={{
-                          fontSize: 13,
-                          color: colors.subtext,
-                          fontFamily: font.subtitle,
-                          paddingRight: 5,
-                          paddingVertical: 7,
-                        }}
-                        numberOfLines={3}
-                        ellipsizeMode="tail">
-                        {item.Content}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                  </LinearGradient>
-                </View>
-              </ListItem>
-            )}
-          />
+                        <ListItem.Title
+                          style={{
+                            fontSize: 15,
+                            color: colors.text,
+                            fontFamily: font.title,
+                          }}>
+                          {item.Blog}
+                        </ListItem.Title>
+                        <ListItem.Subtitle
+                          style={{
+                            fontSize: 13,
+                            color: colors.subtext,
+                            fontFamily: font.subtitle,
+                            paddingRight: 5,
+                            paddingVertical: 7,
+                          }}
+                          numberOfLines={3}
+                          ellipsizeMode="tail">
+                          {item.Content}
+                        </ListItem.Subtitle>
+                      </ListItem.Content>
+                      <ListItem.Chevron />
+                    </LinearGradient>
+                  </View>
+                </ListItem>
+              )}
+            />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={require('../../assets/image/image.png')}
+                style={{
+                  height: windowHeight / 3 + 20,
+                  width: windowWidth / 2 + 20,
+                }}
+              />
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: font.title,
+                    color: colors.text,
+                  }}>
+                  Blog list
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: font.subtitle,
+                    color: colors.subtext,
+                    textAlign: 'center',
+                    width: windowWidth - 120,
+                    lineHeight: 27,
+                  }}>
+                  When any professional post a Blog, The blog will appear here.
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
       )}
       {requests == 2 && (
@@ -303,8 +345,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   boxGred: {
-    // marginHorizontal: 15,
-    // marginVertical: 5,
     alignItems: 'center',
     borderRadius: 7,
     height: 180,
@@ -318,13 +358,13 @@ const styles = StyleSheet.create({
     width: windowWidth / 2 - 30,
     borderRadius: 7,
     justifyContent: 'center',
-    elevation: 2,
+    elevation: 1,
     alignItems: 'center',
   },
   card: {
     height: 280,
     width: windowWidth / 2 - 30,
-    elevation: 4,
+    elevation: 1,
     marginRight: 10,
     borderRadius: 7,
     backgroundColor: '#fff',

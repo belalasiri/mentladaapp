@@ -112,7 +112,7 @@ export const AuthProvider = ({children}) => {
           }
         },
 
-        register: (fname, lname, email, password, confirmPassword) => {
+        register: (fname, lname, email, password, image, confirmPassword) => {
           auth()
             .createUserWithEmailAndPassword(email, password)
             .then(result => {
@@ -130,7 +130,7 @@ export const AuthProvider = ({children}) => {
                       email: email,
                       role: 'patient',
                       createdAt: firestore.Timestamp.fromDate(new Date()),
-                      userImg: null,
+                      userImg: image,
                     });
                 })
                 .catch(e => {
@@ -148,50 +148,54 @@ export const AuthProvider = ({children}) => {
             });
         },
 
-        ProfRegister: async (
+        ProfRegister: (
           fname,
           lname,
           email,
+          specialization,
           License,
           Experience,
           Specialty,
           password,
-          confirmPassword,
+          image,
         ) => {
-          try {
-            await auth()
-              .createUserWithEmailAndPassword(email, password)
-              .then(result => {
-                result.user.updateProfile({
+          auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(result => {
+              result.user
+                .updateProfile({
                   displayName: 'professional',
+                })
+                .then(() => {
+                  firestore()
+                    .collection('Professional')
+                    .doc(auth().currentUser.uid)
+                    .set({
+                      fname: fname,
+                      lname: lname,
+                      email: email,
+                      specialization: specialization,
+                      License: License,
+                      Experience: Experience,
+                      Specialty: Specialty,
+                      userImg: image,
+                      role: 'professional',
+                      createdAt: firestore.Timestamp.fromDate(new Date()),
+                    });
+                })
+                .catch(e => {
+                  console.log(e);
+                })
+                .catch(error => {
+                  console.log(
+                    'Something went wrong with added user to firestore: ',
+                    error,
+                  );
                 });
-                firestore()
-                  .collection('Professional')
-                  .doc(auth().currentUser.uid)
-                  .set({
-                    fname: fname,
-                    lname: lname,
-                    email: email,
-                    License: License,
-                    Experience: Experience,
-                    Specialty: Specialty,
-                    role: 'professional',
-                    createdAt: firestore.Timestamp.fromDate(new Date()),
-                    userImg: null,
-                  })
-                  .catch(error => {
-                    console.log(
-                      'Something went wrong with added user to firestore: ',
-                      error,
-                    );
-                  });
-              })
-              .catch(error => {
-                console.log('Something went wrong with sign up: ', error);
-              });
-          } catch (e) {
-            console.log(e);
-          }
+            })
+            .catch(error => {
+              console.log('Something went wrong with sign up: ', error);
+            });
         },
 
         logout: async () => {

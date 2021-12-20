@@ -117,7 +117,9 @@ const ProfProfile = ({route, item, navigation}) => {
                   fontFamily: font.subtitle,
                   color: colors.primary,
                 }}>
-                {profData ? profData.Specialty || 'Mentlada' : 'Spacialist'}
+                {profData
+                  ? profData.specialization || 'Mentlada'
+                  : 'Spacialist'}
               </Text>
             </View>
           </View>

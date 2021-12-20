@@ -23,57 +23,15 @@ import {windowWidth} from '../../utils/Dimentions';
 //Libraries
 import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
-import {ListItem} from 'react-native-elements';
+import {Avatar, ListItem} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-
-const Heder = ({onBacePress, onAddPress, name}) => {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        // marginTop: 5,
-        alignItems: 'center',
-      }}>
-      {/* GoBack */}
-      <TouchableOpacity
-        style={{
-          width: 45,
-          height: 45,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        onPress={onBacePress}>
-        <Icon name="chevron-back" size={25} color={colors.text} />
-      </TouchableOpacity>
-
-      {/* Title */}
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{color: colors.text, fontSize: 20, fontFamily: font.title}}>
-          {name}
-        </Text>
-      </View>
-
-      {/* Profile */}
-      <View style={{marginRight: 20}}>
-        <TouchableOpacity activeOpacity={0.5} onPress={onAddPress}>
-          <Feather name="plus-square" size={25} color={colors.text} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
 
 const Details = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [ProfessionalData, setProfessionalData] = useState(null);
+  const [patientData, setPatientData] = useState();
+  const [userData, setUserData] = useState(null);
+
   const [GeneralBlogs, setGeneralBlogs] = useState(null);
   const [BipolarBlogs, setBipolarBlogs] = useState(null);
   const [StressBlogs, setStressBlogs] = useState(null);
@@ -82,6 +40,33 @@ const Details = ({navigation, route}) => {
   const [AnxietyBlogs, setAnxietyBlogs] = useState(null);
   const [SchizophentaBlogs, setSchizophentaBlogs] = useState(null);
   const Categories = route.params;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: Categories.name,
+
+      headerStyle: {elevation: 0},
+      headerTitleStyle: {
+        color: colors.text,
+        fontFamily: font.title,
+      },
+      headerTitleAlign: 'center',
+      headerTintColor: colors.text,
+
+      headerLeft: () => (
+        <View style={{marginLeft: 10}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Icon name="chevron-back" size={25} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, []);
+
   const getProfessional = async () => {
     await firestore()
       .collection('Professional')
@@ -93,8 +78,10 @@ const Details = ({navigation, route}) => {
         }
       });
   };
+
   useEffect(() => {
     getProfessional();
+    getUser();
     const fetcGeneralBlogs = firestore()
       .collection('Blogs')
       .where('Category', '==', 'GENERAL')
@@ -239,13 +226,20 @@ const Details = ({navigation, route}) => {
     );
   }, [navigation]);
 
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <Heder
-        name={Categories.name}
-        onBacePress={() => navigation.goBack()}
-        onAddPress={() => navigation.navigate('addBlog')}
-      />
       <View style={{flex: 1}}>
         {Categories.name == 'GENERAL' ? (
           <>
