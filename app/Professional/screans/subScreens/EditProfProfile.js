@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
-  SafeAreaView,
   TouchableWithoutFeedback,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -21,14 +20,9 @@ import {AuthContext} from '../../..//navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-crop-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Fumi} from 'react-native-textinput-effects';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import {windowWidth} from '../../../utils/Dimentions';
 import font from '../../../config/font';
@@ -253,6 +247,7 @@ const EditProfProfile = ({navigation}) => {
                     </View>
                   )}
                 </TouchableOpacity>
+
                 <View
                   style={{
                     paddingTop: 5,
@@ -278,6 +273,19 @@ const EditProfProfile = ({navigation}) => {
                   </Text>
                 </View>
 
+                <View style={{}}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      lineHeight: 22,
+                      fontSize: 13,
+                      fontFamily: font.subtitle,
+                    }}>
+                    Please complete all required fields in order for the
+                    administrator to authenticate your account and provide you
+                    with the verified mark.
+                  </Text>
+                </View>
                 {/* f.name, lname, bio, phone, contry, city */}
                 <View style={styles.action}>
                   <AntDesign name="user" color="#707070" size={20} />

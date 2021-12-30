@@ -121,25 +121,6 @@ const PostScreen = ({navigation, route}) => {
     return fetchPosts;
   }, [route, navigation]);
 
-  const handleDelete = postId => {
-    Alert.alert(
-      'Delete post',
-      'Are you sure you want to delete this post?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed!'),
-          style: 'cancel',
-        },
-        {
-          text: 'Confirm',
-          onPress: () => deletePost(postId),
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
   const deletePost = postId => {
     console.log('Current Post Id: ', postId);
     setDeleting(true);
@@ -171,6 +152,26 @@ const PostScreen = ({navigation, route}) => {
           }
         }
       });
+  };
+
+  
+  const handleDelete = postId => {
+    Alert.alert(
+      'Delete post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed!'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => deletePost(postId),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   const deleteFirestoreData = postId => {
@@ -209,11 +210,12 @@ const PostScreen = ({navigation, route}) => {
           keyExtractor={item => item.id}
           renderItem={({id, item}) =>
             item.userId === auth().currentUser.uid ? (
-              <CustomPost
-                item={item}
-                onPress={() => navigation.navigate('Profile')}
-                onDelete={handleDelete}
-              />
+             
+             null // <CustomPost
+              //   item={item}
+              //   onPress={() => navigation.navigate('Profile')}
+              //   onDelete={handleDelete}
+              // />
             ) : (
               <CustomPost
                 item={item}

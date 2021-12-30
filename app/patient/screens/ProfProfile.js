@@ -23,6 +23,8 @@ import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import {ToastAndroid} from 'react-native';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ProfProfile = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -31,6 +33,7 @@ const ProfProfile = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [profPationts, setprofPationts] = useState();
+  const [isVerified, setVerified] = useState(null);
 
   let profList = [];
   const fetchProf = async () => {
@@ -85,8 +88,30 @@ const ProfProfile = ({navigation, route}) => {
     }
   };
 
+  const checkVerified = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setVerified(result.data().Verified);
+          // console.log(result.data().Verified);
+        } else {
+          setVerified('notVerified');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkApproval();
+    checkVerified();
     getUser();
     fetchapprovedPatients();
     fetchProf();
@@ -118,6 +143,8 @@ const ProfProfile = ({navigation, route}) => {
         professionalName: route.params.profName,
         profEmail: route.params.profEmail,
         professionalAvatar: route.params.profAvatar,
+        professionalId: route.params.professionalId,
+        isProfessionalVerified: route.params.Verified,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
@@ -225,15 +252,39 @@ const ProfProfile = ({navigation, route}) => {
 
             {/* Profile name and Specialty */}
             <View style={{alignItems: 'center'}}>
-              <Text
+              <View
                 style={{
-                  fontSize: 16,
-                  fontFamily: font.title,
-                  paddingTop: 10,
-                  color: colors.text,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                {route.params.profName}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: font.title,
+                    paddingTop: 10,
+                    color: colors.text,
+                  }}>
+                  {route.params.profName}
+                </Text>
+                {isVerified == 'notVerified' ? null : isVerified ==
+                  'Verified' ? (
+                  <View
+                    style={{
+                      paddingTop: 13,
+                    }}>
+                    <Image
+                      source={icons.verifiedUser}
+                      style={{
+                        width: 17,
+                        height: 17,
+                        marginLeft: 3,
+                        tintColor: COLORS.primary,
+                      }}
+                    />
+                  </View>
+                ) : null}
+              </View>
               <Text
                 style={{
                   fontSize: 12,
@@ -246,43 +297,79 @@ const ProfProfile = ({navigation, route}) => {
           </View>
 
           {/* Prof info continer */}
-          <View style={styles.ProfCont}>
-            <ProfInfo
-              icon="star"
-              iconColor="#ffde9f"
-              backgroundColor="#fff8ea"
-              Title1="4.98"
-              Title2="Reviews"
-            />
-            <ProfInfo
-              icon="person"
-              iconColor="#67d8af"
-              backgroundColor="#e1f7ef"
-              Title1={profPationts ? profPationts.length || '0' : null}
-              Title2="Patients"
-            />
-            <ProfInfo
-              icon="checkmark-done-circle"
-              iconColor="#61edea"
-              backgroundColor="#dffbfb"
-              Title1={route.params.profExperience}
-              Title2="Experience"
-            />
+          <View style={{flexDirection: 'row', paddingTop: SIZES.padding}}>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.lightyellow]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                flex: 1,
+                margin: 5,
+              }}>
+              <ProfInfo
+                icon="star"
+                iconColor={COLORS.yellow}
+                Title1="4.98"
+                Title2="Reviews"
+              />
+            </LinearGradient>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.lightGreen]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                margin: 5,
+                flex: 1,
+              }}>
+              <ProfInfo
+                icon="person"
+                iconColor="#67d8af"
+                // backgroundColor="#e1f7ef"
+                Title1={profPationts ? profPationts.length || '0' : null}
+                Title2="Patients"
+              />
+            </LinearGradient>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.emerald]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                margin: 5,
+                flex: 1,
+              }}>
+              <ProfInfo
+                icon="checkmark-done-circle"
+                iconColor="#61edea"
+                // backgroundColor="#dffbfb"
+                Title1={route.params.profExperience}
+                Title2="Experience"
+              />
+            </LinearGradient>
           </View>
-          <View style={{paddingTop: 15}}>
+
+          <View style={{paddingTop: 15, paddingHorizontal: 10}}>
             <Text
               style={{
-                fontSize: 16,
-                fontFamily: font.title,
-                color: colors.text,
+                ...FONTS.h4,
+                paddingTop: SIZES.padding,
+                width: SIZES.width / 2 + 30,
+                color: COLORS.secondary,
+                flexWrap: 'wrap',
               }}>
               Professionals for you
             </Text>
             <Text
               style={{
-                fontSize: 13,
-                fontFamily: font.subtitle,
-                color: colors.subtext,
+                ...FONTS.body4,
                 paddingTop: 5,
               }}>
               {route.params.profAbout
@@ -290,37 +377,41 @@ const ProfProfile = ({navigation, route}) => {
                 : 'No deteiles are provided..'}
             </Text>
           </View>
-          <View
+
+          <LinearGradient
+            colors={[COLORS.lightpurple, COLORS.lightGreen]}
+            start={{x: 0, y: 1}}
+            end={{x: 0, y: 0}}
             style={{
-              backgroundColor: '#F5F7F9',
-              marginTop: 15,
+              marginVertical: 5,
+              alignItems: 'center',
               borderRadius: 7,
+              marginTop: 15,
+              padding: 10,
             }}>
-            <View style={{margin: 10, alignItems: 'center'}}>
+            <View style={{margin: SIZES.padding, alignItems: 'center'}}>
               <Icon name="document-text" size={25} color="#6D768E" />
 
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontSize: 15, fontFamily: font.title}}>LPC </Text>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    color: '#B283E4',
-                    fontFamily: font.title,
-                  }}>
+                <Text style={{...FONTS.h5, color: COLORS.secondary}}>LPC </Text>
+                <Text style={{...FONTS.h5, color: COLORS.primary}}>
                   {route.params.profLicense}
                 </Text>
               </View>
-              <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
+              <Text style={{...FONTS.body4, color: COLORS.secondary}}>
                 License
               </Text>
             </View>
-          </View>
+          </LinearGradient>
+
           <View style={{paddingTop: 15}}>
             <Text
               style={{
-                fontSize: 16,
-                fontFamily: font.title,
-                color: colors.text,
+                ...FONTS.h4,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                borderRadius: 7,
+                color: COLORS.secondary,
               }}>
               Specialities
             </Text>
@@ -330,6 +421,7 @@ const ProfProfile = ({navigation, route}) => {
               </ScrollView>
             </View>
           </View>
+
           {isApproved == 'notExist' ? (
             <View style={{paddingBottom: 10}}>
               <FormButton
@@ -373,16 +465,16 @@ const styles = StyleSheet.create({
     zIndex: -100,
   },
   Left: {
-    backgroundColor: colors.secoundary,
+    backgroundColor: COLORS.lightyellow,
     position: 'absolute',
     width: 200,
     height: 200,
     borderRadius: 100,
-    left: -50,
-    top: -50,
+    left: -30,
+    top: -30,
   },
   Right: {
-    backgroundColor: colors.primary,
+    backgroundColor: COLORS.lightpurple,
     position: 'absolute',
     width: 400,
     height: 400,

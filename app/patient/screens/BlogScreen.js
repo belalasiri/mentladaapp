@@ -204,6 +204,7 @@ const BlogScreen = ({navigation, route}) => {
                       professionalName: item.professionalName,
                       Category: item.Category,
                       blogTime: item.blogTime,
+                      professionalId: item.professionalId,
                     })
                   }>
                   <View

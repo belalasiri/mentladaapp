@@ -7,6 +7,7 @@ import {
   Text,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 
 // DataBase
@@ -20,7 +21,7 @@ import font from '../../config/font';
 
 //Libraries
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Avatar} from 'react-native-elements';
+import {Avatar, Button, ThemeProvider} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Heder = ({userImage, onBacePress, onProfilePress}) => {
@@ -73,7 +74,7 @@ const Heder = ({userImage, onBacePress, onProfilePress}) => {
   );
 };
 
-const Content = ({HederText, Body, professionalExperience}) => {
+const Content = ({HederText, Body, professionalExperience, userImage}) => {
   return (
     <>
       <View>
@@ -101,6 +102,15 @@ const Content = ({HederText, Body, professionalExperience}) => {
   );
 };
 
+const theme = {
+  Avatar: {
+    rounded: true,
+  },
+  Badge: {
+    textStyle: {fontSize: 30},
+  },
+};
+
 const Notification = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
@@ -113,7 +123,7 @@ const Notification = ({navigation, route}) => {
     await firestore()
       .collection('session')
       .where('approved', '==', 'approved')
-      .where('profEmail', '==', user.email)
+      .orderBy('createdAt', 'desc')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -170,7 +180,7 @@ const Notification = ({navigation, route}) => {
         onProfilePress={() => navigation.navigate('Profile')}
       />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         // onPress={() => navigation.navigate('ProfProfile')}
         onPress={() => navigation.navigate('sessionPlan')}>
         <LinearGradient
@@ -206,7 +216,7 @@ const Notification = ({navigation, route}) => {
             <Icon name="chevron-forward" size={26} color="#a076cd" />
           </View>
         </LinearGradient>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <FlatList
         data={approved}
@@ -227,6 +237,21 @@ const Notification = ({navigation, route}) => {
                 borderRadius: 7,
                 padding: 10,
               }}>
+              <TouchableOpacity
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Avatar
+                  size={50}
+                  rounded
+                  source={{
+                    uri:
+                      item.professionalAvatar ||
+                      'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                  }}
+                />
+              </TouchableOpacity>
               <View
                 style={{
                   flex: 1,
@@ -236,7 +261,7 @@ const Notification = ({navigation, route}) => {
                 }}>
                 <Content
                   HederText="You have been approved 🎉"
-                  Body="Your request for a consultation with one of our profitionals has been approved, plese proceed with the payment"
+                  Body={`Your request for a consultation with ${item.professionalName} has been approved, plese proceed with the payment`}
                 />
               </View>
               <View

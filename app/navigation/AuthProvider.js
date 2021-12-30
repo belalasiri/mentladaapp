@@ -3,11 +3,14 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import storage from '@react-native-firebase/storage';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
 
   return (
     <AuthContext.Provider
@@ -157,7 +160,7 @@ export const AuthProvider = ({children}) => {
           Experience,
           Specialty,
           password,
-          image,
+          // image,
         ) => {
           auth()
             .createUserWithEmailAndPassword(email, password)
@@ -171,6 +174,7 @@ export const AuthProvider = ({children}) => {
                     .collection('Professional')
                     .doc(auth().currentUser.uid)
                     .set({
+                      professionalId: auth().currentUser.uid,
                       fname: fname,
                       lname: lname,
                       email: email,
@@ -178,8 +182,9 @@ export const AuthProvider = ({children}) => {
                       License: License,
                       Experience: Experience,
                       Specialty: Specialty,
-                      userImg: image,
+                      // userImg: image,
                       role: 'professional',
+                      Verified: 'notVerified',
                       createdAt: firestore.Timestamp.fromDate(new Date()),
                     });
                 })

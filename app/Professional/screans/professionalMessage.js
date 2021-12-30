@@ -23,6 +23,7 @@ import font from '../../config/font';
 import Swich from '../../config/components/Swich';
 import colors from '../../config/colors';
 import {windowWidth} from '../../utils/Dimentions';
+import {COLORS} from '../../constants';
 
 const professionalMessage = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -39,7 +40,7 @@ const professionalMessage = ({navigation, route}) => {
     navigation.setOptions({
       title: 'MESSAGE',
       headerStyle: {
-        backgroundColor: '#fff5df',
+        backgroundColor: COLORS.white,
         elevation: 0,
         shadowOpacity: 0,
       },

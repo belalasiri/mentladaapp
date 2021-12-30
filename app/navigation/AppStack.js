@@ -24,6 +24,7 @@ import colors from '../config/colors';
 import Notification from '../patient/screens/Notification';
 import Details from '../patient/screens/categoryDetails';
 import planDetails from '../patient/screens/planDetails';
+import test from '../config/Test/test';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -102,6 +103,11 @@ export default function AppStack() {
         />
         <Stack.Screen name="BlogContent" component={BlogContent} />
         <Stack.Screen name="planDetails" component={planDetails} />
+        <Stack.Screen
+          name="test"
+          component={test}
+          options={() => ({headerShown: true})}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

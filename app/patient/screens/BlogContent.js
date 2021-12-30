@@ -14,17 +14,23 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 
 import {Avatar} from 'react-native-elements';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import Share from 'react-native-share';
 import File from '../../assets/filesBase64';
 import moment from 'moment';
+import {COLORS, FONTS, icons} from '../../constants';
 
 const BlogContent = ({navigation, route}) => {
+  const [loading, setLoading] = useState(true);
+  const [isVerified, setVerified] = useState(null);
+
   let blogTime = (
     <Text>{moment(route.params.blogTime.toDate()).fromNow()}</Text>
   );
+
   const onLikePress = () => {
     firebase
       .firestore()
@@ -37,6 +43,7 @@ const BlogContent = ({navigation, route}) => {
       .collection('likes')
       .doc(firebase.auth().currentUser.uid);
   };
+
   const myCustomShare = async () => {
     const shareOptions = {
       message:
@@ -52,6 +59,31 @@ const BlogContent = ({navigation, route}) => {
       console.log('Error => ', error);
     }
   };
+
+  const checkApproval = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setVerified(result.data().Verified);
+          console.log(result.data().Verified);
+        } else {
+          setVerified('notVerified');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkApproval();
+  }, [isVerified]);
 
   return (
     <View style={styles.container}>
@@ -152,9 +184,37 @@ const BlogContent = ({navigation, route}) => {
                 style={{
                   paddingHorizontal: 15,
                 }}>
-                <Text style={styles.text}>
-                  Written by {route.params.professionalName}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={styles.text}>Written by </Text>
+                    <Text style={styles.nameText}>
+                      {route.params.professionalName}
+                    </Text>
+                  </View>
+
+                  {isVerified == 'notVerified' ? null : isVerified ==
+                    'Verified' ? (
+                    <View style={{}}>
+                      <Image
+                        source={icons.verifiedUser}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          marginLeft: 5,
+                          tintColor: COLORS.primary,
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                </View>
 
                 <Text style={styles.text}>Last updated {blogTime}</Text>
               </View>
@@ -276,6 +336,12 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: font.subtitle,
     color: colors.subtext,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  nameText: {
+    fontFamily: font.title,
+    color: colors.text,
     fontSize: 13,
     lineHeight: 20,
   },

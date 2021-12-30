@@ -23,6 +23,7 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import {COLORS, icons} from '../../constants';
 
 const Heder = ({userImage, onBacePress, onProfilePress}) => {
   return (
@@ -183,7 +184,7 @@ const Notification = ({navigation, route}) => {
     getUser();
     fetchUsers();
     fetchPendingUsers();
-  }, [loading, pending]);
+  }, [loading, pending, ProfessionalData]);
 
   if (loading == true) {
     return (
@@ -192,6 +193,10 @@ const Notification = ({navigation, route}) => {
       </View>
     );
   }
+
+  const Sar = (
+    <Text>{ProfessionalData ? ProfessionalData.Verified || 'sss' : null}</Text>
+  );
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -206,6 +211,58 @@ const Notification = ({navigation, route}) => {
         onProfilePress={() => {}}
       />
 
+      {ProfessionalData.Verified == 'Verified' ? (
+        <View>
+          <LinearGradient
+            colors={[COLORS.lightpurple, COLORS.lightyellow]}
+            start={{x: 0, y: 0.45}}
+            end={{x: 0, y: 0}}
+            style={{
+              flexDirection: 'row',
+              marginHorizontal: 15,
+              marginVertical: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 7,
+              padding: 10,
+            }}>
+            <Image
+              source={icons.verifiedUser}
+              style={{
+                width: 50,
+                height: 50,
+                marginLeft: 5,
+                tintColor: COLORS.primary,
+              }}
+            />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                marginHorizontal: 20,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: colors.subtext,
+                    fontFamily: font.title,
+                  }}>
+                  You account now is Verified, Thank you for being with us in
+                  Mentlada
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', marginVertical: 2}}></View>
+            </View>
+          </LinearGradient>
+        </View>
+      ) : null}
       <FlatList
         data={pending}
         keyExtractor={item => item.id}

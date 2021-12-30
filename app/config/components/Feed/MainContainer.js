@@ -52,7 +52,7 @@ const MainContainer = ({
           />
         ) : null}
       </TouchableOpacity>
-      {/* <Footer /> */}
+      <Footer />
     </View>
   );
 };

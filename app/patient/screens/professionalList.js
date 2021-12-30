@@ -209,7 +209,7 @@ const professionalList = ({navigation, route}) => {
         }}
         onBacePress={() => navigation.goBack()}
         onProfilePress={() => navigation.navigate('Profile')}
-      />
+      /> 
 
       <FlatList
         initialNumToRender={7}

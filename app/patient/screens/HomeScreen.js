@@ -26,6 +26,7 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 import Conversation from '../../assets/conversation.svg';
 import LinearGradient from 'react-native-linear-gradient';
+import {COLORS, icons} from '../../constants';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.6;
@@ -84,6 +85,8 @@ const HomeScreen = ({navigation, route}) => {
             Specialty: doc.data().Specialty,
             userImg: doc.data().userImg,
             role: doc.data().role,
+            professionalId: doc.data().professionalId,
+            Verified: doc.data().Verified,
           });
         });
       })
@@ -178,7 +181,7 @@ const HomeScreen = ({navigation, route}) => {
             </View>
           </View>
         </LinearGradient>
-        {/* Prof List */}
+
         <View
           style={{
             flexDirection: 'row',
@@ -254,6 +257,8 @@ const HomeScreen = ({navigation, route}) => {
                     profAbout: item.about,
                     profLicense: item.License,
                     profSpecialty: item.Specialty,
+                    professionalId: item.professionalId,
+                    Verified: item.Verified,
                     userName: userData.fname + ' ' + userData.lname,
                     userEmail: userData.email,
                     userAvatar: userData.userImg,
@@ -281,7 +286,6 @@ const HomeScreen = ({navigation, route}) => {
                     }}
                     style={styles.cardImage}
                   />
-
                   <View style={styles.cardDetails}>
                     <View
                       style={{
@@ -289,15 +293,40 @@ const HomeScreen = ({navigation, route}) => {
                         justifyContent: 'space-between',
                       }}>
                       <View>
-                        <Text
+                        <View
                           style={{
-                            fontFamily: font.title,
-                            fontSize: 16,
-                            color: colors.text,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}>
-                          {Profdata ? item.fname || 'Mentlada' : 'Mentlada'}{' '}
-                          {Profdata ? item.lname || 'Mentlada' : 'Mentlada'}
-                        </Text>
+                          <Text
+                            style={{
+                              fontFamily: font.title,
+                              fontSize: 16,
+                              color: colors.text,
+                            }}>
+                            {Profdata ? item.fname || 'Mentlada' : 'Mentlada'}{' '}
+                            {Profdata ? item.lname || 'Mentlada' : 'Mentlada'}
+                          </Text>
+                          {item.Verified ==
+                          'notVerified' ? null : item.Verified == 'Verified' ? (
+                            <View
+                              style={{
+                                paddingTop: 5,
+                              }}>
+                              <Image
+                                source={icons.verifiedUser}
+                                style={{
+                                  width: 17,
+                                  height: 17,
+                                  marginLeft: 3,
+                                  tintColor: COLORS.primary,
+                                }}
+                              />
+                            </View>
+                          ) : null}
+                        </View>
+
                         <Text
                           style={{
                             color: colors.subtext,

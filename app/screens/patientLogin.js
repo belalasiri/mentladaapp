@@ -8,7 +8,6 @@ import {AuthContext} from '../navigation/AuthProvider';
 import font from '../config/font';
 import colors from '../config/colors';
 import CustomLink from '../config/components/CustomLink';
-
 const LoginScreen = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -28,6 +27,7 @@ const LoginScreen = () => {
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
+        // onEndEditing={e => handelEmailChange(e.nativeEvent.text)}
       />
 
       <FormInput
@@ -44,10 +44,11 @@ const LoginScreen = () => {
       </TouchableOpacity> */}
 
       <FormButton
-        disabled={!email}
-        disabled={!password}
+        // disabled={!email}
+        // disabled={!password}
         buttonTitle="Login to account"
         onPress={() => login(email, password)}
+        // onPress={() => {}}
       />
 
       {/* OR */}

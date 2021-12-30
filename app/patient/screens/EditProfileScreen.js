@@ -29,11 +29,15 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-
-import colors from '../../config/colors';
+import {useForm, Controller} from 'react-hook-form';
 
 import font from '../../config/font';
+import colors from '../../config/colors';
 import {windowWidth} from '../../utils/Dimentions';
+import CustomInput from '../../config/Test/CustomInput';
+
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const EditProfileScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
@@ -42,7 +46,15 @@ const EditProfileScreen = ({navigation}) => {
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      firstName: userData ? userData.fname : '',
+    },
+  });
   const getUser = async () => {
     setLoading(true);
     // const currentUser = await firestore()
@@ -202,7 +214,9 @@ const EditProfileScreen = ({navigation}) => {
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSubmit(handleUpdate)}>
               {uploading ? (
                 <View style={{alignItems: 'center', justifyContent: 'center'}}>
                   <ActivityIndicator size="small" color={colors.empty} />

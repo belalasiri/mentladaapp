@@ -2,6 +2,7 @@ import React from 'react';
 import {Text, View, StyleSheet, Image, SafeAreaView} from 'react-native';
 import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {FONTS} from '../../constants';
 
 const ProfInfo = ({
   Title1,
@@ -14,12 +15,10 @@ const ProfInfo = ({
   let bg = backgroundColor;
 
   return (
-    <View style={{flex: 1, margin: 5}}>
-      <View style={[styles.container, {backgroundColor: bg}]} {...rest}>
-        <Icon name={icon} size={20} color={iconColor} />
-        <Text style={{fontSize: 16, fontFamily: font.title}}>{Title1}</Text>
-        <Text style={{fontSize: 12, fontFamily: font.subtitle}}>{Title2}</Text>
-      </View>
+    <View style={[styles.container, {backgroundColor: bg}]} {...rest}>
+      <Icon name={icon} size={20} color={iconColor} />
+      <Text style={{...FONTS.h5}}>{Title1}</Text>
+      <Text style={{...FONTS.body5}}>{Title2}</Text>
     </View>
   );
 };

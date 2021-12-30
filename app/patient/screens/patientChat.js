@@ -14,6 +14,7 @@ import {
   FlatList,
   Alert,
   ToastAndroid,
+  Image,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,67 +24,99 @@ import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {moderateScale} from 'react-native-size-matters';
 import moment from 'moment';
+import {COLORS, icons} from '../../constants';
 
-const Heder = ({userImage, onBacePress, onProfilePress, onCall, name}) => {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        paddingHorizontal: 20,
-        paddingTop: 30,
-        paddingBottom: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: colors.subtext,
-      }}>
-      {/* GoBack */}
-      <TouchableOpacity
-        style={{
-          width: 45,
-          height: 45,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Avatar rounded source={userImage} />
-      </TouchableOpacity>
-      {/* Title */}
-      <View
-        style={{
-          // flex: 1,
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-        }}>
-        <Text
-          style={{
-            color: colors.empty,
-            fontFamily: font.title,
-            marginLeft: 15,
-            textTransform: 'uppercase',
-          }}>
-          {name}
-        </Text>
-      </View>
-      {/* Profile */}
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-        }}>
-        <TouchableOpacity activeOpacity={0.5} onPress={onCall}>
-          <Icon name="videocam-outline" size={25} color={colors.w} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
 const patientChat = ({navigation, route}) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [currentDate, setCurrentDate] = useState([]);
   const [packageData, setPackageData] = useState(0);
 
+  const Heder = ({
+    userImage,
+    onBacePress,
+    endSetion,
+    onProfilePress,
+    onCall,
+    name,
+  }) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: 20,
+          paddingTop: 30,
+          paddingBottom: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.subtext,
+        }}>
+        {/* GoBack */}
+        {/*  */}
+
+        <TouchableOpacity
+          style={{
+            width: 45,
+            height: 45,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Avatar rounded source={userImage} />
+        </TouchableOpacity>
+        {/* Title */}
+        <View
+          style={{
+            // flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          }}>
+          <Text
+            style={{
+              color: colors.empty,
+              fontFamily: font.title,
+              marginLeft: 15,
+              textTransform: 'uppercase',
+            }}>
+            {name}
+          </Text>
+          {route.params.isProfessionalVerified == 'notVerified' ? null : route
+              .params.isProfessionalVerified == 'Verified' ? (
+            <View
+              style={{
+                paddingTop: 3,
+              }}>
+              <Image
+                source={icons.verifiedUser}
+                style={{
+                  width: 13,
+                  height: 13,
+                  marginLeft: 3,
+                  tintColor: COLORS.primary,
+                }}
+              />
+            </View>
+          ) : null}
+          {/* 
+          {route.params.isProfessionalVerified}
+           */}
+        </View>
+        {/* Profile */}
+
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}>
+          <TouchableOpacity activeOpacity={0.5} onPress={endSetion}>
+            <Icon name="exit-outline" size={25} color={colors.w} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
   const onCall = () => {
     Alert.alert('Patient Prof ID!', ` ${route.params.isRequested}`);
   };
@@ -150,7 +183,7 @@ const patientChat = ({navigation, route}) => {
 
       .then(() => {
         ToastAndroid.showWithGravityAndOffset(
-          `You have `,
+          `You still have \n \n ${formatted}`,
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
           0,
@@ -190,7 +223,7 @@ const patientChat = ({navigation, route}) => {
 
   useEffect(() => {
     currentDateFun();
-  }, [packageData]);
+  }, [packageData, formatted]);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Heder
@@ -203,6 +236,7 @@ const patientChat = ({navigation, route}) => {
         onProfilePress={() => navigation.navigate('Profile')}
         onCall={() => onCall()}
         name={route.params.professionalName}
+        endSetion={endSetion}
       />
       <StatusBar
         barStyle="light-content"
@@ -283,9 +317,6 @@ const patientChat = ({navigation, route}) => {
               />
 
               <View style={styles.footer}>
-                <TouchableOpacity onPress={endSetion}>
-                  <Text>END</Text>
-                </TouchableOpacity>
                 <TextInput
                   value={input}
                   multiline

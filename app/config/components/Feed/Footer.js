@@ -1,10 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState, useContext, useLayoutEffect} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import colors from '../../colors';
+import {AuthContext} from '../../../navigation/AuthProvider';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
+
 
 const Footer = () => {
+  const {user} = useContext(AuthContext);
+  
+const onLikePress = (userId, postId) => {
+  firebase
+    .firestore()
+    .collection('posts')
+    .doc(userId)
+    .collection('userPosts')
+    .doc(postId)
+    .collection('likes')
+    .doc(firebase.auth().currentUser.uid)
+    .set({});
+};
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.iconContainer}>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
+import {COLORS} from '../../constants';
 import colors from '../colors';
 import font from '../font';
 
@@ -22,7 +23,7 @@ export default function CustomSwitch({
         height: 44,
         width: '100%',
         borderRadius: 7,
-        borderColor: colors.primary,
+        borderColor: COLORS.primary,
         flexDirection: 'row',
         justifyContent: 'center',
       }}>
@@ -31,16 +32,16 @@ export default function CustomSwitch({
         onPress={() => updateSwitchData(1)}
         style={{
           flex: 1,
-          backgroundColor:  '#fff5df',
+          backgroundColor: COLORS.white,
           justifyContent: 'center',
           borderBottomColor:
-            getSelectionMode == 1 ? colors.subtext :  '#fff5df',
+            getSelectionMode == 1 ? colors.subtext : COLORS.white,
           borderBottomWidth: 2,
           alignItems: 'center',
         }}>
         <Text
           style={{
-            color: getSelectionMode == 1 ? colors.subtext : colors.subtext,
+            color: getSelectionMode == 1 ? COLORS.secondary : COLORS.secondary,
             fontSize: 14,
             fontFamily: font.title,
           }}>
@@ -53,16 +54,16 @@ export default function CustomSwitch({
         style={{
           activeOpacity: 0.6,
           flex: 1,
-          backgroundColor: '#fff5df',
+          backgroundColor: COLORS.white,
           borderBottomColor:
-            getSelectionMode == 2 ? colors.subtext : '#fff5df',
+            getSelectionMode == 2 ? COLORS.secondary : COLORS.white,
           borderBottomWidth: 2,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         <Text
           style={{
-            color: getSelectionMode == 2 ? colors.subtext : colors.subtext,
+            color: getSelectionMode == 2 ? COLORS.secondary : COLORS.secondary,
             fontSize: 14,
             fontFamily: font.title,
           }}>

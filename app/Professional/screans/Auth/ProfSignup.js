@@ -37,29 +37,8 @@ const ProfSignup = ({navigation}) => {
   const [image, setImage] = useState();
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  // const [BirthDate, setBirthDate] = useState();
-  // const [certificate, setCertificate] = useState();
 
   const {ProfRegister} = useContext(AuthContext);
-
-  const takePhotoFromCamera = () => {
-    ImagePicker.openCamera({
-      cropping: true,
-    })
-      .then(image => {
-        console.log(image);
-        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-        setImage(imageUri);
-      })
-      .catch(e => {
-        if (e.code !== 'E_PICKER_CANCELLED') {
-          console.log(e);
-          Alert.alert(
-            'Sorry, there was an issue attempting to Take the imag you taked. Please try again',
-          );
-        }
-      });
-  };
 
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
@@ -97,10 +76,13 @@ const ProfSignup = ({navigation}) => {
           <View style={styles.Right} />
         </View>
 
-        <View style={[styles.fullLogo, {borderRadius: 70}]}>
+        {/* <View style={[styles.fullLogo, {borderRadius: 70}]}>
           {image ? (
             <ImageBackground
-              source={{uri: image}}
+              source={{
+                uri:
+                  image || 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+              }}
               style={{height: 130, width: 130}}
               blurRadius={2}
               imageStyle={{borderRadius: 70}}>
@@ -136,11 +118,12 @@ const ProfSignup = ({navigation}) => {
                 imageStyle={{borderRadius: 70}}></ImageBackground>
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
 
         {/* </View> */}
-        <View style={{paddingTop: 10}}>
-          <Text style={[styles.text, {width: windowWidth / 1}]}>
+        <View style={{paddingTop: 100}}>
+          <Text
+            style={[styles.text, {width: windowWidth / 1, marginBottom: 20}]}>
             Create patient account
           </Text>
           <Input
@@ -206,7 +189,7 @@ const ProfSignup = ({navigation}) => {
           <Input
             labelValue={Experience}
             onChangeText={ProfExperience => setExperience(ProfExperience)}
-            placeholderText="Your Experience"
+            placeholderText="Years of Experience"
             iconType="Trophy"
             keyboardType="default"
           />
@@ -271,7 +254,6 @@ const ProfSignup = ({navigation}) => {
                 Experience,
                 Specialty,
                 password,
-                image,
               )
             }
           />

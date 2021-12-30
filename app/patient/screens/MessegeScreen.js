@@ -24,6 +24,7 @@ import CustomProfList from '../../config/components/CustomProfList';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import colors from '../../config/colors';
+import {COLORS} from '../../constants';
 
 const MessageScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -59,7 +60,7 @@ const MessageScreen = ({navigation, route}) => {
     navigation.setOptions({
       title: 'MESSAGE',
       headerStyle: {
-        backgroundColor: '#fff5df',
+        backgroundColor: COLORS.white,
         elevation: 0,
         shadowOpacity: 0,
       },
@@ -134,6 +135,8 @@ const MessageScreen = ({navigation, route}) => {
     patientAvatar,
     patientName,
     isRequested,
+    professionalId,
+    isProfessionalVerified,
   ) => {
     if (packageData >= 1) {
       navigation.navigate('Chat', {
@@ -145,6 +148,8 @@ const MessageScreen = ({navigation, route}) => {
         patientAvatar,
         patientName,
         isRequested,
+        professionalId,
+        isProfessionalVerified,
       });
     } else {
       Alert.alert(
@@ -213,6 +218,27 @@ const MessageScreen = ({navigation, route}) => {
     );
   };
 
+  async function deleteProf(ApprovedChats, patientEmail, profEmail) {
+    await firestore()
+      .collection('session')
+      .doc(patientEmail + profEmail)
+      .update({
+        approved: 'pending',
+      })
+      .then(result => {
+        if (loading == false) {
+          setLoading(true);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
+    if (loading) {
+      setLoading(false);
+    }
+  }
+
   return (
     <SafeAreaView style={{backgroundColor: '#fff', flex: 1}}>
       <StatusBar
@@ -242,6 +268,8 @@ const MessageScreen = ({navigation, route}) => {
                     patientAvatar,
                     patientName,
                     isRequested,
+                    professionalId,
+                    isProfessionalVerified,
                   },
                 }) => (
                   <CustomProfList
@@ -254,7 +282,12 @@ const MessageScreen = ({navigation, route}) => {
                     patientEmail={patientEmail}
                     patientName={patientName}
                     enterChat={enterChat}
+                    professionalId={professionalId}
                     isRequested={isRequested}
+                    isProfessionalVerified={isProfessionalVerified}
+                    deleteProf={() =>
+                      deleteProf(ApprovedChats, patientEmail, profEmail)
+                    }
                   />
                 ),
               )}
@@ -313,6 +346,9 @@ const MessageScreen = ({navigation, route}) => {
                     patientEmail,
                     patientAvatar,
                     patientName,
+                    isRequested,
+                    professionalId,
+                    isProfessionalVerified,
                   },
                 }) => (
                   <CustomProfList
@@ -325,6 +361,9 @@ const MessageScreen = ({navigation, route}) => {
                     patientEmail={patientEmail}
                     patientName={patientName}
                     enterChat={onPendingDelete}
+                    isRequested={isRequested}
+                    professionalId={professionalId}
+                    isProfessionalVerified={isProfessionalVerified}
                   />
                 ),
               )}

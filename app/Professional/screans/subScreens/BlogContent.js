@@ -4,15 +4,18 @@ import {
   View,
   StyleSheet,
   Image,
-  SafeAreaView,
   ScrollView,
   StatusBar,
-  Alert,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import colors from '../../../config/colors';
 import font from '../../../config/font';
-
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {Avatar} from 'react-native-elements';
@@ -20,8 +23,27 @@ import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import Share from 'react-native-share';
 import File from '../../../assets/filesBase64';
 import moment from 'moment';
+import {COLORS, FONTS, icons} from '../../../constants';
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+import {AuthContext} from '../../../navigation/AuthProvider';
 
 const BlogContent = ({navigation, route}) => {
+  const {user, logout} = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+  const [isVerified, setVerified] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+
   let blogTime = (
     <Text>{moment(route.params.blogTime.toDate()).fromNow()}</Text>
   );
@@ -37,6 +59,7 @@ const BlogContent = ({navigation, route}) => {
       .collection('likes')
       .doc(firebase.auth().currentUser.uid);
   };
+
   const myCustomShare = async () => {
     const shareOptions = {
       message:
@@ -52,6 +75,36 @@ const BlogContent = ({navigation, route}) => {
       console.log('Error => ', error);
     }
   };
+
+  const checkApproval = async () => {
+    setUploading(true);
+
+    await firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setVerified(result.data().Verified);
+          console.log(result.data().Verified);
+          setUploading(false);
+        } else {
+          setVerified('notVerified');
+          setUploading(false);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkApproval();
+  }, [isVerified]);
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -122,7 +175,6 @@ const BlogContent = ({navigation, route}) => {
             </Text>
           </View>
         </View>
-
         {/* Author Continer */}
         <View style={{flex: 2}}>
           <View
@@ -151,28 +203,85 @@ const BlogContent = ({navigation, route}) => {
                 style={{
                   paddingHorizontal: 15,
                 }}>
-                <Text style={styles.text}>
-                  Written by {route.params.professionalName}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={styles.text}>Written by </Text>
+                    <Text style={styles.nameText}>
+                      {route.params.professionalName}
+                    </Text>
+                  </View>
+
+                  {isVerified == 'notVerified' ? null : isVerified ==
+                    'Verified' ? (
+                    <View style={{}}>
+                      {loading ? (
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginLeft: 8,
+                          }}>
+                          <BallIndicator color={COLORS.secondary} size={10} />
+                        </View>
+                      ) : (
+                        <Image
+                          source={icons.verifiedUser}
+                          style={{
+                            width: 16,
+                            height: 16,
+                            marginLeft: 5,
+                            tintColor: COLORS.primary,
+                          }}
+                        />
+                      )}
+                    </View>
+                  ) : null}
+                </View>
 
                 <Text style={styles.text}>Last updated {blogTime}</Text>
               </View>
             </View>
-
-            <TouchableOpacity
-              onPress={() => onLikePress()}
+            <View
               style={{
+                flexDirection: 'row',
+                margin: 10,
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: 25,
-                // backgroundColor: 'rgba(0,0,0,0.2)',
               }}>
-              <Icon name="heart-outline" size={25} color={colors.subtext} />
-            </TouchableOpacity>
+              {route.params.professionalId == auth().currentUser.uid ? (
+                <TouchableOpacity onPress={() => {}}>
+                  <Image
+                    source={icons.Delete}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      tintColor: COLORS.primary,
+                    }}
+                  />
+                </TouchableOpacity>
+              ) : null}
+
+              <TouchableOpacity>
+                <Icon
+                  name="heart-outline"
+                  size={25}
+                  color={colors.subtext}
+                  style={{marginLeft: 10}}
+                  onPress={() => Alert.alert('aaa', 'aa')}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
+
         {/* Blog content */}
         <View style={{flex: 2}}>
           {/* Title */}
@@ -274,6 +383,12 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: font.subtitle,
     color: colors.subtext,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  nameText: {
+    fontFamily: font.title,
+    color: colors.text,
     fontSize: 13,
     lineHeight: 20,
   },

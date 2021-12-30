@@ -16,17 +16,11 @@ import {
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
 
-import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Feather from 'react-native-vector-icons/Feather';
-
 import font from '../../config/font';
 import colors from '../../config/colors';
-import ListCard from '../../config/components/ListCard';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import Header from '../../config/components/Home/Header';
 import Spacer from '../../config/components/Home/Spacer';
-import Conversation from '../../assets/conversation.svg';
 import {Avatar, ListItem} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -102,7 +96,7 @@ const Card = ({Categories}) => {
 };
 
 const ProfHome = ({navigation, route}) => {
-  const {user, Proflogout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -504,8 +498,21 @@ const ProfHome = ({navigation, route}) => {
                     professionalName: item.professionalName,
                     Category: item.Category,
                     blogTime: item.blogTime,
+                    professionalId: item.professionalId,
                   })
                 }>
+                {/* 
+                          id: item.id,
+                      data: item.data,
+                      Blog: item.Blog,
+                      Content: item.Content,
+                      blogtImg: item.blogtImg,
+                      professionalAvatar: item.professionalAvatar,
+                      professionalName: item.professionalName,
+                      Category: item.Category,
+                      blogTime: item.blogTime,
+                      professionalId: item.professionalId,
+              */}
                 <View
                   style={{
                     width: windowWidth / 1 - 40,

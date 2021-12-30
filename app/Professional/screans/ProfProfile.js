@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import {COLORS, FONTS, SIZES, icons} from '../../constants';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import FormButton from '../../config/components/FormButton';
@@ -19,12 +20,14 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 import ProfInfo from '../../config/components/ProfInfo';
 import SpecialityCard from '../../config/components/SpecialityCard';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ProfProfile = ({route, item, navigation}) => {
   const {user, Proflogout} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
   const [profPationts, setprofPationts] = useState();
   const [loading, setLoading] = useState(true);
+  const [isVerified, setVerified] = useState(null);
 
   const getUser = async () => {
     await firestore()
@@ -37,6 +40,27 @@ const ProfProfile = ({route, item, navigation}) => {
           setProfData(documentSnapshot.data());
         }
       });
+  };
+
+  const checkApproval = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setVerified(result.data().Verified);
+          // console.log(result.data().Verified);
+        } else {
+          setVerified('notVerified');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
   };
 
   let approvedPatientsList = [];
@@ -67,6 +91,7 @@ const ProfProfile = ({route, item, navigation}) => {
 
   useEffect(() => {
     getUser();
+    checkApproval();
     fetchapprovedPatients();
   }, [profData]);
 
@@ -101,16 +126,41 @@ const ProfProfile = ({route, item, navigation}) => {
 
             {/* Profile name and Specialty */}
             <View style={{alignItems: 'center'}}>
-              <Text
+              <View
                 style={{
-                  fontSize: 16,
-                  fontFamily: font.title,
-                  paddingTop: 10,
-                  color: colors.text,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                {profData ? profData.fname || 'Professional' : 'Professional'}{' '}
-                {profData ? profData.lname || 'Profile' : 'Profile'}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: font.title,
+                    paddingTop: 10,
+                    color: colors.text,
+                  }}>
+                  {profData ? profData.fname || 'Professional' : 'Professional'}{' '}
+                  {profData ? profData.lname || 'Profile' : 'Profile'}
+                </Text>
+
+                {isVerified == 'notVerified' ? null : isVerified ==
+                  'Verified' ? (
+                  <View
+                    style={{
+                      paddingTop: 12,
+                    }}>
+                    <Image
+                      source={icons.verifiedUser}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        marginLeft: 5,
+                        tintColor: COLORS.primary,
+                      }}
+                    />
+                  </View>
+                ) : null}
+              </View>
               <Text
                 style={{
                   fontSize: 13,
@@ -148,30 +198,62 @@ const ProfProfile = ({route, item, navigation}) => {
           </View>
 
           {/* Prof info continer */}
-          <View style={styles.ProfCont}>
-            <ProfInfo
-              icon="star"
-              iconColor="#ffde9f"
-              backgroundColor="#fff8ea"
-              Title1="4.98"
-              Title2="Reviews"
-            />
-
-            <ProfInfo
-              icon="person"
-              iconColor="#67d8af"
-              backgroundColor="#e1f7ef"
-              Title1={profPationts ? profPationts.length || '0' : null}
-              Title2="Patients"
-            />
-
-            <ProfInfo
-              icon="checkmark-done-circle"
-              iconColor="#61edea"
-              backgroundColor="#dffbfb"
-              Title1={profData ? profData.Experience || 'New' : 'Spacialist'}
-              Title2="Experience"
-            />
+          <View style={{flexDirection: 'row', paddingTop: SIZES.padding}}>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.lightyellow]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                flex: 1,
+                margin: 5,
+              }}>
+              <ProfInfo
+                icon="star"
+                iconColor={COLORS.yellow}
+                Title1="4.98"
+                Title2="Reviews"
+              />
+            </LinearGradient>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.lightGreen]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                margin: 5,
+                flex: 1,
+              }}>
+              <ProfInfo
+                icon="person"
+                iconColor={COLORS.green}
+                // backgroundColor="#e1f7ef"
+                Title1={profPationts ? profPationts.length || '0' : null}
+                Title2="Patients"
+              />
+            </LinearGradient>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.emerald]}
+              start={{x: 0.5, y: 2.0}}
+              end={{x: 0.0, y: 0.25}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                margin: 5,
+                flex: 1,
+              }}>
+              <ProfInfo
+                icon="checkmark-done-circle"
+                iconColor={COLORS.lime}
+                Title1={profData ? profData.Experience || 'New' : 'Spacialist'}
+                Title2="Experience"
+              />
+            </LinearGradient>
           </View>
           <View style={{paddingTop: 15}}>
             {route.params ? (
@@ -288,16 +370,16 @@ const styles = StyleSheet.create({
     zIndex: -100,
   },
   Left: {
-    backgroundColor: colors.secoundary,
+    backgroundColor: COLORS.lightyellow,
     position: 'absolute',
     width: 200,
     height: 200,
     borderRadius: 100,
-    left: -50,
-    top: -50,
+    left: -30,
+    top: -30,
   },
   Right: {
-    backgroundColor: colors.primary,
+    backgroundColor: COLORS.lightpurple,
     position: 'absolute',
     width: 400,
     height: 400,
@@ -305,10 +387,9 @@ const styles = StyleSheet.create({
     right: -100,
     top: -200,
   },
-
   Hedercontainer: {
     alignItems: 'center',
-    paddingTop: 70,
+    paddingTop: 60,
   },
   ProfileImage: {
     width: 100,
