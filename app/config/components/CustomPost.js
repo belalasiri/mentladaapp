@@ -1,33 +1,35 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useLayoutEffect} from 'react';
 import {
   Text,
-  View,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
   Image,
   Modal,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 
 import {AuthContext} from '../../navigation/AuthProvider';
-import ProgressiveImage from './ProgressiveImage';
-import {Avatar} from 'react-native-elements';
-import {Divider} from '../../patient/styles/FeedStyles';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
-import colors from '../colors';
-import font from '../font';
 import ProfilePic from './Feed/ProfilePic';
 import MainContainer from './Feed/MainContainer';
+import {COLORS} from '../../constants';
 
-const CustomPost = ({item, onDelete, onPress}) => {
+const CustomPost = ({
+  item,
+  onDelete,
+  onPress,
+  onContainerPress,
+  onCommentPress,
+}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState(false);
+  const [CommentsList, setComments] = useState([]);
+  const [likeList, setLikeList] = useState([]);
 
   const getUser = async () => {
     await firestore()
@@ -45,9 +47,49 @@ const CustomPost = ({item, onDelete, onPress}) => {
     getUser();
   }, []);
 
+  useLayoutEffect(() => {
+    const getComments = firestore()
+      .collection('posts')
+      .doc(item.id)
+      .collection('Comments')
+      .orderBy('CommentTime', 'asc')
+      .onSnapshot(snapshot =>
+        setComments(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data(),
+            Comment: doc.data().Comment,
+            CommentTime: doc.data().CommentTime,
+            CommenterId: doc.data().CommenterId,
+          })),
+        ),
+      );
+    return getComments;
+  }, []);
+
+  useLayoutEffect(() => {
+    const getLikes = firestore()
+      .collection('posts')
+      .doc(item.id)
+      .collection('Likes')
+      .orderBy('likedTime', 'asc')
+      .onSnapshot(snapshot =>
+        setLikeList(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data(),
+            Liked: doc.data().Liked,
+            likedTime: doc.data().likedTime,
+            likerId: doc.data().likerId,
+          })),
+        ),
+      );
+    return getLikes;
+  }, []);
+
   let UserName = (
     <Text>
-      {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
+      {userData ? userData.fniame || 'Mentlada' : 'Mentlada'}{' '}
       {userData ? userData.lname || 'Patient' : 'Patient'}
     </Text>
   );
@@ -64,7 +106,9 @@ const CustomPost = ({item, onDelete, onPress}) => {
               'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
             : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
         }}
+        onPress={onPress}
       />
+
       <MainContainer
         Name={UserName}
         postTime={postTime}
@@ -77,6 +121,10 @@ const CustomPost = ({item, onDelete, onPress}) => {
         onPress={onPress}
         onDelete={() => onDelete(item.id)}
         onImagePress={() => setDialog(true)}
+        onContainerPress={onContainerPress}
+        onCommentPress={onContainerPress}
+        CommentsLength={CommentsList.length}
+        likeList={likeList.length}
       />
 
       <Modal visible={dialog !== false} animated animationType="slide">
@@ -96,7 +144,7 @@ const CustomPost = ({item, onDelete, onPress}) => {
             borderRadius: 7,
             marginBottom: 0,
           }}>
-          <Icon name="close" color={colors.w} size={30} />
+          <Icon name="close" color={COLORS.white} size={30} />
         </TouchableOpacity>
 
         <Image
@@ -117,7 +165,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 15,
     borderBottomWidth: 2,
-    borderBottomColor: colors.w,
+    borderBottomColor: COLORS.white,
   },
   zoomedImage: {
     height: windowHeight / 1,

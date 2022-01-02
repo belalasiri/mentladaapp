@@ -1,28 +1,21 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
-  Dimensions,
   FlatList,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   Image,
-  Animated,
-  ActivityIndicator,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -32,15 +25,17 @@ import colors from '../../config/colors';
 import BlogSwitch from '../components/BlogSwitch';
 import {windowWidth} from '../../utils/Dimentions';
 import {Avatar, ListItem} from 'react-native-elements';
-import CategoryBox from '../components/CategoryBox';
-const width = Dimensions.get('window').width / 2 - 30;
+
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import BlogCustom from '../components/BlogCustom';
 
 const ProfBlog = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [profData, setProfData] = useState(null);
   const [allPosts, setAllPost] = useState(null);
-  const [ownPosts, setOwnPosts] = useState(null);
   const [requests, setRequests] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
   const Categories = [
     {
@@ -163,6 +158,7 @@ const ProfBlog = ({navigation, route}) => {
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
           setProfData(documentSnapshot.data());
+          // console.log(documentSnapshot.data());
         }
       });
   };
@@ -195,32 +191,85 @@ const ProfBlog = ({navigation, route}) => {
     return fetcBlogs;
   }, [navigation]);
 
-  useLayoutEffect(() => {
-    const fetchOwnBlogs = firestore()
+  const deletePost = postId => {
+    console.log('Current Post Id: ', postId);
+    setDeleting(true);
+
+    firestore()
       .collection('Blogs')
-      .where('professionalEmail', '==', user.email)
-      .onSnapshot(snapshot =>
-        setOwnPosts(
-          snapshot.docs.map(doc => ({
-            id: doc.id,
-            data: doc.data(),
-            professionalId: doc.data().professionalId,
-            professionalAvatar: doc.data().professionalAvatar,
-            professionalName: doc.data().professionalName,
-            Blog: doc.data().Blog,
-            Content: doc.data().Content,
-            blogtImg: doc.data().blogtImg,
-            Category: doc.data().Category,
-            blogTime: doc.data().blogTime,
-          })),
-        ),
-      );
-    return fetchOwnBlogs;
-  }, [navigation]);
+      .doc(postId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          const {postImg} = documentSnapshot.data();
+
+          if (postImg != null) {
+            const storageRef = storage().refFromURL(postImg);
+            const imageRef = storage().ref(storageRef.fullPath);
+
+            imageRef
+              .delete()
+              .then(() => {
+                // console.log(`${postImg} has been deleted successfully.`);
+                deleteFirestoreData(postId);
+              })
+              .catch(e => {
+                console.log('Error while deleting the image. ', e);
+              });
+            //  If the post image is not available
+          } else {
+            deleteFirestoreData(postId);
+          }
+        }
+      });
+  };
+
+  const handleDelete = postId => {
+    Alert.alert(
+      'Delete post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed!'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => deletePost(postId),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const deleteFirestoreData = postId => {
+    firestore()
+      .collection('Blogs')
+      .doc(postId)
+      .delete()
+      .then(() => {
+        // Alert.alert(
+        //   'Post deleted!',
+        //   'Your post has been deleted successfully!',
+        // );
+        setDeleting(false);
+        ToastAndroid.showWithGravityAndOffset(
+          'Your post has been deleted successfully!',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          0,
+          200,
+        );
+        setDeleted(true);
+      })
+      .catch(e => console.log('Error deleting posst.', e));
+  };
 
   useEffect(() => {
     getProf();
-  }, []);
+    setDeleted(false);
+  }, [deleted]);
 
   return (
     <SafeAreaView
@@ -242,85 +291,27 @@ const ProfBlog = ({navigation, route}) => {
               data={allPosts}
               keyExtractor={item => item.id}
               showsVerticalScrollIndicator={false}
-              renderItem={({id, item}) => (
-                <ListItem
-                  onPress={() =>
-                    navigation.navigate('BlogContent', {
-                      id: item.id,
-                      data: item.data,
-                      Blog: item.Blog,
-                      Content: item.Content,
-                      blogtImg: item.blogtImg,
-                      professionalAvatar: item.professionalAvatar,
-                      professionalName: item.professionalName,
-                      Category: item.Category,
-                      blogTime: item.blogTime,
-                      professionalId: item.professionalId,
-                    })
-                  }>
-                  <View
-                    style={{
-                      width: windowWidth / 1 - 40,
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <LinearGradient
-                      colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                      start={{x: 0, y: 1}}
-                      end={{x: 1, y: 0}}
-                      style={{
-                        flexDirection: 'row',
-                        borderRadius: 7,
-                      }}>
-                      <View style={{width: 100}}>
-                        <Image
-                          source={{
-                            uri:
-                              item.blogtImg ||
-                              'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
-                          }}
-                          style={{
-                            width: 100,
-                            height: 150,
-                            borderTopLeftRadius: 7,
-                            borderBottomLeftRadius: 7,
-                          }}
-                        />
-                      </View>
-                      <ListItem.Content
-                        style={{
-                          alignItems: 'flex-start',
-                          justifyContent: 'center',
-                          marginLeft: 20,
-                          paddingRight: 3,
-                          paddingVertical: 10,
-                        }}>
-                        <ListItem.Title
-                          style={{
-                            fontSize: 15,
-                            color: colors.text,
-                            fontFamily: font.title,
-                          }}>
-                          {item.Blog}
-                        </ListItem.Title>
-                        <ListItem.Subtitle
-                          style={{
-                            fontSize: 13,
-                            color: colors.subtext,
-                            fontFamily: font.subtitle,
-                            paddingRight: 5,
-                            paddingVertical: 7,
-                          }}
-                          numberOfLines={3}
-                          ellipsizeMode="tail">
-                          {item.Content}
-                        </ListItem.Subtitle>
-                      </ListItem.Content>
-                      <ListItem.Chevron />
-                    </LinearGradient>
-                  </View>
-                </ListItem>
-              )}
+              renderItem={({id, item}) =>
+                item.professionalId === auth().currentUser.uid ? null : (
+                  <BlogCustom
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate('BlogContent', {
+                        id: item.id,
+                        data: item.data,
+                        Blog: item.Blog,
+                        Content: item.Content,
+                        blogtImg: item.blogtImg,
+                        professionalAvatar: item.professionalAvatar,
+                        professionalName: item.professionalName,
+                        Category: item.Category,
+                        blogTime: item.blogTime,
+                        professionalId: item.professionalId,
+                      })
+                    }
+                  />
+                )
+              }
             />
           ) : (
             <View
@@ -363,90 +354,33 @@ const ProfBlog = ({navigation, route}) => {
       )}
       {requests == 2 && (
         <View style={{flex: 1}}>
-          {ownPosts?.[0] ? (
+          {allPosts?.[0] ? (
             <FlatList
-              data={ownPosts}
+              data={allPosts}
               keyExtractor={item => item.id}
               showsVerticalScrollIndicator={false}
-              renderItem={({id, item}) => (
-                <ListItem
-                  onPress={() =>
-                    navigation.navigate('BlogContent', {
-                      id: item.id,
-                      data: item.data,
-                      Blog: item.Blog,
-                      Content: item.Content,
-                      blogtImg: item.blogtImg,
-                      professionalAvatar: item.professionalAvatar,
-                      professionalName: item.professionalName,
-                      Category: item.Category,
-                      blogTime: item.blogTime,
-                      professionalId: item.professionalId,
-                    })
-                  }>
-                  <View
-                    style={{
-                      width: windowWidth / 1 - 40,
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <LinearGradient
-                      colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                      start={{x: 0, y: 1}}
-                      end={{x: 1, y: 0}}
-                      style={{
-                        flexDirection: 'row',
-                        borderRadius: 7,
-                      }}>
-                      <View style={{width: 100}}>
-                        <Image
-                          source={{
-                            uri:
-                              item.blogtImg ||
-                              'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
-                          }}
-                          style={{
-                            width: 100,
-                            height: 150,
-                            borderTopLeftRadius: 7,
-                            borderBottomLeftRadius: 7,
-                          }}
-                        />
-                      </View>
-                      <ListItem.Content
-                        style={{
-                          alignItems: 'flex-start',
-                          justifyContent: 'center',
-                          marginLeft: 20,
-                          paddingRight: 3,
-                          paddingVertical: 10,
-                        }}>
-                        <ListItem.Title
-                          style={{
-                            fontSize: 15,
-                            color: colors.text,
-                            fontFamily: font.title,
-                          }}>
-                          {item.Blog}
-                        </ListItem.Title>
-                        <ListItem.Subtitle
-                          style={{
-                            fontSize: 13,
-                            color: colors.subtext,
-                            fontFamily: font.subtitle,
-                            paddingRight: 5,
-                            paddingVertical: 7,
-                          }}
-                          numberOfLines={3}
-                          ellipsizeMode="tail">
-                          {item.Content}
-                        </ListItem.Subtitle>
-                      </ListItem.Content>
-                      <ListItem.Chevron />
-                    </LinearGradient>
-                  </View>
-                </ListItem>
-              )}
+              renderItem={({id, item}) =>
+                item.professionalId != auth().currentUser.uid ? null : (
+                  <BlogCustom
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate('BlogContent', {
+                        id: item.id,
+                        data: item.data,
+                        Blog: item.Blog,
+                        Content: item.Content,
+                        blogtImg: item.blogtImg,
+                        professionalAvatar: item.professionalAvatar,
+                        professionalName: item.professionalName,
+                        Category: item.Category,
+                        blogTime: item.blogTime,
+                        professionalId: item.professionalId,
+                      })
+                    }
+                    onDelete={handleDelete}
+                  />
+                )
+              }
             />
           ) : (
             <View
@@ -522,19 +456,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   boxGred: {
-    // marginHorizontal: 15,
-    // marginVertical: 5,
     alignItems: 'center',
     borderRadius: 7,
     height: 180,
     zIndex: 100,
-    width: windowWidth / 2 - 30,
+    width: SIZES.width / 2 - 30,
     padding: 10,
   },
   boxContainer: {
     // margin: 10,
     height: 180,
-    width: windowWidth / 2 - 30,
+    width: SIZES.width / 2 - 30,
     borderRadius: 7,
     justifyContent: 'center',
     elevation: 2,
@@ -542,7 +474,7 @@ const styles = StyleSheet.create({
   },
   card: {
     height: 280,
-    width: windowWidth / 2 - 30,
+    width: SIZES.width / 2 - 30,
     elevation: 4,
     marginRight: 10,
     borderRadius: 7,
@@ -559,69 +491,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   Title: {fontFamily: font.title, fontSize: 15, color: colors.text},
+  text: {
+    fontFamily: font.subtitle,
+    color: colors.subtext,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  nameText: {
+    fontFamily: font.title,
+    color: colors.text,
+    fontSize: 13,
+    lineHeight: 20,
+  },
 });
-{
-  /* 
-  <FlatList
-  columnWrapperStyle={{justifyContent: 'space-around'}}
-  data={Categories}
-  keyExtractor={item => item.id}
-  numColumns={2}
-  renderItem={({id, item}) => (
-    <CategoryBox
-      Title={item.name}
-      image={item.source}
-      onPress={() => {}}
-    />
-  )}
-/>
-  */
-}
-// <ScrollView>
-//   <View style={{alignItems: 'center'}}>
-//     <View
-//       style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-//       <CategoryBox
-//         Title="BIPOLAR DISORDER"
-//         image={require('../../assets/image/Blog/BIPOLAR_DISORDER.png')}
-//         onPress={() =>
-//           navigation.navigate('BipolarDisorder', {
-//             categoryData: item.name,
-//           })
-//         }
-//       />
-//       {/* navigation.navigate('BipolarDisorder', { categoryData: item }) */}
-//       <CategoryBox
-//         Title="STRESS"
-//         image={require('../../assets/image/Blog/STRESS.png')}
-//         onPress={() => navigation.navigate('Stress')}
-//       />
-//     </View>
-//     <View
-//       style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-//       <CategoryBox
-//         Title="DEMENTIA"
-//         image={require('../../assets/image/Blog/DEMENTIA.png')}
-//         onPress={() => navigation.navigate('Dementia')}
-//       />
-//       <CategoryBox
-//         Title="INSOMNIA"
-//         image={require('../../assets/image/Blog/INSOMNIA.png')}
-//         onPress={() => navigation.navigate('Insomnia')}
-//       />
-//     </View>
-//     <View
-//       style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-//       <CategoryBox
-//         Title="ANXIETY"
-//         image={require('../../assets/image/Blog/ANXIETY.png')}
-//         onPress={() => navigation.navigate('Anxiety')}
-//       />
-//       <CategoryBox
-//         Title="SCHIZOPHRENIA"
-//         image={require('../../assets/image/Blog/SCHIZOPHRENIA.png')}
-//         onPress={() => navigation.navigate('Schizophrenia')}
-//       />
-//     </View>
-//   </View>
-// </ScrollView>

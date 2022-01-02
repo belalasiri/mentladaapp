@@ -25,6 +25,7 @@ import Notification from '../patient/screens/Notification';
 import Details from '../patient/screens/categoryDetails';
 import planDetails from '../patient/screens/planDetails';
 import test from '../config/Test/test';
+import FullPost from '../patient/screens/FullPost';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -108,6 +109,7 @@ export default function AppStack() {
           component={test}
           options={() => ({headerShown: true})}
         />
+        <Stack.Screen name="FullPost" component={FullPost} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

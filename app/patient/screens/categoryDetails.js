@@ -25,6 +25,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {Avatar, ListItem} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import BlogCustom from './subScreen/BlogCustom';
 
 const Details = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -249,7 +250,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -259,68 +261,12 @@ const Details = ({navigation, route}) => {
                         blogtImg: item.blogtImg,
                         professionalAvatar: item.professionalAvatar,
                         professionalName: item.professionalName,
-                        blogTime: item.blogTime,
                         Category: item.Category,
+                        blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -370,7 +316,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -382,66 +329,10 @@ const Details = ({navigation, route}) => {
                         professionalName: item.professionalName,
                         Category: item.Category,
                         blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -491,7 +382,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -503,66 +395,10 @@ const Details = ({navigation, route}) => {
                         professionalName: item.professionalName,
                         Category: item.Category,
                         blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -612,7 +448,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -624,66 +461,10 @@ const Details = ({navigation, route}) => {
                         professionalName: item.professionalName,
                         Category: item.Category,
                         blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -733,7 +514,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -743,68 +525,12 @@ const Details = ({navigation, route}) => {
                         blogtImg: item.blogtImg,
                         professionalAvatar: item.professionalAvatar,
                         professionalName: item.professionalName,
-                        blogTime: item.blogTime,
                         Category: item.Category,
+                        blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -854,7 +580,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -866,66 +593,10 @@ const Details = ({navigation, route}) => {
                         professionalName: item.professionalName,
                         Category: item.Category,
                         blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -975,7 +646,8 @@ const Details = ({navigation, route}) => {
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({id, item}) => (
-                  <ListItem
+                  <BlogCustom
+                    item={item}
                     onPress={() =>
                       navigation.navigate('BlogContent', {
                         id: item.id,
@@ -987,66 +659,10 @@ const Details = ({navigation, route}) => {
                         professionalName: item.professionalName,
                         Category: item.Category,
                         blogTime: item.blogTime,
+                        professionalId: item.professionalId,
                       })
-                    }>
-                    <View
-                      style={{
-                        width: windowWidth / 1 - 40,
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <LinearGradient
-                        colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                        start={{x: 0, y: 1}}
-                        end={{x: 1, y: 0}}
-                        style={{
-                          flexDirection: 'row',
-                          borderRadius: 7,
-                        }}>
-                        <View style={{width: 100}}>
-                          <Image
-                            source={{uri: item.blogtImg}}
-                            style={{
-                              width: 100,
-                              height: 150,
-                              borderTopLeftRadius: 7,
-                              borderBottomLeftRadius: 7,
-                            }}
-                          />
-                        </View>
-                        <ListItem.Content
-                          style={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            marginLeft: 20,
-                            paddingRight: 3,
-                            paddingVertical: 10,
-                          }}>
-                          <ListItem.Title
-                            style={{
-                              fontSize: 15,
-                              color: colors.text,
-                              fontFamily: font.title,
-                            }}>
-                            {item.Blog}
-                          </ListItem.Title>
-                          <ListItem.Subtitle
-                            style={{
-                              fontSize: 13,
-                              color: colors.subtext,
-                              fontFamily: font.subtitle,
-                              paddingRight: 5,
-                              paddingVertical: 7,
-                            }}
-                            numberOfLines={3}
-                            ellipsizeMode="tail">
-                            {item.Content}
-                          </ListItem.Subtitle>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </LinearGradient>
-                    </View>
-                  </ListItem>
+                    }
+                  />
                 )}
               />
             ) : (
@@ -1095,11 +711,3 @@ const Details = ({navigation, route}) => {
 };
 
 export default Details;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

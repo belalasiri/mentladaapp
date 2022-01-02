@@ -194,7 +194,7 @@ const sessionPlan = ({navigation, route}) => {
       });
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     firestore()
       .collection('packages')
       .doc(route.params ? route.params.userId : user.uid)

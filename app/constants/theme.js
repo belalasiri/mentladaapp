@@ -45,13 +45,16 @@ export const SIZES = {
   h2: 22,
   h3: 20,
   h4: 18,
+  h4_2: 17,
   h5: 16,
-  h5: 14,
+  h6: 14,
   body1: 30,
   body2: 20,
   body3: 16,
   body4: 14,
   body5: 12,
+  body6: 10,
+  body7: 8,
 
   // app dimensions
   width,
@@ -82,6 +85,11 @@ export const FONTS = {
   h4: {
     fontFamily: 'DINNextLTArabic-Medium',
     fontSize: SIZES.h4,
+    lineHeight: 22,
+  },
+  h4_2: {
+    fontFamily: 'DINNextLTArabic-Medium',
+    fontSize: SIZES.h4_2,
     lineHeight: 22,
   },
   h5: {
@@ -117,6 +125,16 @@ export const FONTS = {
   body5: {
     fontFamily: 'DINNextLTArabic-Regular',
     fontSize: SIZES.body5,
+    lineHeight: 22,
+  },
+  body6: {
+    fontFamily: 'DINNextLTArabic-Regular',
+    fontSize: SIZES.body5,
+    lineHeight: 18,
+  },
+  body7: {
+    fontFamily: 'DINNextLTArabic-Regular',
+    fontSize: SIZES.body7,
     lineHeight: 22,
   },
 };

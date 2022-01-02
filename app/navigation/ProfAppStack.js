@@ -27,6 +27,8 @@ import Dementia from '../Professional/screans/subScreens/Categories/dementia';
 import Insomnia from '../Professional/screans/subScreens/Categories/insomnia';
 import Anxiety from '../Professional/screans/subScreens/Categories/anxiety';
 import Schizophrenia from '../Professional/screans/subScreens/Categories/schizophrenia';
+import BlogCustom from '../Professional/components/BlogCustom';
+import AuthorCustom from '../Professional/components/AuthorCustom';
 
 import Details from '../Professional/screans/subScreens/categoryDetails';
 const Stack = createNativeStackNavigator();
@@ -70,7 +72,11 @@ function HomeStack() {
         },
       })}>
       <Tab.Screen name="Home" component={ProfHome} />
-      <Tab.Screen name="Requests" component={Profrequests} />
+      <Tab.Screen
+        name="Requests"
+        component={Profrequests}
+        options={() => ({headerShown: true})}
+      />
       <Tab.Screen
         name="Blog"
         component={ProfBlog}
@@ -107,7 +113,9 @@ export default function AppStack() {
         <Stack.Screen name="Insomnia" component={Insomnia} />
         <Stack.Screen name="Anxiety" component={Anxiety} />
         <Stack.Screen name="Schizophrenia" component={Schizophrenia} />
+        <Stack.Screen name="BlogCustom" component={BlogCustom} />
         <Stack.Screen name="Details" component={Details} />
+        <Stack.Screen name="AuthorCustom" component={AuthorCustom} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

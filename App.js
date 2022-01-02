@@ -1,8 +1,13 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
+import {StatusBar, LogBox} from 'react-native';
 import Providers from './app/navigation';
 
+// Ignore log notification by message:
+
+// Ignore all log notifications:
+// LogBox.ignoreAllLogs();
 const App = () => {
+  LogBox.ignoreLogs(['Warning: sssssssssssssssssss']);
   return (
     <>
       <StatusBar

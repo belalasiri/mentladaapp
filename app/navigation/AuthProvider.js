@@ -134,6 +134,7 @@ export const AuthProvider = ({children}) => {
                       role: 'patient',
                       createdAt: firestore.Timestamp.fromDate(new Date()),
                       userImg: image,
+                      userId: auth().currentUser.uid,
                     });
                 })
                 .catch(e => {

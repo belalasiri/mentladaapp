@@ -25,6 +25,8 @@ import firestore, {firebase} from '@react-native-firebase/firestore';
 import {ToastAndroid} from 'react-native';
 import {COLORS, FONTS, icons, SIZES} from '../../constants';
 import LinearGradient from 'react-native-linear-gradient';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const ProfProfile = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -34,6 +36,7 @@ const ProfProfile = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [profPationts, setprofPationts] = useState();
   const [isVerified, setVerified] = useState(null);
+  const [isReloading, setReloading] = useState(false);
 
   let profList = [];
   const fetchProf = async () => {
@@ -75,8 +78,10 @@ const ProfProfile = ({navigation, route}) => {
         if (result.exists) {
           setIsApproveddata(result.data().approved);
           console.log(result.data().approved);
+          // setReloading(false);
         } else {
           setIsApproveddata('notExist');
+          // setReloading(false);
         }
       })
       .catch(e => {
@@ -86,6 +91,7 @@ const ProfProfile = ({navigation, route}) => {
     if (loading) {
       setLoading(false);
     }
+    // setReloading(false);
   };
 
   const checkVerified = async () => {
@@ -130,6 +136,8 @@ const ProfProfile = ({navigation, route}) => {
   };
 
   const onRequest = () => {
+    setReloading(true);
+
     firebase
       .firestore()
       .collection('session')
@@ -149,6 +157,8 @@ const ProfProfile = ({navigation, route}) => {
       })
       .then(() => {
         setLoading(true);
+        setReloading(false);
+
         console.log('Request Sent!');
         Alert.alert(
           'Request Sent!',
@@ -157,6 +167,8 @@ const ProfProfile = ({navigation, route}) => {
       });
   };
   const onDelete = () => {
+    setReloading(true);
+
     firebase
       .firestore()
       .collection('session')
@@ -165,6 +177,8 @@ const ProfProfile = ({navigation, route}) => {
       .then(() => {
         console.log('Your request has been cancel!');
         setLoading(true);
+        setReloading(false);
+
         Alert.alert('Request Cenceled!', '');
       });
   };
@@ -295,7 +309,6 @@ const ProfProfile = ({navigation, route}) => {
               </Text>
             </View>
           </View>
-
           {/* Prof info continer */}
           <View style={{flexDirection: 'row', paddingTop: SIZES.padding}}>
             <LinearGradient
@@ -355,7 +368,6 @@ const ProfProfile = ({navigation, route}) => {
               />
             </LinearGradient>
           </View>
-
           <View style={{paddingTop: 15, paddingHorizontal: 10}}>
             <Text
               style={{
@@ -377,7 +389,6 @@ const ProfProfile = ({navigation, route}) => {
                 : 'No deteiles are provided..'}
             </Text>
           </View>
-
           <LinearGradient
             colors={[COLORS.lightpurple, COLORS.lightGreen]}
             start={{x: 0, y: 1}}
@@ -421,34 +432,134 @@ const ProfProfile = ({navigation, route}) => {
               </ScrollView>
             </View>
           </View>
-
-          {isApproved == 'notExist' ? (
-            <View style={{paddingBottom: 10}}>
-              <FormButton
-                buttonTitle="Request for a counselling session"
-                onPress={() => onRequest()}
-              />
-            </View>
-          ) : isApproved == 'pending' ? (
-            <View style={{paddingBottom: 10}}>
-              <View style={[styles.containerLoading, styles.horizontal]}>
-                <FormButton buttonTitle="Cancel" onPress={() => onDelete()} />
-              </View>
-            </View>
-          ) : isApproved == 'approved' ? (
-            <View style={{paddingBottom: 10}}>
-              <FormButton
-                buttonTitle="Chat"
-                onPress={() => navigation.navigate('Message')}
-              />
-            </View>
-          ) : (
-            <View style={{paddingBottom: 10}}>
-              <View style={[styles.containerLoading, styles.horizontal]}>
-                <ActivityIndicator size="large" color={colors.primary} />
-              </View>
-            </View>
-          )}
+          <View style={{marginBottom: 10}}>
+            {isApproved == 'notExist' ? (
+              <LinearGradient
+                colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                start={{x: 0, y: 1}}
+                end={{x: 0, y: 0}}
+                style={{
+                  marginTop: 10,
+                  paddingBottom: 3,
+                  width: '100%',
+                  height: SIZES.height / 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => onRequest()}>
+                  {isReloading ? (
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <BallIndicator color={COLORS.secondary} size={15} />
+                    </View>
+                  ) : (
+                    <Text
+                      style={[styles.buttonText, {color: COLORS.secondary}]}>
+                      Request for a counselling session
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </LinearGradient>
+            ) : isApproved == 'pending' ? (
+              <LinearGradient
+                colors={[COLORS.lightyellow, COLORS.lightGreen]}
+                start={{x: 0, y: 1}}
+                end={{x: 0, y: 0}}
+                style={{
+                  marginTop: 10,
+                  paddingBottom: 3,
+                  width: '100%',
+                  height: SIZES.height / 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => onDelete()}>
+                  {isReloading ? (
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <BallIndicator color={COLORS.secondary} size={15} />
+                    </View>
+                  ) : (
+                    <Text
+                      style={[styles.buttonText, {color: COLORS.secondary}]}>
+                      Cancel the request
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </LinearGradient>
+            ) : isApproved == 'approved' ? (
+              <LinearGradient
+                colors={[COLORS.lightGreen, COLORS.green]}
+                start={{x: 0, y: 0}}
+                end={{x: 0, y: 3}}
+                style={{
+                  marginTop: 10,
+                  paddingBottom: 3,
+                  width: '100%',
+                  height: SIZES.height / 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => navigation.navigate('Message')}>
+                  {isReloading ? (
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <BallIndicator color={COLORS.white} size={15} />
+                    </View>
+                  ) : (
+                    <Text
+                      style={[styles.buttonText, {color: COLORS.secondary}]}>
+                      Chat
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </LinearGradient>
+            ) : (
+              <LinearGradient
+                colors={[COLORS.lightpurple, COLORS.primary]}
+                start={{x: 0, y: 0}}
+                end={{x: 0, y: 3}}
+                style={{
+                  marginTop: 10,
+                  paddingBottom: 3,
+                  width: '100%',
+                  height: SIZES.height / 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <BarIndicator color={COLORS.secondary} size={20} />
+                </TouchableOpacity>
+              </LinearGradient>
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -522,5 +633,9 @@ const styles = StyleSheet.create({
 
   cancelButton: {
     borderRadius: 40,
+  },
+  buttonContainer: {},
+  buttonText: {
+    ...FONTS.h5,
   },
 });

@@ -24,6 +24,7 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import BlogSwitch from '../../config/components/BlogSwitch';
+import BlogCustom from './subScreen/BlogCustom';
 
 const BlogScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -32,7 +33,8 @@ const BlogScreen = ({navigation, route}) => {
   const [allPosts, setAllPost] = useState(null);
   const [ownPosts, setOwnPosts] = useState(null);
   const [requests, setRequests] = useState(true);
-
+  const [isVerified, setVerified] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const Categories = [
     {
       id: 1,
@@ -161,13 +163,13 @@ const BlogScreen = ({navigation, route}) => {
             Blog: doc.data().Blog,
             Content: doc.data().Content,
             blogtImg: doc.data().blogtImg,
-            blogTime: doc.data().blogTime,
             Category: doc.data().Category,
+            blogTime: doc.data().blogTime,
           })),
         ),
       );
     return fetcBlogs;
-  }, [route]);
+  }, [navigation]);
 
   useEffect(() => {
     getUser();
@@ -192,7 +194,8 @@ const BlogScreen = ({navigation, route}) => {
               data={allPosts}
               keyExtractor={item => item.id}
               renderItem={({id, item}) => (
-                <ListItem
+                <BlogCustom
+                  item={item}
                   onPress={() =>
                     navigation.navigate('BlogContent', {
                       id: item.id,
@@ -206,65 +209,8 @@ const BlogScreen = ({navigation, route}) => {
                       blogTime: item.blogTime,
                       professionalId: item.professionalId,
                     })
-                  }>
-                  <View
-                    style={{
-                      width: windowWidth / 1 - 30,
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <LinearGradient
-                      colors={['#f0e6fa', '#fff', '#f7f3fc']}
-                      start={{x: 0, y: 1}}
-                      end={{x: 1, y: 0}}
-                      style={{
-                        flexDirection: 'row',
-                        borderRadius: 7,
-                      }}>
-                      <View style={{width: 100}}>
-                        <Image
-                          source={{uri: item.blogtImg}}
-                          style={{
-                            width: 100,
-                            height: 150,
-                            borderTopLeftRadius: 7,
-                            borderBottomLeftRadius: 7,
-                          }}
-                        />
-                      </View>
-                      <ListItem.Content
-                        style={{
-                          alignItems: 'flex-start',
-                          justifyContent: 'center',
-                          marginLeft: 20,
-                          paddingRight: 3,
-                          paddingVertical: 10,
-                        }}>
-                        <ListItem.Title
-                          style={{
-                            fontSize: 15,
-                            color: colors.text,
-                            fontFamily: font.title,
-                          }}>
-                          {item.Blog}
-                        </ListItem.Title>
-                        <ListItem.Subtitle
-                          style={{
-                            fontSize: 13,
-                            color: colors.subtext,
-                            fontFamily: font.subtitle,
-                            paddingRight: 5,
-                            paddingVertical: 7,
-                          }}
-                          numberOfLines={3}
-                          ellipsizeMode="tail">
-                          {item.Content}
-                        </ListItem.Subtitle>
-                      </ListItem.Content>
-                      <ListItem.Chevron />
-                    </LinearGradient>
-                  </View>
-                </ListItem>
+                  }
+                />
               )}
             />
           ) : (

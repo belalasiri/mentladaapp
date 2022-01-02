@@ -36,6 +36,7 @@ const PostScreen = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [CommentsList, setComments] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -154,7 +155,6 @@ const PostScreen = ({navigation, route}) => {
       });
   };
 
-  
   const handleDelete = postId => {
     Alert.alert(
       'Delete post',
@@ -197,10 +197,6 @@ const PostScreen = ({navigation, route}) => {
       .catch(e => console.log('Error deleting posst.', e));
   };
 
-  useEffect(() => {
-    getUser();
-  }, [deleted]);
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {posts?.[0] ? (
@@ -209,18 +205,24 @@ const PostScreen = ({navigation, route}) => {
           data={posts}
           keyExtractor={item => item.id}
           renderItem={({id, item}) =>
-            item.userId === auth().currentUser.uid ? (
-             
-             null // <CustomPost
+            item.userId === auth().currentUser.uid ? null : ( // <CustomPost
               //   item={item}
               //   onPress={() => navigation.navigate('Profile')}
               //   onDelete={handleDelete}
               // />
-            ) : (
               <CustomPost
                 item={item}
                 onPress={() =>
                   navigation.navigate('HomeProfile', {userId: item.userId})
+                }
+                onContainerPress={() =>
+                  navigation.navigate('FullPost', {
+                    userId: item.userId,
+                    post: item.post,
+                    postTime: item.postTime,
+                    postImg: item.postImg,
+                    id: item.id,
+                  })
                 }
               />
             )

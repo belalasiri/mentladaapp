@@ -1,5 +1,11 @@
 import React from 'react';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import {windowHeight} from '../../../utils/Dimentions';
 import colors from '../../colors';
@@ -19,40 +25,52 @@ const MainContainer = ({
   onPress,
   onDelete,
   onImagePress,
+  onContainerPress,
+  postId,
+  CommentsLength,
+  likeList,
+  onCommentPress,
 }) => {
   return (
     <View style={styles.Container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.UserNameAndtimeContainer}
-          onPress={onPress}>
-          <Text style={styles.UserName}>{Name}</Text>
-          <Text style={styles.Time}>{postTime}</Text>
-        </TouchableOpacity>
-
-        {userUid == itemuserId ? (
-          <TouchableOpacity onPress={onDelete}>
-            <Feather name={IconName} size={25} color={colors.primary} />
+      <Pressable onPress={onContainerPress}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            style={styles.UserNameAndtimeContainer}
+            onPress={onPress}>
+            <Text style={styles.UserName}>{Name}</Text>
+            <Text style={styles.Time}>{postTime}</Text>
           </TouchableOpacity>
-        ) : null}
-      </View>
-      <Text style={styles.Content}>{PostContent}</Text>
-      <TouchableOpacity style={{marginVertical: 10}} onPress={onImagePress}>
-        {conPostImage != null ? (
-          <ProgressiveImage
-            defaultImageSource={require('../../../assets/image/default-img.jpg')}
-            source={postImage}
-            style={{
-              height: 300,
-              width: '100%',
-              borderRadius: 10,
-              overflow: 'hidden',
-            }}
-            resizeMode="cover"
-          />
-        ) : null}
-      </TouchableOpacity>
-      <Footer />
+
+          {userUid == itemuserId ? (
+            <TouchableOpacity onPress={onDelete}>
+              <Feather name={IconName} size={25} color={colors.primary} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
+
+        <Text style={styles.Content}>{PostContent}</Text>
+        <TouchableOpacity style={{marginVertical: 10}} onPress={onImagePress}>
+          {conPostImage != null ? (
+            <ProgressiveImage
+              defaultImageSource={require('../../../assets/image/default-img.jpg')}
+              source={postImage}
+              style={{
+                height: 300,
+                width: '100%',
+                borderRadius: 10,
+                overflow: 'hidden',
+              }}
+              resizeMode="cover"
+            />
+          ) : null}
+        </TouchableOpacity>
+        <Footer
+          CommentsLength={CommentsLength}
+          onCommentPress={onCommentPress}
+          likeList={likeList}
+        />
+      </Pressable>
     </View>
   );
 };

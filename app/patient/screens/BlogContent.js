@@ -36,7 +36,6 @@ const BlogContent = ({navigation, route}) => {
       .firestore()
       .collection('Blogs')
       .doc(route.params.id)
-
       .update({
         likes: firebase.firestore.FieldValue.increment(1),
       })
@@ -88,7 +87,7 @@ const BlogContent = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="default"
+        barStyle="dark-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
@@ -221,7 +220,7 @@ const BlogContent = ({navigation, route}) => {
             </View>
 
             <TouchableOpacity
-              onPress={() => onLikePress()}
+              onPress={() => {}}
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',

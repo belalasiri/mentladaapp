@@ -40,31 +40,6 @@ const CustomProfList = ({
     return fetcLastMessages;
   });
 
-  //  const checkApproval = async () => {
-  //    await firestore()
-  //      .collection('Professional')
-  //      .doc(route.params.professionalId)
-  //      .get()
-  //      .then(result => {
-  //        if (result.exists) {
-  //          setVerified(result.data().Verified);
-  //          console.log(result.data().Verified);
-  //        } else {
-  //          setVerified('notVerified');
-  //        }
-  //      })
-  //      .catch(e => {
-  //        console.log(e);
-  //      });
-  //    if (loading) {
-  //      setLoading(false);
-  //    }
-  //  };
-
-  //  useEffect(() => {
-  //    checkApproval();
-  //  }, [isVerified]);
-
   return (
     <ListItem.Swipeable
       key={id}

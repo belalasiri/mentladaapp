@@ -273,6 +273,7 @@ const patientChat = ({navigation, route}) => {
                   {formatted}
                 </Text>
               </View>
+
               <FlatList
                 inverted
                 initialNumToRender={7}

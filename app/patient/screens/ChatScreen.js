@@ -1,29 +1,15 @@
 import React, {useState, useEffect, useContext} from 'react';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Pressable,
-  Text,
-  FlatList,
-  SafeAreaView,
-  ActivityIndicator,
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import moment from 'moment';
 import {moderateScale} from 'react-native-size-matters';
 
-import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../../config/colors';
 import font from '../../config/font';
 import MessageInput from '../../config/components/MessageInput';
 const ChatScreen = ({route, profsData, navigation}) => {
-  const {user} = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState(null);
   const [loading, setLoading] = useState(true);

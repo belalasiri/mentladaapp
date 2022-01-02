@@ -31,6 +31,9 @@ import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
 import CustomPost from '../../config/components/CustomPost';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import moment from 'moment';
+import {COLORS, FONTS} from '../../constants';
+import {BarIndicator} from 'react-native-indicators';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -38,6 +41,52 @@ const ProfileScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [ApprovedChats, setApprovedChats] = useState([]);
+  const [PendingChats, setPendingChats] = useState([]);
+  const [packageData, setPackageData] = useState(0);
+
+  const Heder = ({onBacePress, onAddPress, name}) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: 10,
+          paddingVertical: 10,
+          // marginTop: 5,
+          alignItems: 'center',
+        }}>
+        {/* GoBack */}
+        <View style={{flex: 1}}>
+          <TouchableOpacity
+            style={{
+              width: 45,
+              height: 45,
+              alignItems: 'center',
+              borderRadius: 25,
+              justifyContent: 'center',
+              backgroundColor: COLORS.lightpurple,
+            }}
+            onPress={onBacePress}>
+            <Icon name="chevron-back" size={25} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Title */}
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{color: colors.text, fontSize: 20, fontFamily: font.title}}>
+            {name}
+          </Text>
+        </View>
+        <View style={{flex: 1, justifyContent: 'center'}} />
+      </View>
+    );
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,17 +109,6 @@ const ProfileScreen = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       ),
-      // headerRight: () => (
-      //   <View style={{marginRight: 20}}>
-      //     <TouchableOpacity
-      //       activeOpacity={0.5}
-      //       onPress={() => {
-      //         navigation.navigate('EditProfile');
-      //       }}>
-      //       <MaterialIcons name="edit" size={25} color={colors.text} />
-      //     </TouchableOpacity>
-      //   </View>
-      // ),
     });
   }, []);
 
@@ -181,10 +219,6 @@ const ProfileScreen = ({navigation, route}) => {
       .doc(postId)
       .delete()
       .then(() => {
-        // Alert.alert(
-        //   'Post deleted!',
-        //   'Your post has been deleted successfully!',
-        // );
         ToastAndroid.showWithGravityAndOffset(
           'Your post has been deleted successfully!',
           ToastAndroid.LONG,
@@ -217,15 +251,55 @@ const ProfileScreen = ({navigation, route}) => {
     getUser();
     fetchPosts();
     setDeleted(false);
-  }, [deleted, user, userData]);
+
+    const APPROVED = firestore()
+      .collection('session')
+      .where('patientEmail', '==', user.email)
+      .where('approved', '==', 'approved')
+      .onSnapshot(snapshot =>
+        setApprovedChats(
+          snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})),
+        ),
+      );
+    const PENDING = firestore()
+      .collection('session')
+      .where('patientEmail', '==', user.email)
+      .where('approved', '==', 'pending')
+      .onSnapshot(snapshot =>
+        setPendingChats(
+          snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})),
+        ),
+      );
+    return APPROVED, PENDING;
+  }, [navigation, deleted, posts]);
+
+  useLayoutEffect(() => {
+    firestore()
+      .collection('packages')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setPackageData(documentSnapshot.data().seconds);
+          console.log(packageData);
+        } else return 0;
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }, [packageData]);
 
   if (loading == true) {
     return (
       <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color="#f7f3fc" />
+        <BarIndicator size={35} color={COLORS.primary} />
       </View>
     );
   }
+  const formatted = moment
+    .utc(packageData * 1000)
+    .format('DD [d,]HH [h,]mm [m]');
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {/* <StatusBar barStyle="dark-content" backgroundColor="#f7f3fc" /> */}
@@ -241,172 +315,392 @@ const ProfileScreen = ({navigation, route}) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1.4, alignItems: 'flex-start'}}>
-              <Image
-                style={styles.userImg}
-                source={{
-                  uri: userData
-                    ? userData.userImg ||
-                      'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                    : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-                }}
-              />
-            </View>
+        {route.params ? (
+          <>
+            {route.params.userId !== auth().currentUser.uid ? (
+              <>
+                {/* other users view */}
+                <Heder
+                  name={
+                    userData
+                      ? userData.fname + ' ' + userData.lname || 'Mentlada'
+                      : 'Mentlada'
+                  }
+                  userImage={{
+                    uri: 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                  }}
+                  onBacePress={() => navigation.goBack()}
+                />
+                <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        style={styles.userImg}
+                        source={{
+                          uri: userData
+                            ? userData.userImg ||
+                              'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                            : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                        }}
+                      />
 
-            {/* posts, followers, folowing */}
-            <View style={{flex: 3}}>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                <View style={styles.userInfoItem}>
-                  <Text style={styles.userInfoTitle}>{posts.length}</Text>
-                  <Text style={styles.userInfoSubTitle}>Posts</Text>
+                      <View
+                        style={{
+                          paddingHorizontal: 10,
+                          paddingTop: 10,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text style={styles.userName}>
+                          {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
+                          {userData ? userData.lname || 'Patient' : 'Patient'}
+                        </Text>
+
+                        <Text style={styles.aboutUser}>
+                          {userData
+                            ? userData.about || 'No details added.'
+                            : ''}
+                        </Text>
+                      </View>
+                      <Divider />
+                    </View>
+                  </View>
+
+                  <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignContent: 'center',
+                        paddingVertical: 15,
+                      }}>
+                      <Icon name="mail-outline" size={15} />
+
+                      <Text style={styles.phone}>
+                        {userData ? userData.email || 'No email added.' : ''}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignContent: 'center',
+                      }}>
+                      <Icon name="call-outline" size={15} />
+
+                      <Text style={styles.phone}>
+                        {userData
+                          ? userData.phone || 'No phone no. added.'
+                          : ''}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginTop: 15,
+                        alignContent: 'center',
+                      }}>
+                      <MaterialCommunityIcons
+                        name="map-marker-outline"
+                        color="#333333"
+                        size={15}
+                      />
+
+                      <Text style={styles.phone}>
+                        {userData
+                          ? userData.country || 'No details added.'
+                          : ''}
+                        {' _ '}
+                        {userData ? userData.city || 'No details added.' : ''}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Tell Your Friends button */}
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      borderRadius: 7,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingVertical: 6,
+                      backgroundColor: colors.w,
+                      marginTop: 10,
+                    }}
+                    onPress={myCustomShare}>
+                    <Icon
+                      name="share-outline"
+                      color={colors.primary}
+                      size={20}
+                    />
+                    <Text
+                      style={{
+                        marginLeft: 5,
+                        fontFamily: font.title,
+                        color: colors.primary,
+                        fontSize: 14,
+                      }}>
+                      Tell Your Friends about Mentlada
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.userInfoItem}>
-                  <Text style={styles.userInfoTitle}>0</Text>
-                  <Text style={styles.userInfoSubTitle}>Followers</Text>
+                <View
+                  style={{
+                    marginBottom: 10,
+                    marginHorizontal: 5,
+                    marginTop: 20,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: -9,
+                        marginLeft: 20,
+                      }}>
+                      <Icon name="apps" size={20} />
+                      <Text style={styles.sPosts}>
+                        {userData ? userData.fname || 'Mentlada' : 'Mentlada'}'s
+                        posts
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: -9,
+                        marginRight: 20,
+                      }}>
+                      <Text
+                        style={{
+                          color: COLORS.secondary,
+                          ...FONTS.h4,
+                          paddingHorizontal: 10,
+                        }}>
+                        {posts.length}
+                      </Text>
+                      {posts.length == 1 ? (
+                        <Text style={{color: COLORS.secondary, ...FONTS.h5}}>
+                          Post
+                        </Text>
+                      ) : (
+                        <Text style={{color: COLORS.secondary, ...FONTS.h5}}>
+                          Posts
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                  <Divider />
                 </View>
-                <View style={styles.userInfoItem}>
-                  <Text style={styles.userInfoTitle}>0</Text>
-                  <Text style={styles.userInfoSubTitle}>Folowing</Text>
+              </>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {/* current user view */}
+            <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flex: 1.4, alignItems: 'flex-start'}}>
+                  <Image
+                    style={styles.userImg}
+                    source={{
+                      uri: userData
+                        ? userData.userImg ||
+                          'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                        : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                    }}
+                  />
+                </View>
+
+                {/* posts, followers, folowing */}
+
+                <View style={{flex: 3}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+                      alignItems: 'center',
+                    }}>
+                    <View style={styles.userInfoItem}>
+                      <Text style={styles.userInfoTitle}>{posts.length}</Text>
+                      <Text style={styles.userInfoSubTitle}>Posts</Text>
+                    </View>
+                    <View style={styles.userInfoItem}>
+                      {packageData ? (
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            color: COLORS.secondary,
+                            marginBottom: 5,
+                          }}>
+                          {formatted}
+                        </Text>
+                      ) : (
+                        <Text style={styles.userInfoTitle}>No plan</Text>
+                      )}
+
+                      <Text style={styles.userInfoSubTitle}>Mentlada Plan</Text>
+                    </View>
+                    <View style={styles.userInfoItem}>
+                      <Text style={styles.userInfoTitle}>
+                        {ApprovedChats.length}
+                      </Text>
+                      <Text style={styles.userInfoSubTitle}>Professionals</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
 
-          <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
-            <Text style={styles.userName}>
-              {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
-              {userData ? userData.lname || 'Patient' : 'Patient'}
-            </Text>
-
-            <Text style={styles.aboutUser}>
-              {userData ? userData.about || 'No details added.' : ''}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-                paddingVertical: 15,
-              }}>
-              <Icon name="mail-outline" size={15} />
-
-              <Text style={styles.phone}>
-                {userData ? userData.email || 'No email added.' : ''}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-              }}>
-              <Icon name="call-outline" size={15} />
-
-              <Text style={styles.phone}>
-                {userData ? userData.phone || 'No phone no. added.' : ''}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 15,
-                alignContent: 'center',
-              }}>
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                color="#333333"
-                size={15}
-              />
-
-              <Text style={styles.phone}>
-                {userData ? userData.country || 'No details added.' : ''}
-                {' _ '}
-                {userData ? userData.city || 'No details added.' : ''}
-              </Text>
-            </View>
-          </View>
-
-          {/* buttons for the edit profile message and follow */}
-          <View style={styles.userBtnWrapper}>
-            {route.params ? (
-              <>
-                {route.params.userId !== auth().currentUser.uid ? null : null}
-              </>
-            ) : (
-              <>
-                <TouchableOpacity
-                  style={styles.userBtn_E}
-                  onPress={() => {
-                    navigation.navigate('EditProfile');
-                  }}>
-                  <Text style={styles.userBtnTxt}>Edit profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.userBtn_L}
-                  onPress={() => logout()}>
-                  <Text style={styles.userBtnTxt}>Logout</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-
-          {/* Tell Your Friends button */}
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              borderRadius: 7,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingVertical: 6,
-              backgroundColor: colors.w,
-            }}
-            onPress={myCustomShare}>
-            <Icon name="share-outline" color={colors.primary} size={20} />
-            <Text
-              style={{
-                marginLeft: 5,
-                fontFamily: font.title,
-                color: colors.primary,
-                fontSize: 14,
-              }}>
-              Tell Your Friends
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Your Post or $user_name posts  */}
-        <View style={{marginBottom: 20, marginHorizontal: 5, marginTop: 10}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              marginBottom: -9,
-              marginLeft: 20,
-            }}>
-            {route.params ? (
-              <>
-                <Icon name="apps" size={20} />
-                <Text style={styles.sPosts}>
-                  {userData ? userData.fname || 'Mentlada' : 'Mentlada'}'s posts
+              <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+                <Text style={styles.userName}>
+                  {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
+                  {userData ? userData.lname || 'Patient' : 'Patient'}
                 </Text>
-              </>
-            ) : (
-              <>
+
+                <Text style={styles.aboutUser}>
+                  {userData ? userData.about || 'No details added.' : ''}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    paddingVertical: 15,
+                  }}>
+                  <Icon name="mail-outline" size={15} />
+
+                  <Text style={styles.phone}>
+                    {userData ? userData.email || 'No email added.' : ''}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                  }}>
+                  <Icon name="call-outline" size={15} />
+
+                  <Text style={styles.phone}>
+                    {userData ? userData.phone || 'No phone no. added.' : ''}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 15,
+                    alignContent: 'center',
+                  }}>
+                  <MaterialCommunityIcons
+                    name="map-marker-outline"
+                    color="#333333"
+                    size={15}
+                  />
+
+                  <Text style={styles.phone}>
+                    {userData ? userData.country || 'No details added.' : ''}
+                    {' _ '}
+                    {userData ? userData.city || 'No details added.' : ''}
+                  </Text>
+                </View>
+              </View>
+
+              {/* buttons for the edit profile message and follow */}
+              <View style={styles.userBtnWrapper}>
+                {route.params ? (
+                  <>
+                    {route.params.userId !== auth().currentUser.uid
+                      ? null
+                      : null}
+                  </>
+                ) : (
+                  <>
+                    <TouchableOpacity
+                      style={styles.userBtn_E}
+                      onPress={() => {
+                        navigation.navigate('EditProfile');
+                      }}>
+                      <Text style={styles.userBtnTxt}>Edit profile</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.userBtn_L}
+                      onPress={() => logout()}>
+                      <Text style={styles.userBtnTxt}>Logout</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+
+              {/* Tell Your Friends button */}
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  borderRadius: 7,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingVertical: 6,
+                  backgroundColor: colors.w,
+                }}
+                onPress={myCustomShare}>
+                <Icon name="share-outline" color={colors.primary} size={20} />
+                <Text
+                  style={{
+                    marginLeft: 5,
+                    fontFamily: font.title,
+                    color: colors.primary,
+                    fontSize: 14,
+                  }}>
+                  Tell Your Friends
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{marginBottom: 10, marginHorizontal: 5, marginTop: 20}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  marginBottom: -9,
+                  marginLeft: 20,
+                }}>
                 <Icon name="apps" size={20} />
                 <Text style={styles.Posts}>Your posts</Text>
-              </>
-            )}
-          </View>
-          <Divider />
-        </View>
+              </View>
+              <Divider />
+            </View>
+          </>
+        )}
 
         {/* mapping the user post */}
         {posts?.[0] ? (
           <View style={{flex: 1}}>
             {posts.map(item => (
-              <CustomPost key={item.id} item={item} onDelete={handleDelete} />
+              <CustomPost
+                key={item.id}
+                item={item}
+                onDelete={handleDelete}
+                onContainerPress={() =>
+                  navigation.navigate('FullPost', {
+                    userId: item.userId,
+                    post: item.post,
+                    postTime: item.postTime,
+                    postImg: item.postImg,
+                    id: item.id,
+                  })
+                }
+              />
             ))}
           </View>
         ) : (
@@ -588,10 +882,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userInfoTitle: {
-    fontSize: 20,
+    ...FONTS.h5,
+    color: COLORS.secondary,
     marginBottom: 5,
-    fontWeight: 'bold',
-    color: colors.text,
   },
   userInfoSubTitle: {
     fontSize: 12,

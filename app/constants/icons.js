@@ -1,11 +1,6 @@
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-// const user = <AntDesign name="user" color="#707070" size={20} />;
-
+const rejected = require('../assets/icons/rejected.png');
+const approved = require('../assets/icons/approved.png');
+const Pending = require('../assets/icons/pending.png');
 const Delete = require('../assets/icons/bin.png');
 const verifiedUser = require('../assets/icons/verified-user.png');
 const removeUser = require('../assets/icons/remove-user.png');
@@ -31,8 +26,19 @@ const patient = require('../assets/icons/patient.png');
 const Professional = require('../assets/icons/Professional.png');
 const post = require('../assets/icons/post.png');
 const blog = require('../assets/icons/blog.png');
+const comment = require('../assets/icons/comment.png');
+const commentIcon = require('../assets/icons/commentIcon.png');
+const heart = require('../assets/icons/heart.png');
+const heartFill = require('../assets/icons/heartFill.png');
 
 export default {
+  heartFill,
+  heart,
+  commentIcon,
+  comment,
+  rejected,
+  approved,
+  Pending,
   Delete,
   verifiedUser,
   removeUser,

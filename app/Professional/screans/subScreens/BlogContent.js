@@ -36,8 +36,11 @@ import {
   WaveIndicator,
 } from 'react-native-indicators';
 import {AuthContext} from '../../../navigation/AuthProvider';
+import DeleteBlog from '../../components/DeleteBlog';
+import OnDelete from '../../components/onDelete';
+import AuthorCustom from '../../components/AuthorCustom';
 
-const BlogContent = ({navigation, route}) => {
+const BlogContent = ({navigation, route, onDelete}) => {
   const {user, logout} = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isVerified, setVerified] = useState(null);
@@ -86,7 +89,7 @@ const BlogContent = ({navigation, route}) => {
       .then(result => {
         if (result.exists) {
           setVerified(result.data().Verified);
-          console.log(result.data().Verified);
+          // console.log(result.data().Verified);
           setUploading(false);
         } else {
           setVerified('notVerified');
@@ -105,15 +108,35 @@ const BlogContent = ({navigation, route}) => {
     checkApproval();
   }, [isVerified]);
 
+  const handleDelete = postId => {
+    Alert.alert(
+      'Delete post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed!'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => console.log(`Confirm Pressed! ${route.params.id}`),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="default"
+        barStyle="dark-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
       <ScrollView>
         {/* Header */}
+
+        {/* Blog pic continer */}
         <View style={{flex: 1}}>
           <Image
             source={{
@@ -128,6 +151,8 @@ const BlogContent = ({navigation, route}) => {
             }}
           />
         </View>
+
+        {/* Header nav continer */}
         <View
           style={{
             alignItems: 'center',
@@ -175,6 +200,7 @@ const BlogContent = ({navigation, route}) => {
             </Text>
           </View>
         </View>
+
         {/* Author Continer */}
         <View style={{flex: 2}}>
           <View
@@ -222,7 +248,7 @@ const BlogContent = ({navigation, route}) => {
                   {isVerified == 'notVerified' ? null : isVerified ==
                     'Verified' ? (
                     <View style={{}}>
-                      {loading ? (
+                      {uploading ? (
                         <View
                           style={{
                             alignItems: 'center',
@@ -256,19 +282,6 @@ const BlogContent = ({navigation, route}) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              {route.params.professionalId == auth().currentUser.uid ? (
-                <TouchableOpacity onPress={() => {}}>
-                  <Image
-                    source={icons.Delete}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      tintColor: COLORS.primary,
-                    }}
-                  />
-                </TouchableOpacity>
-              ) : null}
-
               <TouchableOpacity>
                 <Icon
                   name="heart-outline"
