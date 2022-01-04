@@ -7,26 +7,19 @@ import {
   ScrollView,
   TextInput,
   Image,
-  FlatList,
   ToastAndroid,
-  Alert,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {COLORS, FONTS, icons, SIZES} from '../../constants';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {Avatar, Button} from 'react-native-elements';
 import moment from 'moment';
 import NameContainer from './subScreen/Post/NameContainer';
 import BodyContainer from './subScreen/Post/BodyContainer';
 import FooterContainer from './subScreen/Post/FooterContainer';
-import CommentContainer from './subScreen/Post/CommentContainer';
 import CustomComments from './subScreen/Post/CommentsList';
 import {BallIndicator} from 'react-native-indicators';
+
 const FullPost = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);

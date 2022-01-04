@@ -11,6 +11,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StatusBar,
+  Pressable,
 } from 'react-native';
 import {COLORS, FONTS, SIZES, icons} from '../../constants';
 
@@ -310,39 +311,45 @@ const ProfProfile = ({route, item, navigation}) => {
               </>
             )}
           </View>
-          <View
-            style={{
-              backgroundColor: '#F5F7F9',
-              marginTop: 15,
-              borderRadius: 7,
-            }}>
-            <View style={{margin: 10, alignItems: 'center'}}>
-              <Icon name="document-text" size={25} color="#6D768E" />
+          <Pressable onPress={() => navigation.navigate('LicenseCertificate')}>
+            <LinearGradient
+              colors={[COLORS.lightpurple, COLORS.lightGreen]}
+              start={{x: 0, y: 1}}
+              end={{x: 0, y: 0}}
+              style={{
+                marginVertical: 5,
+                alignItems: 'center',
+                borderRadius: 7,
+                marginTop: 15,
+                padding: 10,
+              }}>
+              <View style={{margin: SIZES.padding, alignItems: 'center'}}>
+                <Icon name="document-text" size={25} color="#6D768E" />
 
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontSize: 15, fontFamily: font.title}}>LPC </Text>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    color: '#B283E4',
-                    fontFamily: font.title,
-                  }}>
-                  {profData
-                    ? profData.License || 'This Professional has No License'
-                    : 'This Professional has No License'}
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{...FONTS.h5, color: COLORS.secondary}}>
+                    LPC{' '}
+                  </Text>
+                  <Text style={{...FONTS.h5, color: COLORS.primary}}>
+                    {profData
+                      ? profData.License || 'This Professional has No License'
+                      : 'This Professional has No License'}
+                  </Text>
+                </View>
+                <Text style={{...FONTS.body4, color: COLORS.secondary}}>
+                  License
                 </Text>
               </View>
-              <Text style={{fontSize: 12, fontFamily: font.subtitle}}>
-                License
-              </Text>
-            </View>
-          </View>
+            </LinearGradient>
+          </Pressable>
           <View style={{paddingTop: 15}}>
             <Text
               style={{
-                fontSize: 16,
-                fontFamily: font.title,
-                color: colors.text,
+                ...FONTS.h4,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                borderRadius: 7,
+                color: COLORS.secondary,
               }}>
               Specialities
             </Text>

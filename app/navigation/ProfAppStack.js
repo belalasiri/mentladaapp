@@ -29,6 +29,7 @@ import Anxiety from '../Professional/screans/subScreens/Categories/anxiety';
 import Schizophrenia from '../Professional/screans/subScreens/Categories/schizophrenia';
 import BlogCustom from '../Professional/components/BlogCustom';
 import AuthorCustom from '../Professional/components/AuthorCustom';
+import LicenseCertificate from '../Professional/screans/subScreens/licenseCertificate';
 
 import Details from '../Professional/screans/subScreens/categoryDetails';
 const Stack = createNativeStackNavigator();
@@ -116,6 +117,10 @@ export default function AppStack() {
         <Stack.Screen name="BlogCustom" component={BlogCustom} />
         <Stack.Screen name="Details" component={Details} />
         <Stack.Screen name="AuthorCustom" component={AuthorCustom} />
+        <Stack.Screen
+          name="LicenseCertificate"
+          component={LicenseCertificate}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

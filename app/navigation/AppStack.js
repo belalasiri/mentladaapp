@@ -26,6 +26,7 @@ import Details from '../patient/screens/categoryDetails';
 import planDetails from '../patient/screens/planDetails';
 import test from '../config/Test/test';
 import FullPost from '../patient/screens/FullPost';
+import LicenseCertificate from '../Professional/screans/subScreens/licenseCertificate';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -110,6 +111,10 @@ export default function AppStack() {
           options={() => ({headerShown: true})}
         />
         <Stack.Screen name="FullPost" component={FullPost} />
+        <Stack.Screen
+          name="LicenseCertificate"
+          component={LicenseCertificate}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

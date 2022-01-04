@@ -452,6 +452,7 @@ const ProfileScreen = ({navigation, route}) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
+
                 <View
                   style={{
                     marginBottom: 10,
