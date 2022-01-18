@@ -1,3 +1,4 @@
+const FinalLogo = require('../assets/icons/FinalLogo.png');
 const rejected = require('../assets/icons/rejected.png');
 const approved = require('../assets/icons/approved.png');
 const Pending = require('../assets/icons/pending.png');
@@ -30,8 +31,10 @@ const comment = require('../assets/icons/comment.png');
 const commentIcon = require('../assets/icons/commentIcon.png');
 const heart = require('../assets/icons/heart.png');
 const heartFill = require('../assets/icons/heartFill.png');
+const uploading = require('../assets/icons/uploading.jpg');
 
 export default {
+  uploading,
   heartFill,
   heart,
   commentIcon,
@@ -64,4 +67,5 @@ export default {
   send,
   user,
   wallet,
+  FinalLogo,
 };

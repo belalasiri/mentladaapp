@@ -27,11 +27,12 @@ import Feather from 'react-native-vector-icons/Feather';
 import {Avatar} from 'react-native-elements';
 import CustomPost from '../../config/components/CustomPost';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import PostContent from './subScreen/PostContent';
 
 const PostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -97,6 +98,7 @@ const PostScreen = ({navigation, route}) => {
   };
 
   useLayoutEffect(() => {
+    getUser();
     const fetchPosts = firestore()
       .collection('posts')
       .orderBy('postTime', 'desc')
@@ -205,12 +207,8 @@ const PostScreen = ({navigation, route}) => {
           data={posts}
           keyExtractor={item => item.id}
           renderItem={({id, item}) =>
-            item.userId === auth().currentUser.uid ? null : ( // <CustomPost
-              //   item={item}
-              //   onPress={() => navigation.navigate('Profile')}
-              //   onDelete={handleDelete}
-              // />
-              <CustomPost
+            item.userId === auth().currentUser.uid ? null : (
+              <PostContent
                 item={item}
                 onPress={() =>
                   navigation.navigate('HomeProfile', {userId: item.userId})

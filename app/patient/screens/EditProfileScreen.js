@@ -35,7 +35,8 @@ import font from '../../config/font';
 import colors from '../../config/colors';
 import {windowWidth} from '../../utils/Dimentions';
 import CustomInput from '../../config/Test/CustomInput';
-
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
@@ -218,8 +219,13 @@ const EditProfileScreen = ({navigation}) => {
               style={styles.button}
               onPress={handleSubmit(handleUpdate)}>
               {uploading ? (
-                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                  <ActivityIndicator size="small" color={colors.empty} />
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                  }}>
+                  <BallIndicator color={COLORS.secondary} size={12} />
                 </View>
               ) : (
                 <Text style={styles.buttonText}>Update</Text>
@@ -233,11 +239,28 @@ const EditProfileScreen = ({navigation}) => {
               <View style={{alignItems: 'center'}}>
                 {/* Image continer */}
                 <TouchableOpacity onPress={choosePhotoFromLibrary}>
-                  {loading ? (
-                    <View
-                      style={{alignItems: 'center', justifyContent: 'center'}}>
-                      <ActivityIndicator size="large" color={colors.primary} />
-                    </View>
+                  {!loading ? (
+                    <ImageBackground
+                      source={icons.FinalLogo}
+                      style={{
+                        height: 130,
+                        width: 130,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      blurRadius={60}
+                      imageStyle={{borderRadius: 70}}>
+                      <BarIndicator color={COLORS.secondary} size={40} />
+                      <Text
+                        style={{
+                          position: 'absolute',
+                          paddingTop: 80,
+                          ...FONTS.h5,
+                          color: COLORS.secondary,
+                        }}>
+                        {transferred} %
+                      </Text>
+                    </ImageBackground>
                   ) : (
                     <View
                       style={{
@@ -423,7 +446,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 16,
+    paddingTop: SIZES.padding,
   },
   cancelText: {
     paddingVertical: 5,
@@ -433,17 +456,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   buttonText: {
-    paddingHorizontal: 30,
     paddingVertical: 5,
-    color: colors.empty,
+    color: COLORS.primary,
     fontFamily: font.title,
     paddingBottom: 7,
     fontSize: 15,
   },
   button: {
-    backgroundColor: colors.primary,
-    borderRadius: 50,
-    width: windowWidth / 3 - 20,
+    backgroundColor: COLORS.lightpurple,
+    borderRadius: 7,
+    width: windowWidth / 3 - 40,
     alignItems: 'center',
     justifyContent: 'center',
   },

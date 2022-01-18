@@ -95,7 +95,7 @@ const AddPostScreen = ({navigation, route}) => {
         post: post,
         postImg: imageUrl,
         postTime: firestore.Timestamp.fromDate(new Date()),
-        postId: id,
+        // postId: id,
       })
       .then(() => {
         navigation.goBack();

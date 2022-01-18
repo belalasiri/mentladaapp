@@ -88,7 +88,7 @@ const LoginScreen = ({navigation}) => {
           <View style={styles.Right} />
         </View>
 
-        <View style={[styles.fullLogo, {borderRadius: 70}]}>
+        {/* <View style={[styles.fullLogo, {borderRadius: 70}]}>
           {image ? (
             <ImageBackground
               source={{uri: image}}
@@ -127,10 +127,10 @@ const LoginScreen = ({navigation}) => {
                 imageStyle={{borderRadius: 70}}></ImageBackground>
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
 
         {/* </View> */}
-        <View style={{paddingTop: 10}}>
+        <View style={{paddingTop: 120}}>
           <Text style={[styles.text, {width: windowWidth / 1}]}>
             Create patient account
           </Text>
@@ -200,7 +200,7 @@ const LoginScreen = ({navigation}) => {
         <FormButton
           buttonTitle="Create an account"
           onPress={() =>
-            register(fname, lname, email, password, image, confirmPassword)
+            register(fname, lname, email, password, confirmPassword)
           }
         />
 

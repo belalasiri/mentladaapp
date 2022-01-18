@@ -14,33 +14,70 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+
+//Firebase
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+// import {AuthContext} from '../../../navigation/AuthProvider';
 
 import {Avatar} from 'react-native-elements';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import Share from 'react-native-share';
 import File from '../../assets/filesBase64';
 import moment from 'moment';
-import {COLORS, FONTS, icons} from '../../constants';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
+import LinearGradient from 'react-native-linear-gradient';
 
 const BlogContent = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [isVerified, setVerified] = useState(null);
+  const [isLiked, setLiked] = useState([]);
+  const [likeList, setLikeList] = useState(0);
+  const [isReloading, setReloading] = useState(false);
 
   let blogTime = (
     <Text>{moment(route.params.blogTime.toDate()).fromNow()}</Text>
   );
 
   const onLikePress = () => {
+    setReloading(true);
+
     firebase
       .firestore()
       .collection('Blogs')
       .doc(route.params.id)
-      .update({
-        likes: firebase.firestore.FieldValue.increment(1),
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .set({
+        likedTime: firestore.Timestamp.fromDate(new Date()),
+        likerId: auth().currentUser.uid,
+        Liked: 'true',
       })
-      .collection('likes')
-      .doc(firebase.auth().currentUser.uid);
+      .then(() => {
+        setReloading(false);
+        // console.log('Blog liked!');
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the Blog.', error);
+      });
+  };
+  const disLikeThePost = () => {
+    setReloading(true);
+    firebase
+      .firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .delete()
+      .then(() => {
+        setReloading(false);
+        // console.log('Blog disLiked!');
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
   };
 
   const myCustomShare = async () => {
@@ -67,7 +104,7 @@ const BlogContent = ({navigation, route}) => {
       .then(result => {
         if (result.exists) {
           setVerified(result.data().Verified);
-          console.log(result.data().Verified);
+          // console.log(result.data().Verified);
         } else {
           setVerified('notVerified');
         }
@@ -79,10 +116,53 @@ const BlogContent = ({navigation, route}) => {
       setLoading(false);
     }
   };
+  const checkLiker = async () => {
+    await firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setLiked(result.data().likerId);
+          // console.log(isLiked);
+        } else {
+          setLiked('notLiked');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  useLayoutEffect(() => {
+    const getLikes = firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .orderBy('likedTime', 'asc')
+      .onSnapshot(snapshot =>
+        setLikeList(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data(),
+            Liked: doc.data().Liked,
+            likedTime: doc.data().likedTime,
+            likerId: doc.data().likerId,
+          })),
+        ),
+      );
+    return getLikes;
+  }, []);
 
   useEffect(() => {
     checkApproval();
-  }, [isVerified]);
+    checkLiker();
+  }, [isVerified, isLiked, likeList, isReloading]);
 
   return (
     <View style={styles.container}>
@@ -162,7 +242,7 @@ const BlogContent = ({navigation, route}) => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: 15,
+              padding: SIZES.padding * 2 - 5,
             }}>
             <View
               style={{
@@ -219,20 +299,116 @@ const BlogContent = ({navigation, route}) => {
               </View>
             </View>
 
-            <TouchableOpacity
-              onPress={() => {}}
+            <View
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: 25,
-                // backgroundColor: 'rgba(0,0,0,0.2)',
               }}>
-              <Icon name="heart-outline" size={25} color={colors.subtext} />
-            </TouchableOpacity>
+              {isLiked == 'notLiked' ? (
+                <TouchableOpacity onPress={onLikePress}>
+                  <LinearGradient
+                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                    start={{x: 0, y: 1}}
+                    end={{x: 0, y: 0}}
+                    style={{
+                      borderRadius: 7,
+                      padding: SIZES.padding,
+                      width: '100%',
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                      }}>
+                      <TouchableOpacity
+                        onPress={onLikePress}
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        {isReloading ? (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingHorizontal: SIZES.padding / 2,
+                            }}>
+                            <BallIndicator color={COLORS.secondary} size={15} />
+                          </View>
+                        ) : (
+                          <Icon
+                            name="heart-outline"
+                            size={23}
+                            color={COLORS.secondary}
+                          />
+                        )}
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...FONTS.body4,
+                          color: COLORS.secondary,
+                          paddingLeft: SIZES.padding / 2,
+                        }}>
+                        {likeList.length || 0}
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : isLiked == auth().currentUser.uid ? (
+                <TouchableOpacity onPress={disLikeThePost}>
+                  <LinearGradient
+                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                    start={{x: 0, y: 1}}
+                    end={{x: 0, y: 0}}
+                    style={{
+                      borderRadius: 7,
+                      width: '100%',
+                      padding: SIZES.padding,
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity
+                        onPress={disLikeThePost}
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        {isReloading ? (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingHorizontal: SIZES.padding / 2,
+                            }}>
+                            <BallIndicator color={COLORS.secondary} size={15} />
+                          </View>
+                        ) : (
+                          <Icon name="heart" size={22} color={COLORS.primary} />
+                        )}
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...FONTS.body4,
+                          color: COLORS.secondary,
+                          paddingLeft: SIZES.padding / 2,
+                        }}>
+                        {likeList.length || 0}
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <BarIndicator color={COLORS.secondary} size={15} />
+              )}
+            </View>
           </View>
         </View>
+
         {/* Blog content */}
         <View style={{flex: 2}}>
           {/* Title */}

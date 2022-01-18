@@ -1,17 +1,21 @@
-import React from 'react';
+import React, {useLayoutEffect, useState, useEffect} from 'react';
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
   Pressable,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import {windowHeight} from '../../../utils/Dimentions';
 import colors from '../../colors';
 import font from '../../font';
 import ProgressiveImage from '../ProgressiveImage';
 import Footer from './Footer';
+import TestLikesList from './TestLikesList';
 
 const MainContainer = ({
   Name,
@@ -26,10 +30,13 @@ const MainContainer = ({
   onDelete,
   onImagePress,
   onContainerPress,
-  postId,
+  likeThePost,
   CommentsLength,
   likeList,
   onCommentPress,
+  onLikePress,
+  itemID,
+  disLikeThePost,
 }) => {
   return (
     <View style={styles.Container}>
@@ -41,7 +48,6 @@ const MainContainer = ({
             <Text style={styles.UserName}>{Name}</Text>
             <Text style={styles.Time}>{postTime}</Text>
           </TouchableOpacity>
-
           {userUid == itemuserId ? (
             <TouchableOpacity onPress={onDelete}>
               <Feather name={IconName} size={25} color={colors.primary} />
@@ -69,7 +75,31 @@ const MainContainer = ({
           CommentsLength={CommentsLength}
           onCommentPress={onCommentPress}
           likeList={likeList}
+          onLikePress={onLikePress}
+          itemID={itemID}
+          likeThePost={likeThePost}
+          disLikeThePost={disLikeThePost}
         />
+
+        {/* <Text>{auth().currentUser.uid}</Text> */}
+        {/* {likedData.likerId === auth().currentUser.uid ? (
+          <Text>
+            sss {'           '}
+            {auth().currentUser.uid}
+          </Text>
+        ) : (
+          <Text>
+            aock {'           '}
+            {auth().currentUser.uid}
+          </Text>
+        )} */}
+        {/* <Text>{itemID}</Text> */}
+
+        {/* <View style={{flex: 1}}>
+          {likerList.map(item => (
+            <TestLikesList key={item.id} item={item} />
+          ))}
+        </View> */}
       </Pressable>
     </View>
   );

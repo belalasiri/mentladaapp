@@ -26,7 +26,8 @@ import colors from '../../config/colors';
 import font from '../../config/font';
 import Conversation from '../../assets/conversation.svg';
 import LinearGradient from 'react-native-linear-gradient';
-import {COLORS, icons} from '../../constants';
+import {COLORS, FONTS, icons} from '../../constants';
+import HeaderText from './subScreen/HeaderText';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.6;
@@ -37,17 +38,18 @@ const HomeScreen = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [Profdata, setProfdata] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [allPosts, setAllPost] = useState(null);
+  const [allBlogs, setAllBlogs] = useState(null);
+  const [Headers, setHeader] = useState('Nothing');
 
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
-
+  // maxToRenderPerBatch={5}
   useLayoutEffect(() => {
     const fetcBlogs = firestore()
       .collection('Blogs')
       .orderBy('blogTime', 'desc')
       .onSnapshot(snapshot =>
-        setAllPost(
+        setAllBlogs(
           snapshot.docs.map(doc => ({
             id: doc.id,
             data: doc.data(),
@@ -65,6 +67,21 @@ const HomeScreen = ({navigation, route}) => {
 
     return fetcBlogs;
   }, [navigation]);
+
+  useLayoutEffect(() => {
+    const FETCH_HEADER = firestore()
+      .collection('Header')
+      .orderBy('lastUpdated', 'desc')
+      .onSnapshot(snapshot =>
+        setHeader(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            HeaderText: doc.data().HeaderText,
+          })),
+        ),
+      );
+    return FETCH_HEADER;
+  }, []);
 
   let profList = [];
 
@@ -121,7 +138,7 @@ const HomeScreen = ({navigation, route}) => {
   if (loading == true) {
     return (
       <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color={colors.green} />
+        <ActivityIndicator size="large" color={COLORS.green} />
       </View>
     );
   }
@@ -152,33 +169,25 @@ const HomeScreen = ({navigation, route}) => {
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
           style={{
-            flexDirection: 'row',
             marginHorizontal: 15,
+            paddingHorizontal: 15,
             marginVertical: 5,
-            alignItems: 'center',
+            paddingVertical: 20,
             borderRadius: 7,
             padding: 10,
-            paddingVertical: 20,
           }}>
-          <Icon name="trophy-outline" size={35} color={colors.subtext} />
           <View
             style={{
               flex: 1,
-              alignItems: 'flex-start',
+              flexDirection: 'row',
+              alignItems: 'center',
               justifyContent: 'center',
-              marginHorizontal: 20,
             }}>
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: colors.subtext,
-                  fontFamily: font.title,
-                }}>
-                If it's out of your hands, it deserves freedom from your mind
-                too.
-              </Text>
-            </View>
+            <Icon name="trophy-outline" size={35} color={COLORS.secondary} />
+
+            {Headers.map(item => (
+              <HeaderText key={item.id} item={item} />
+            ))}
           </View>
         </LinearGradient>
 
@@ -193,21 +202,14 @@ const HomeScreen = ({navigation, route}) => {
           <Text
             style={{
               fontFamily: font.title,
-              color: colors.text,
+              color: COLORS.secondary,
               fontSize: 16,
             }}>
             Professional's for you
           </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('professionaList')}>
-            <Text
-              style={{
-                fontFamily: font.title,
-                color: colors.primary,
-                fontSize: 12,
-              }}>
-              See more
-            </Text>
+            <Text style={{...FONTS.h7, color: COLORS.primary}}>See more</Text>
           </TouchableOpacity>
         </View>
 
@@ -469,21 +471,14 @@ const HomeScreen = ({navigation, route}) => {
             Most recent blog
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Blog')}>
-            <Text
-              style={{
-                fontFamily: font.title,
-                color: colors.primary,
-                fontSize: 12,
-              }}>
-              See all
-            </Text>
+            <Text style={{...FONTS.h7, color: COLORS.primary}}>See more</Text>
           </TouchableOpacity>
         </View>
 
         <View style={{flex: 1}}>
           <FlatList
             horizontal
-            data={allPosts}
+            data={allBlogs}
             keyExtractor={item => item.id}
             showsHorizontalScrollIndicator={false}
             renderItem={({id, item}) => (

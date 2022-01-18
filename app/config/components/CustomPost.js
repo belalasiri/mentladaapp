@@ -6,11 +6,12 @@ import {
   SafeAreaView,
   Image,
   Modal,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../navigation/AuthProvider';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import ProfilePic from './Feed/ProfilePic';
@@ -26,6 +27,8 @@ const CustomPost = ({
 }) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [likedData, setLikedData] = useState([]);
+  const [likerList, setLikerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState(false);
   const [CommentsList, setComments] = useState([]);
@@ -44,6 +47,8 @@ const CustomPost = ({
   };
 
   useEffect(() => {
+    getLikedData();
+    // getLikerList();
     getUser();
   }, []);
 
@@ -87,6 +92,51 @@ const CustomPost = ({
     return getLikes;
   }, []);
 
+  const likeThePost = () => {
+    firestore()
+      .collection('posts')
+      .doc(item.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .set({
+        likedTime: firestore.Timestamp.fromDate(new Date()),
+        likerId: auth().currentUser.uid,
+        Liked: 'true',
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
+  };
+  const disLikeThePost = () => {
+    firestore()
+      .collection('posts')
+      .doc(item.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .delete()
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
+  };
+
+  const getLikedData = async () => {
+    await firestore()
+      .collection('posts')
+      .doc(item.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setLikedData(documentSnapshot.data());
+        }
+      });
+    setLoading(false);
+  };
+
   let UserName = (
     <Text>
       {userData ? userData.fniame || 'Mentlada' : 'Mentlada'}{' '}
@@ -109,6 +159,18 @@ const CustomPost = ({
         onPress={onPress}
       />
 
+      {/* <Text>{auth().currentUser.uid}</Text> */}
+      {/* {likedData.likerId === auth().currentUser.uid ? (
+        <Text>
+          sss {'           '}
+          {auth().currentUser.uid}
+        </Text>
+      ) : (
+        <Text>
+          aock {'           '}
+          {auth().currentUser.uid}
+        </Text>
+      )} */}
       <MainContainer
         Name={UserName}
         postTime={postTime}
@@ -125,6 +187,9 @@ const CustomPost = ({
         onCommentPress={onContainerPress}
         CommentsLength={CommentsList.length}
         likeList={likeList.length}
+        likeThePost={likeThePost}
+        disLikeThePost={disLikeThePost}
+        itemID={item.id}
       />
 
       <Modal visible={dialog !== false} animated animationType="slide">

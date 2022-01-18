@@ -22,6 +22,8 @@ import font from '../../config/font';
 import ProfInfo from '../../config/components/ProfInfo';
 import SpecialityCard from '../../config/components/SpecialityCard';
 import LinearGradient from 'react-native-linear-gradient';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ImageBackground} from 'react-native';
 
 const ProfProfile = ({route, item, navigation}) => {
   const {user, Proflogout} = useContext(AuthContext);
@@ -311,37 +313,116 @@ const ProfProfile = ({route, item, navigation}) => {
               </>
             )}
           </View>
-          <Pressable onPress={() => navigation.navigate('LicenseCertificate')}>
-            <LinearGradient
-              colors={[COLORS.lightpurple, COLORS.lightGreen]}
-              start={{x: 0, y: 1}}
-              end={{x: 0, y: 0}}
-              style={{
-                marginVertical: 5,
-                alignItems: 'center',
-                borderRadius: 7,
-                marginTop: 15,
-                padding: 10,
-              }}>
-              <View style={{margin: SIZES.padding, alignItems: 'center'}}>
-                <Icon name="document-text" size={25} color="#6D768E" />
+          <LinearGradient
+            colors={[COLORS.lightpurple, COLORS.lightGreen]}
+            start={{x: 0, y: 1}}
+            end={{x: 0, y: 0}}
+            style={{
+              marginVertical: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
 
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{...FONTS.h5, color: COLORS.secondary}}>
-                    LPC{' '}
-                  </Text>
-                  <Text style={{...FONTS.h5, color: COLORS.primary}}>
-                    {profData
-                      ? profData.License || 'This Professional has No License'
-                      : 'This Professional has No License'}
-                  </Text>
-                </View>
-                <Text style={{...FONTS.body4, color: COLORS.secondary}}>
-                  License
+              borderRadius: 7,
+              marginTop: 15,
+              padding: 10,
+            }}>
+            <View
+              style={{
+                margin: SIZES.padding,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Icon name="document-text" size={25} color="#6D768E" />
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{...FONTS.h5, color: COLORS.secondary}}>LPC </Text>
+                <Text style={{...FONTS.h5, color: COLORS.primary}}>
+                  {profData
+                    ? profData.License || 'This Professional has No License'
+                    : 'This Professional has No License'}
                 </Text>
               </View>
-            </LinearGradient>
-          </Pressable>
+              <Text style={{...FONTS.body4, color: COLORS.secondary}}>
+                License
+              </Text>
+            </View>
+          </LinearGradient>
+
+          <View style={{paddingTop: 15}}>
+            <Text
+              style={{
+                ...FONTS.h4,
+                textAlign: 'left',
+                color: COLORS.secondary,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+              }}>
+              Licensed professional counselor certification
+            </Text>
+            <Pressable
+              onPress={() => navigation.navigate('LicenseCertificate')}>
+              <LinearGradient
+                colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                start={{x: 0, y: 1}}
+                end={{x: 0, y: 0}}
+                style={{
+                  marginVertical: 5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+
+                  borderRadius: 7,
+                  marginTop: 15,
+                  padding: 10,
+                }}>
+                <ImageBackground
+                  source={{
+                    uri: profData
+                      ? profData.LicenseCertificate ||
+                        'https://i.ibb.co/YjC43xX/uploading.jpg'
+                      : 'https://i.ibb.co/YjC43xX/uploading.jpg',
+                  }}
+                  style={{
+                    width: 300,
+                    height: 200,
+                  }}
+                  blurRadius={5}
+                  imageStyle={{
+                    borderRadius: 7,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    {/* <MaterialCommunityIcons
+                      name="camera"
+                      size={50}
+                      color={COLORS.secondary}
+                      style={{
+                        opacity: 0.7,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: COLORS.secondary,
+                        borderRadius: 7,
+                      }}
+                    /> */}
+                    <Text
+                      style={{
+                        ...FONTS.h4_2,
+                        textAlign: 'center',
+                        color: COLORS.secondary,
+                      }}>
+                      Tap to change the certificate
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </LinearGradient>
+            </Pressable>
+          </View>
+
           <View style={{paddingTop: 15}}>
             <Text
               style={{

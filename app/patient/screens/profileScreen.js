@@ -8,9 +8,6 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
-  ActivityIndicator,
-  StatusBar,
-  Button,
   ToastAndroid,
 } from 'react-native';
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -18,22 +15,19 @@ import storage from '@react-native-firebase/storage';
 import Share from 'react-native-share';
 import auth from '@react-native-firebase/auth';
 
-import Feather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 import font from '../../config/font';
 import colors from '../../config/colors';
-import PostCard from '../../config/components/PostCard';
 import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
-import CustomPost from '../../config/components/CustomPost';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import moment from 'moment';
 import {COLORS, FONTS} from '../../constants';
 import {BarIndicator} from 'react-native-indicators';
+import PostContent from './subScreen/PostContent';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -79,7 +73,12 @@ const ProfileScreen = ({navigation, route}) => {
             justifyContent: 'center',
           }}>
           <Text
-            style={{color: colors.text, fontSize: 20, fontFamily: font.title}}>
+            style={{
+              color: colors.text,
+              fontSize: 15,
+              fontFamily: font.title,
+              textAlign: 'center',
+            }}>
             {name}
           </Text>
         </View>
@@ -372,7 +371,15 @@ const ProfileScreen = ({navigation, route}) => {
                             : ''}
                         </Text>
                       </View>
-                      <Divider />
+                      <View
+                        style={{
+                          borderBottomColor: '#ddd',
+                          borderBottomWidth: 1,
+                          width: '92%',
+                          alignSelf: 'center',
+                          marginTop: 10,
+                        }}
+                      />
                     </View>
                   </View>
 
@@ -688,7 +695,7 @@ const ProfileScreen = ({navigation, route}) => {
         {posts?.[0] ? (
           <View style={{flex: 1}}>
             {posts.map(item => (
-              <CustomPost
+              <PostContent
                 key={item.id}
                 item={item}
                 onDelete={handleDelete}
@@ -826,11 +833,13 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   aboutUser: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666',
+    // fontSize: 12,
+    // fontWeight: '600',
+    // color: '#666',
+    // fontFamily: font.subtitle,
     marginTop: 10,
-    fontFamily: font.subtitle,
+    ...FONTS.body5,
+    textAlign: 'center',
   },
   phone: {
     fontSize: 12,

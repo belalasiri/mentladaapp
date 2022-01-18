@@ -45,7 +45,7 @@ const EditProfProfile = ({navigation}) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('User Data', documentSnapshot.data());
+          // console.log('User Data', documentSnapshot.data());
           setProfData(documentSnapshot.data());
           setLoading(false);
         }

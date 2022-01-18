@@ -9,6 +9,7 @@ import {
   Image,
   ToastAndroid,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 import {COLORS, FONTS, icons, SIZES} from '../../constants';
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -19,6 +20,7 @@ import BodyContainer from './subScreen/Post/BodyContainer';
 import FooterContainer from './subScreen/Post/FooterContainer';
 import CustomComments from './subScreen/Post/CommentsList';
 import {BallIndicator} from 'react-native-indicators';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const FullPost = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
@@ -28,6 +30,9 @@ const FullPost = ({navigation, route}) => {
   const [likePost, setLikePost] = useState([]);
   const [commenting, setCommenting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isLiked, setLiked] = useState([]);
+  const [likeList, setLikeList] = useState(0);
+  const [isReloading, setReloading] = useState(false);
 
   const post = route.params;
 
@@ -59,13 +64,6 @@ const FullPost = ({navigation, route}) => {
       .then(() => {
         setInput('');
         setCommenting(false);
-        // ToastAndroid.showWithGravityAndOffset(
-        //   'Your comment has been added Successfully',
-        //   ToastAndroid.SHORT,
-        //   ToastAndroid.BOTTOM,
-        //   0,
-        //   100,
-        // );
       })
       .catch(error => {
         console.log(
@@ -74,34 +72,7 @@ const FullPost = ({navigation, route}) => {
         );
       });
   };
-  const likeThePost = () => {
-    firestore()
-      .collection('posts')
-      .doc(post.id)
-      .collection('Likes')
-      .doc(auth().currentUser.uid)
-      .set({
-        likedTime: firestore.Timestamp.fromDate(new Date()),
-        likerId: auth().currentUser.uid,
-        Liked: 'true',
-      })
-      .catch(error => {
-        console.log('Something went wrong with liking the post.', error);
-      });
-  };
-  const disLikeThePost = () => {
-    firestore()
-      .collection('posts')
-      .doc(post.id)
-      .collection('Likes')
-      .doc(auth().currentUser.uid)
-      .delete()
-      .catch(error => {
-        console.log('Something went wrong with liking the post.', error);
-      });
-  };
 
-  // setInput('');
   useLayoutEffect(() => {
     const getComments = firestore()
       .collection('posts')
@@ -119,18 +90,13 @@ const FullPost = ({navigation, route}) => {
           })),
         ),
       );
-
-    return getComments;
-  }, [navigation]);
-
-  useLayoutEffect(() => {
     const getLikes = firestore()
       .collection('posts')
       .doc(post.id)
       .collection('Likes')
       .orderBy('likedTime', 'asc')
       .onSnapshot(snapshot =>
-        setLikePost(
+        setLikeList(
           snapshot.docs.map(doc => ({
             id: doc.id,
             data: doc.data(),
@@ -141,12 +107,72 @@ const FullPost = ({navigation, route}) => {
         ),
       );
 
-    return getLikes;
-  }, [navigation, likePost]);
+    return getComments, getLikes;
+  }, []);
+
+  const onLikePress = () => {
+    setReloading(true);
+    firestore()
+      .collection('posts')
+      .doc(post.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .set({
+        likedTime: firestore.Timestamp.fromDate(new Date()),
+        likerId: auth().currentUser.uid,
+        Liked: 'true',
+      })
+      .then(() => {
+        setReloading(false);
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
+  };
+
+  const disLikeThePost = () => {
+    setReloading(true);
+    firebase
+      .firestore()
+      .collection('posts')
+      .doc(post.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .delete()
+      .then(() => {
+        setReloading(false);
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
+  };
+
+  const checkLiker = async () => {
+    await firestore()
+      .collection('posts')
+      .doc(post.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setLiked(result.data().likerId);
+        } else {
+          setLiked('notLiked');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getUser();
-  }, [post, likePost]);
+    checkLiker();
+  }, [isLiked, likeList]);
 
   let userName = (
     <Text>
@@ -202,11 +228,148 @@ const FullPost = ({navigation, route}) => {
             conPostImage={post.postImg}
             postImage={{uri: post.postImg}}
           />
-          <FooterContainer
+          {/* <FooterContainer
             CommentsLength={CommentsList.length}
-            likeThePost={likeThePost}
+            likeThePost={onLikePress}
             likedCount={likePost.length || 0}
-          />
+          /> */}
+
+          <View
+            style={{
+              paddingHorizontal: SIZES.padding * 2,
+              paddingVertical: SIZES.padding,
+            }}>
+            <View
+              style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+              {isLiked == 'notLiked' ? (
+                <TouchableOpacity onPress={onLikePress}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingHorizontal: SIZES.padding,
+                    }}>
+                    <TouchableOpacity onPress={onLikePress} style={{}}>
+                      {isReloading ? (
+                        <View
+                          style={{
+                            marginRight: 5,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <BallIndicator color={COLORS.secondary} size={15} />
+                        </View>
+                      ) : (
+                        <Icon
+                          name="heart-outline"
+                          size={23}
+                          color={COLORS.secondary}
+                        />
+                      )}
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...FONTS.body4,
+                        color: COLORS.secondary,
+                        paddingLeft: SIZES.padding / 2,
+                      }}>
+                      {likeList.length || 0}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ) : isLiked == auth().currentUser.uid ? (
+                <TouchableOpacity onPress={disLikeThePost}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      paddingRight: SIZES.padding,
+                    }}>
+                    <TouchableOpacity onPress={disLikeThePost} style={{}}>
+                      {isReloading ? (
+                        <View
+                          style={{
+                            marginRight: 5,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <BallIndicator color={COLORS.secondary} size={15} />
+                        </View>
+                      ) : (
+                        <Icon name="heart" size={22} color={COLORS.primary} />
+                      )}
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...FONTS.body4,
+                        color: COLORS.secondary,
+                        paddingLeft: SIZES.padding / 2,
+                      }}>
+                      {likeList.length || 0}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <View style={{marginRight: 15, flexDirection: 'row'}}>
+                  <BallIndicator color={COLORS.secondary} size={15} />
+                  <Text
+                    style={{
+                      ...FONTS.body4,
+                      color: COLORS.secondary,
+                      paddingLeft: SIZES.padding * 2 - 5,
+                      textAlign: 'center',
+                    }}>
+                    {likeList.length || 0}
+                  </Text>
+                </View>
+              )}
+              {/* <Pressable
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 15,
+                }}
+                onPress={onLikePress}>
+                <Image
+                  source={icons.heart}
+                  style={{width: 20, height: 20, tintColor: COLORS.secondary}}
+                />
+                <Text style={{marginLeft: 5, textAlign: 'center'}}>1</Text>
+              </Pressable> */}
+
+              <Pressable
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    ...FONTS.h4,
+                    color: COLORS.secondary,
+                    paddingHorizontal: SIZES.padding,
+                  }}>
+                  {CommentsList.length}
+                </Text>
+                <Text style={{...FONTS.body5, color: COLORS.secondary}}>
+                  comments
+                </Text>
+              </Pressable>
+            </View>
+            {/* <Divider /> */}
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: COLORS.lightpurple,
+                margin: SIZES.padding,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+          </View>
+
           {CommentsList?.[0] ? (
             <View style={{flex: 1}}>
               {CommentsList.map(item => (
@@ -242,40 +405,40 @@ const FullPost = ({navigation, route}) => {
               </Text>
             </View>
           )}
-          <View style={styles.footer}>
-            <TextInput
-              value={input}
-              multiline
-              onChangeText={text => setInput(text)}
-              placeholder="Write a comment..."
-              style={styles.textInput}
-            />
-            <TouchableOpacity
-              onPress={sendComment}
-              activeOpacity={0.5}
-              disabled={!input}>
-              {commenting ? (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <BallIndicator color={COLORS.secondary} size={15} />
-                </View>
-              ) : (
-                <Image
-                  source={icons.send}
-                  style={{
-                    width: 25,
-                    height: 25,
-                    tintColor: !input ? '#d9c1f2' : COLORS.primary,
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
+      <View style={styles.footer}>
+        <TextInput
+          value={input}
+          multiline
+          onChangeText={text => setInput(text)}
+          placeholder="Write a comment..."
+          style={styles.textInput}
+        />
+        <TouchableOpacity
+          onPress={sendComment}
+          activeOpacity={0.5}
+          disabled={!input}>
+          {commenting ? (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <BallIndicator color={COLORS.secondary} size={15} />
+            </View>
+          ) : (
+            <Image
+              source={icons.send}
+              style={{
+                width: 25,
+                height: 25,
+                tintColor: !input ? '#d9c1f2' : COLORS.primary,
+              }}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

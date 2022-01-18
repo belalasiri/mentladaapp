@@ -9,8 +9,6 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [transferred, setTransferred] = useState(0);
 
   return (
     <AuthContext.Provider
@@ -115,7 +113,7 @@ export const AuthProvider = ({children}) => {
           }
         },
 
-        register: (fname, lname, email, password, image, confirmPassword) => {
+        register: (fname, lname, email, password, confirmPassword) => {
           auth()
             .createUserWithEmailAndPassword(email, password)
             .then(result => {
@@ -133,7 +131,7 @@ export const AuthProvider = ({children}) => {
                       email: email,
                       role: 'patient',
                       createdAt: firestore.Timestamp.fromDate(new Date()),
-                      userImg: image,
+                      // userImg: image,
                       userId: auth().currentUser.uid,
                     });
                 })

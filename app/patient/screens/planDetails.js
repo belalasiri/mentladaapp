@@ -29,6 +29,8 @@ import MonthPicker from 'react-native-month-year-picker';
 
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import {BallIndicator} from 'react-native-indicators';
+import {COLORS} from '../../constants';
 
 const planDetails = ({navigation, route}) => {
   const [cardDetails, setCardDetails] = useState();
@@ -111,28 +113,35 @@ const planDetails = ({navigation, route}) => {
       200,
     );
   };
+
   const submitPlan = () => {
+    setUploading(true);
     firestore()
       .collection('packages')
       .doc(auth().currentUser.uid)
       .set({
-        seconds: 480000,
+        UserID: auth().currentUser.uid,
+        seconds: plan.seconds,
         NameOnCard: name,
         cardNumber: cardNumber,
         CVC: CVC,
-        expiryDate: date,
+        CardExpiryDate: date,
+        subscribedAt: firestore.Timestamp.fromDate(new Date()),
+        Price: plan.Price,
+        planCategory: plan.HederText,
       })
       .then(() => {
-        navigation.goBack();
+        navigation.navigate('Home');
         console.log('successfully subscribed!');
         Alert.alert(
           `You have successfully subscribed to our ${plan.HederText} plan. `,
           'Your profile has been updated successfully.',
         );
+        setUploading(false);
       });
   };
   useEffect(() => {}, [plan]);
-  
+
   return (
     <KeyboardAvoidingView style={styles.container} keyboardVerticalOffset={80}>
       <StatusBar
@@ -158,7 +167,7 @@ const planDetails = ({navigation, route}) => {
             color: colors.text,
             fontSize: 16,
           }}>
-          Add your payment infromation
+          Add your payment infromation{plan.seconds}
         </Text>
       </View>
 
@@ -212,7 +221,6 @@ const planDetails = ({navigation, route}) => {
               <Content
                 HederText={plan.HederText}
                 Body={plan.Body}
-                Body2={plan.Body2}
                 Price={plan.Price}
                 priceInfo={plan.priceInfo}
               />
@@ -326,32 +334,28 @@ const planDetails = ({navigation, route}) => {
         <TouchableOpacity
           style={styles.button}
           onPress={submitPlan}
-          disabled={loading}
+          disabled={uploading}
           disabled={!name}
           disabled={!date}
           disabled={!cardNumber}
           disabled={!CVC}>
           {uploading ? (
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <ActivityIndicator size="small" color={colors.empty} />
-            </View>
+            <BallIndicator color={COLORS.purple} size={15} />
           ) : (
             <Text style={styles.buttonText}>PAY {plan.Price}</Text>
           )}
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          style={styles.button}
-          onPress={onCancel}
-          disabled={loading}
+          onPress={submitPlan}
+          disabled={uploading}
           disabled={!name}
           disabled={!date}
           disabled={!cardNumber}
+          style={styles.button}
           disabled={!CVC}>
           {uploading ? (
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <ActivityIndicator size="small" color={colors.empty} />
-            </View>
+            <BallIndicator color={COLORS.purple} size={15} />
           ) : (
             <Text style={styles.buttonText}>PAY {plan.Price}</Text>
           )}
