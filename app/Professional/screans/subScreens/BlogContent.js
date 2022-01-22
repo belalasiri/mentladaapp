@@ -23,7 +23,7 @@ import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import Share from 'react-native-share';
 import File from '../../../assets/filesBase64';
 import moment from 'moment';
-import {COLORS, FONTS, icons} from '../../../constants';
+import {COLORS, FONTS, icons, SIZES} from '../../../constants';
 import {
   BallIndicator,
   BarIndicator,
@@ -39,29 +39,79 @@ import {AuthContext} from '../../../navigation/AuthProvider';
 import DeleteBlog from '../../components/DeleteBlog';
 import OnDelete from '../../components/onDelete';
 import AuthorCustom from '../../components/AuthorCustom';
+import LinearGradient from 'react-native-linear-gradient';
 
 const BlogContent = ({navigation, route, onDelete}) => {
   const {user, logout} = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isVerified, setVerified] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [deleted, setDeleted] = useState(false);
+  const [isLiked, setLiked] = useState([]);
+  const [likeList, setLikeList] = useState(0);
+  const [isReloading, setReloading] = useState(false);
 
   let blogTime = (
     <Text>{moment(route.params.blogTime.toDate()).fromNow()}</Text>
   );
   const onLikePress = () => {
+    setReloading(true);
+
     firebase
       .firestore()
       .collection('Blogs')
       .doc(route.params.id)
-
-      .update({
-        likes: firebase.firestore.FieldValue.increment(1),
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .set({
+        likedTime: firestore.Timestamp.fromDate(new Date()),
+        likerId: auth().currentUser.uid,
+        Liked: 'true',
       })
-      .collection('likes')
-      .doc(firebase.auth().currentUser.uid);
+      .then(() => {
+        setReloading(false);
+        // console.log('Blog liked!');
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the Blog.', error);
+      });
   };
+  const disLikeThePost = () => {
+    setReloading(true);
+    firebase
+      .firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .delete()
+      .then(() => {
+        setReloading(false);
+        // console.log('Blog disLiked!');
+      })
+      .catch(error => {
+        console.log('Something went wrong with liking the post.', error);
+      });
+  };
+
+  useLayoutEffect(() => {
+    const getLikes = firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .orderBy('likedTime', 'asc')
+      .onSnapshot(snapshot =>
+        setLikeList(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data(),
+            Liked: doc.data().Liked,
+            likedTime: doc.data().likedTime,
+            likerId: doc.data().likerId,
+          })),
+        ),
+      );
+    return getLikes;
+  }, []);
 
   const myCustomShare = async () => {
     const shareOptions = {
@@ -104,9 +154,33 @@ const BlogContent = ({navigation, route, onDelete}) => {
     }
   };
 
+  const checkLiker = async () => {
+    await firestore()
+      .collection('Blogs')
+      .doc(route.params.id)
+      .collection('Likes')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setLiked(result.data().likerId);
+          // console.log(isLiked);
+        } else {
+          setLiked('notLiked');
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkApproval();
-  }, [isVerified]);
+    checkLiker();
+  }, [isVerified, isLiked, likeList]);
 
   const handleDelete = postId => {
     Alert.alert(
@@ -275,7 +349,127 @@ const BlogContent = ({navigation, route, onDelete}) => {
                 <Text style={styles.text}>Last updated {blogTime}</Text>
               </View>
             </View>
+
             <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              {isLiked == 'notLiked' ? (
+                <TouchableOpacity onPress={onLikePress}>
+                  <LinearGradient
+                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                    start={{x: 0, y: 1}}
+                    end={{x: 0, y: 0}}
+                    style={{
+                      borderRadius: 7,
+                      padding: SIZES.padding,
+                      width: '100%',
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                      }}>
+                      <TouchableOpacity
+                        onPress={onLikePress}
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        {isReloading ? (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingHorizontal: SIZES.padding / 2,
+                            }}>
+                            <BallIndicator color={COLORS.secondary} size={15} />
+                          </View>
+                        ) : (
+                          <Icon
+                            name="heart-outline"
+                            size={23}
+                            color={COLORS.secondary}
+                          />
+                        )}
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...FONTS.body4,
+                          color: COLORS.secondary,
+                          paddingLeft: SIZES.padding / 2,
+                        }}>
+                        {likeList.length || 0}
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : isLiked == auth().currentUser.uid ? (
+                <TouchableOpacity onPress={disLikeThePost}>
+                  <LinearGradient
+                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                    start={{x: 0, y: 1}}
+                    end={{x: 0, y: 0}}
+                    style={{
+                      borderRadius: 7,
+                      width: '100%',
+                      padding: SIZES.padding,
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity
+                        onPress={disLikeThePost}
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        {isReloading ? (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingHorizontal: SIZES.padding / 2,
+                            }}>
+                            <BallIndicator color={COLORS.secondary} size={15} />
+                          </View>
+                        ) : (
+                          <Icon name="heart" size={22} color={COLORS.primary} />
+                        )}
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...FONTS.body4,
+                          color: COLORS.secondary,
+                          paddingLeft: SIZES.padding / 2,
+                        }}>
+                        {likeList.length || 0}
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <LinearGradient
+                  colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                  start={{x: 0, y: 1}}
+                  end={{x: 0, y: 0}}
+                  style={{
+                    borderRadius: 7,
+                    width: '100%',
+                    paddingHorizontal: SIZES.padding * 2 - 5,
+                    height: '100%',
+                  }}>
+                  <BarIndicator color={COLORS.secondary} size={15} />
+                </LinearGradient>
+              )}
+            </View>
+
+            {/* <View
               style={{
                 flexDirection: 'row',
                 margin: 10,
@@ -291,7 +485,7 @@ const BlogContent = ({navigation, route, onDelete}) => {
                   onPress={() => Alert.alert('aaa', 'aa')}
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </View>
 

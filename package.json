@@ -42,6 +42,8 @@
     "react-native-month-year-picker": "^1.8.0",
     "react-native-onboarding-swiper": "^1.1.4",
     "react-native-paper": "^4.9.2",
+    "react-native-ratings": "^8.1.0",
+    "react-native-read-more-text": "^1.1.2",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.9.0",
     "react-native-share": "^7.2.1",

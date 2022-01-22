@@ -89,27 +89,29 @@ const ProfileScreen = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'profile',
+      title: userData
+        ? userData.fname + ' ' + userData.lname || 'Mentlada'
+        : 'Mentlada',
       headerStyle: {elevation: 0},
       headerTitleStyle: {
         color: colors.text,
+        fontSize: 15,
         fontFamily: font.title,
+        textAlign: 'center',
       },
       headerTitleAlign: 'center',
       headerTintColor: colors.text,
       headerLeft: () => (
-        <View style={{marginLeft: 20}}>
+        <View style={{marginLeft: 10}}>
           <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-              navigation.navigate('AddPost');
-            }}>
-            <Icon name="create-outline" size={25} color={colors.subtext} />
+            style={{alignItems: 'center', justifyContent: 'center'}}
+            onPress={() => navigation.goBack()}>
+            <Icon name="chevron-back" size={25} color={colors.text} />
           </TouchableOpacity>
         </View>
       ),
     });
-  }, []);
+  }, [userData]);
 
   const fetchPosts = async () => {
     try {
@@ -302,7 +304,7 @@ const ProfileScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {/* <StatusBar barStyle="dark-content" backgroundColor="#f7f3fc" /> */}
-
+      {/* 
       <View style={styles.userBtnWrapper}>
         {route.params ? (
           <>
@@ -311,7 +313,7 @@ const ProfileScreen = ({navigation, route}) => {
             ) : null}
           </>
         ) : null}
-      </View>
+      </View> */}
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {route.params ? (
@@ -319,7 +321,7 @@ const ProfileScreen = ({navigation, route}) => {
             {route.params.userId !== auth().currentUser.uid ? (
               <>
                 {/* other users view */}
-                <Heder
+                {/* <Heder
                   name={
                     userData
                       ? userData.fname + ' ' + userData.lname || 'Mentlada'
@@ -329,7 +331,7 @@ const ProfileScreen = ({navigation, route}) => {
                     uri: 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
                   }}
                   onBacePress={() => navigation.goBack()}
-                />
+                /> */}
                 <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
                   <View
                     style={{
@@ -342,6 +344,7 @@ const ProfileScreen = ({navigation, route}) => {
                         flex: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
+                        paddingTop: 20,
                       }}>
                       <Image
                         style={styles.userImg}
@@ -365,7 +368,7 @@ const ProfileScreen = ({navigation, route}) => {
                           {userData ? userData.lname || 'Patient' : 'Patient'}
                         </Text>
 
-                        <Text style={styles.aboutUser}>
+                        <Text style={[styles.aboutUser, {textAlign: 'center'}]}>
                           {userData
                             ? userData.about || 'No details added.'
                             : ''}
@@ -384,7 +387,7 @@ const ProfileScreen = ({navigation, route}) => {
                   </View>
 
                   <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
-                    <View
+                    {/* <View
                       style={{
                         flexDirection: 'row',
                         alignContent: 'center',
@@ -408,7 +411,7 @@ const ProfileScreen = ({navigation, route}) => {
                           ? userData.phone || 'No phone no. added.'
                           : ''}
                       </Text>
-                    </View>
+                    </View> */}
                     <View
                       style={{
                         flexDirection: 'row',
@@ -839,7 +842,6 @@ const styles = StyleSheet.create({
     // fontFamily: font.subtitle,
     marginTop: 10,
     ...FONTS.body5,
-    textAlign: 'center',
   },
   phone: {
     fontSize: 12,

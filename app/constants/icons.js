@@ -32,8 +32,10 @@ const commentIcon = require('../assets/icons/commentIcon.png');
 const heart = require('../assets/icons/heart.png');
 const heartFill = require('../assets/icons/heartFill.png');
 const uploading = require('../assets/icons/uploading.jpg');
+const Review = require('../assets/image/Review.png');
 
 export default {
+  Review,
   uploading,
   heartFill,
   heart,

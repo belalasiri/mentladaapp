@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
   Text,
   View,
@@ -7,67 +7,57 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
-  ActivityIndicator,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
-import FormButton from '../../config/components/FormButton';
-import colors from '../../config/colors';
-import font from '../../config/font';
-import ProfInfo from '../../config/components/ProfInfo';
-import SpecialityCard from '../../config/components/SpecialityCard';
-
-import auth from '@react-native-firebase/auth';
-import {AuthContext} from '../../navigation/AuthProvider';
+// DataBase
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import {ToastAndroid} from 'react-native';
-import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import auth from '@react-native-firebase/auth';
+
+// libraries
+import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import {BallIndicator, BarIndicator} from 'react-native-indicators';
-import AwesomeAlert from 'react-native-awesome-alerts';
+import ReadMore from 'react-native-read-more-text';
+
+// Imports
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
+import colors from '../../config/colors';
+import font from '../../config/font';
+import SpecialityCard from '../../config/components/SpecialityCard';
+import ProfInfo from '../../config/components/ProfInfo';
 
 const ProfProfile = ({navigation, route}) => {
-  const {user} = useContext(AuthContext);
-  const [Profdata, setProfdata] = useState(null);
   const [isApproved, setIsApproveddata] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
   const [profPationts, setprofPationts] = useState();
   const [isVerified, setVerified] = useState(null);
   const [isReloading, setReloading] = useState(false);
+  const [professionalRating, setProfessionalRating] = useState([]);
+  const [professional, setProfessional] = useState([]);
 
-  let profList = [];
-  const fetchProf = async () => {
-    await firestore()
-      .collection('Professional')
-      .where('patientEmail', '==', user.email)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          profList.push({
-            id: doc.id,
-            fname: doc.data().fname,
-            lname: doc.data().lname,
-            email: doc.data().email,
-            about: doc.data().about,
-            Experience: doc.data().Experience,
-            License: doc.data().License,
-            Specialty: doc.data().Specialty,
-            userImg: doc.data().userImg,
-          });
-        });
-      })
-      .catch(e => {
-        console.log(e);
-      });
-    setProfdata(profList);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: route.params.profName,
+      headerStyle: {elevation: 0},
+      headerTitleStyle: {color: COLORS.secondary, ...FONTS.h5},
+      headerTitleAlign: 'center',
+      headerTintColor: COLORS.secondary,
 
-    if (loading) {
-      setLoading(false);
-    }
-  };
+      headerLeft: () => (
+        <View style={{marginLeft: 10}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Icon name="chevron-back" size={25} color={COLORS.secondary} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, []);
 
   const checkApproval = async () => {
     await firestore()
@@ -115,26 +105,6 @@ const ProfProfile = ({navigation, route}) => {
     }
   };
 
-  useEffect(() => {
-    checkApproval();
-    checkVerified();
-    getUser();
-    fetchapprovedPatients();
-    fetchProf();
-  }, [isApproved, user, loading]);
-
-  const getUser = async () => {
-    await firestore()
-      .collection('users')
-      .doc(route.params ? route.params.userId : user.uid)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          setUserData(documentSnapshot.data());
-        }
-      });
-  };
-
   const onRequest = () => {
     setReloading(true);
 
@@ -152,6 +122,7 @@ const ProfProfile = ({navigation, route}) => {
         profEmail: route.params.profEmail,
         professionalAvatar: route.params.profAvatar,
         professionalId: route.params.professionalId,
+        patientId: auth().currentUser.uid,
         isProfessionalVerified: route.params.Verified,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
@@ -183,17 +154,6 @@ const ProfProfile = ({navigation, route}) => {
       });
   };
 
-  const onCancel = () => {
-    navigation.goBack();
-    ToastAndroid.showWithGravityAndOffset(
-      'Add post Canceled',
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      0,
-      200,
-    );
-  };
-
   let approvedPatientsList = [];
   const fetchapprovedPatients = async () => {
     await firestore()
@@ -220,12 +180,72 @@ const ProfProfile = ({navigation, route}) => {
     }
   };
 
+  const _renderTruncatedFooter = handlePress => {
+    return (
+      <Text
+        style={{color: COLORS.primary, marginTop: 5, ...FONTS.h6}}
+        onPress={handlePress}>
+        Read more
+      </Text>
+    );
+  };
+
+  const _renderRevealedFooter = handlePress => {
+    return (
+      <Text
+        style={{color: COLORS.primary, marginTop: 5, ...FONTS.h6}}
+        onPress={handlePress}>
+        Show less
+      </Text>
+    );
+  };
+
+  useLayoutEffect(() => {
+    const getProfessionalRaiting = firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .collection('Rating')
+      .orderBy('ReviewTime', 'desc')
+      .onSnapshot(snapshot =>
+        setProfessionalRating(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            ReviewerId: doc.data().ReviewerId,
+            ReviewContent: doc.data().ReviewContent,
+            ReviewTime: doc.data().ReviewTime,
+            Review: doc.data().Review,
+          })),
+        ),
+      );
+
+    return getProfessionalRaiting;
+  }, [navigation]);
+
+  const getUser = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setProfessional(documentSnapshot.data());
+        }
+      });
+  };
+
+  useEffect(() => {
+    checkApproval();
+    checkVerified();
+    getUser();
+    fetchapprovedPatients();
+  }, [isApproved, route]);
+
+  let starRatings = 0;
+  professionalRating.forEach(item => {
+    starRatings += item.Review / professionalRating.length;
+  });
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: '#fff',
-      }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {/* Profile pic and name with Specialty */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <StatusBar
@@ -234,34 +254,16 @@ const ProfProfile = ({navigation, route}) => {
           backgroundColor="rgba(0,0,0,0)"
         />
 
-        <View style={styles.Heder}>
-          <View style={styles.Left} />
-          <View style={styles.Right} />
-        </View>
-
-        <View style={styles.headerContainer}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-            <Icon
-              name="chevron-back"
-              size={25}
-              color={colors.subtext}
-              style={{paddingVertical: 10}}
-            />
-          </TouchableOpacity>
-        </View>
-
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.Hedercontainer}>
             {/* Profile pic */}
             <Image
               style={styles.ProfileImage}
               source={{
-                uri: Profdata
-                  ? route.params.profAvatar ||
-                    'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
-                  : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                uri:
+                  route.params.profAvatar ||
+                  'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
               }}
-              // source={require('../../assets/image/users/user_1.jpg')}
             />
 
             {/* Profile name and Specialty */}
@@ -280,6 +282,10 @@ const ProfProfile = ({navigation, route}) => {
                     color: colors.text,
                   }}>
                   {route.params.profName}
+                  {/* {professional
+                    ? professional.fname + ' ' + professional.lname ||
+                      'Professional'
+                    : 'Professional'} */}
                 </Text>
                 {isVerified == 'notVerified' ? null : isVerified ==
                   'Verified' ? (
@@ -306,9 +312,13 @@ const ProfProfile = ({navigation, route}) => {
                   color: colors.primary,
                 }}>
                 {route.params.profSpecialty}
+                {/* {professional
+                  ? professional.Specialty || 'Specialty'
+                  : 'Specialty'} */}
               </Text>
             </View>
           </View>
+
           {/* Prof info continer */}
           <View style={{flexDirection: 'row', paddingTop: SIZES.padding}}>
             <LinearGradient
@@ -322,12 +332,60 @@ const ProfProfile = ({navigation, route}) => {
                 flex: 1,
                 margin: 5,
               }}>
-              <ProfInfo
-                icon="star"
-                iconColor={COLORS.yellow}
-                Title1="4.98"
-                Title2="Reviews"
-              />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ReviewsList', {
+                    professionalId: route.params.professionalId,
+                    profName: route.params.profName,
+                  })
+                }>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    borderRadius: 7,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    justifyContent: 'center',
+                  }}>
+                  <Icon name="star" size={20} color={COLORS.yellow} />
+                  {starRatings ? (
+                    <View
+                      style={{
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                        flexDirection: 'row',
+                      }}>
+                      <Text
+                        style={{
+                          ...FONTS.h5,
+                          color: COLORS.secondary,
+                          textAlign: 'center',
+                        }}>
+                        {starRatings}
+                      </Text>
+                      <Text
+                        style={{
+                          ...FONTS.h7,
+                          color: COLORS.primary,
+                          marginTop: 5,
+                        }}>
+                        /5
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text
+                      style={{
+                        ...FONTS.h7,
+                        width: 100,
+                        textAlign: 'center',
+                        marginTop: 5,
+                      }}>
+                      No Ratings Yet
+                    </Text>
+                  )}
+                  <Text style={{...FONTS.body5}}>Reviews</Text>
+                </View>
+              </TouchableOpacity>
             </LinearGradient>
             <LinearGradient
               colors={[COLORS.lightpurple, COLORS.lightGreen]}
@@ -343,7 +401,6 @@ const ProfProfile = ({navigation, route}) => {
               <ProfInfo
                 icon="person"
                 iconColor="#67d8af"
-                // backgroundColor="#e1f7ef"
                 Title1={profPationts ? profPationts.length || '0' : null}
                 Title2="Patients"
               />
@@ -359,35 +416,60 @@ const ProfProfile = ({navigation, route}) => {
                 margin: 5,
                 flex: 1,
               }}>
-              <ProfInfo
-                icon="checkmark-done-circle"
-                iconColor="#61edea"
-                // backgroundColor="#dffbfb"
-                Title1={route.params.profExperience}
-                Title2="Experience"
-              />
+              <View
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 7,
+                  paddingTop: 10,
+                  paddingBottom: 10,
+                  justifyContent: 'center',
+                }}>
+                <Icon
+                  name="checkmark-done-circle"
+                  size={20}
+                  color={COLORS.lime}
+                />
+                <Text
+                  style={{
+                    ...FONTS.h6,
+                    width: 100,
+                    textAlign: 'center',
+                    marginTop: 5,
+                  }}>
+                  {route.params.profExperience}
+                </Text>
+                <Text style={{...FONTS.body5}}>Experience</Text>
+              </View>
             </LinearGradient>
           </View>
+
           <View style={{paddingTop: 15, paddingHorizontal: 10}}>
             <Text
               style={{
                 ...FONTS.h4,
                 paddingTop: SIZES.padding,
-                width: SIZES.width / 2 + 30,
+                // width: SIZES.width / 2 + 30,
+
                 color: COLORS.secondary,
                 flexWrap: 'wrap',
               }}>
               Professionals for you
             </Text>
-            <Text
-              style={{
-                ...FONTS.body4,
-                paddingTop: 5,
-              }}>
-              {route.params.profAbout
-                ? route.params.profAbout || 'No deteiles are provided..'
-                : 'No deteiles are provided..'}
-            </Text>
+            <ReadMore
+              numberOfLines={3}
+              renderTruncatedFooter={_renderTruncatedFooter}
+              renderRevealedFooter={_renderRevealedFooter}>
+              <Text
+                style={{
+                  ...FONTS.body4,
+                  marginTop: 10,
+                  flexWrap: 'wrap',
+                }}>
+                {route.params.profAbout
+                  ? route.params.profAbout || 'No deteiles are provided..'
+                  : 'No deteiles are provided..'}
+              </Text>
+            </ReadMore>
           </View>
           <LinearGradient
             colors={[COLORS.lightpurple, COLORS.lightGreen]}
@@ -627,7 +709,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 16,
+    marginTop: 40,
     paddingLeft: 20,
   },
 

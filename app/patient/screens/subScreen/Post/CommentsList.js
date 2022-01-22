@@ -17,6 +17,7 @@ import moment from 'moment';
 
 const CommentsList = ({item, navigation, deleting, onDelete}) => {
   const [userData, setUserData] = useState(null);
+  const [profData, setProfData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const getUser = async () => {
@@ -31,15 +32,37 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
       });
     setLoading(false);
   };
+  const getProf = async () => {
+    await firestore()
+      .collection('Professional')
+      .doc(item.CommenterId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setProfData(documentSnapshot.data());
+        }
+      });
+    setLoading(false);
+  };
 
   useEffect(() => {
     getUser();
-  }, [userData]);
+    getProf();
+  }, [userData, profData]);
 
   let userName = (
     <Text>
-      {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
-      {userData ? userData.lname || 'Patient' : 'Patient'}
+      {userData
+        ? userData.fname + ' ' + userData.lname || 'Mentlada user'
+        : 'Mentlada user'}
+    </Text>
+  );
+
+  let userUID = (
+    <Text>
+      {userData
+        ? userData.userId + ' ' + userData.userId || 'ssssssaas'
+        : 'ssssssss'}
     </Text>
   );
   let postTime = moment(item.CommentTime.toDate()).fromNow();
@@ -49,7 +72,7 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
       style={{
         alignItems: 'flex-start',
         justifyContent: 'center',
-        paddingHorizontal: SIZES.padding * 2,
+        paddingHorizontal: SIZES.padding,
         marginVertical: 5,
       }}>
       <View
@@ -58,16 +81,17 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Avatar
-          rounded
-          size={35}
-          source={{
-            uri: userData
-              ? userData.userImg ||
-                'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-              : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-          }}
-        />
+        <View style={{alignSelf: 'flex-start'}}>
+          <Avatar
+            rounded
+            size={35}
+            source={{
+              uri: userData
+                ? userData.userImg || 'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
+            }}
+          />
+        </View>
 
         <View
           style={{
@@ -87,7 +111,10 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
               paddingHorizontal: SIZES.padding * 1.4,
             }}>
             <Text style={{...FONTS.h6, color: COLORS.secondary}}>
-              {userName}
+              {userData ? userData.fname + ' ' + userData.lname || null : null}
+              {profData
+                ? 'Dr.' + profData.fname + ' ' + profData.lname || null
+                : null}
             </Text>
             <Text style={{...FONTS.body6, color: COLORS.secondary}}>
               {postTime}

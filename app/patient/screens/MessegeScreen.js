@@ -40,15 +40,13 @@ const MessageScreen = ({navigation, route}) => {
   };
 
   const getPackage = async () => {
-    // console.log(route.params ? route.params.userId : user.uid);
     await firestore()
       .collection('packages')
-      .doc(route.params ? route.params.userId : user.uid)
+      .doc(user.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
           setPackageData(documentSnapshot.data().seconds);
-          // console.log(packageData);
         }
       })
       .catch(e => {
@@ -182,7 +180,7 @@ const MessageScreen = ({navigation, route}) => {
       'By confurming you are going to cancel the consultation request with the professional',
       [
         {
-          text: 'Cancel',
+          text: 'Back',
           onPress: () => {
             ToastAndroid.showWithGravityAndOffset(
               'No Action has been made, Thank you',

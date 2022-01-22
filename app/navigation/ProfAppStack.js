@@ -32,6 +32,8 @@ import AuthorCustom from '../Professional/components/AuthorCustom';
 import LicenseCertificate from '../Professional/screans/subScreens/licenseCertificate';
 
 import Details from '../Professional/screans/subScreens/categoryDetails';
+import ProfileScreen from '../patient/screens/profileScreen';
+import FullPost from '../patient/screens/FullPost';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -121,6 +123,12 @@ export default function AppStack() {
           name="LicenseCertificate"
           component={LicenseCertificate}
         />
+        <Stack.Screen
+          name="HomeProfile"
+          component={ProfileScreen}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen name="FullPost" component={FullPost} />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

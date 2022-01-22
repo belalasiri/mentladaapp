@@ -17,7 +17,10 @@ const ProfInfo = ({
   return (
     <View style={[styles.container, {backgroundColor: bg}]} {...rest}>
       <Icon name={icon} size={20} color={iconColor} />
-      <Text style={{...FONTS.h5}}>{Title1}</Text>
+      <Text
+        style={{...FONTS.h5, width: 100, textAlign: 'center', marginTop: 5}}>
+        {Title1}
+      </Text>
       <Text style={{...FONTS.body5}}>{Title2}</Text>
     </View>
   );
@@ -32,5 +35,6 @@ const styles = StyleSheet.create({
     // padding: 10,
     paddingTop: 10,
     paddingBottom: 10,
+    justifyContent: 'center',
   },
 });

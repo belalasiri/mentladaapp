@@ -28,6 +28,7 @@ import Conversation from '../../assets/conversation.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import {COLORS, FONTS, icons} from '../../constants';
 import HeaderText from './subScreen/HeaderText';
+import Stars from './subScreen/Stars';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.6;
@@ -65,10 +66,6 @@ const HomeScreen = ({navigation, route}) => {
         ),
       );
 
-    return fetcBlogs;
-  }, [navigation]);
-
-  useLayoutEffect(() => {
     const FETCH_HEADER = firestore()
       .collection('Header')
       .orderBy('lastUpdated', 'desc')
@@ -80,11 +77,10 @@ const HomeScreen = ({navigation, route}) => {
           })),
         ),
       );
-    return FETCH_HEADER;
+    return fetcBlogs, FETCH_HEADER;
   }, []);
 
   let profList = [];
-
   const fetchProf = async () => {
     await firestore()
       .collection('Professional')
@@ -132,8 +128,7 @@ const HomeScreen = ({navigation, route}) => {
   useEffect(() => {
     fetchProf();
     getUser();
-    // navigation.addListener('focus', () => setLoading(!loading));
-  }, [navigation, loading, userData, user]);
+  }, [userData, user]);
 
   if (loading == true) {
     return (
@@ -293,19 +288,21 @@ const HomeScreen = ({navigation, route}) => {
                       style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}>
                       <View>
                         <View
                           style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'flex-start',
                           }}>
                           <Text
                             style={{
                               fontFamily: font.title,
                               fontSize: 16,
                               color: colors.text,
+                              textAlign: 'left',
                             }}>
                             {Profdata ? item.fname || 'Mentlada' : 'Mentlada'}{' '}
                             {Profdata ? item.lname || 'Mentlada' : 'Mentlada'}
@@ -346,23 +343,7 @@ const HomeScreen = ({navigation, route}) => {
                         color={colors.primary}
                       />
                     </View>
-                    {/* <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginTop: 10,
-                      }}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Icon name="star" size={15} color={colors.secoundary} />
-                        <Icon name="star" size={15} color={colors.secoundary} />
-                        <Icon name="star" size={15} color={colors.secoundary} />
-                        <Icon name="star" size={15} color={colors.secoundary} />
-                        <Icon name="star" size={15} color={colors.secoundary} />
-                      </View>
-                      <Text style={{fontSize: 10, color: colors.subtext}}>
-                        365 reviews
-                      </Text>
-                    </View> */}
+                    <Stars item={item} />
                   </View>
                 </Animated.View>
               </TouchableOpacity>
@@ -370,6 +351,7 @@ const HomeScreen = ({navigation, route}) => {
           }}
           snapToInterval={cardWidth}
         />
+
         {/* setions plan */}
         <View
           style={{
@@ -436,7 +418,7 @@ const HomeScreen = ({navigation, route}) => {
                       fontFamily: font.subtitle,
                       paddingRight: 5,
                     }}>
-                    Choose your professional
+                    Choose your session plan
                   </Text>
                 </View>
               </View>
@@ -656,9 +638,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 7,
   },
   Tag: {
-    height: 40,
-    width: 60,
-    backgroundColor: colors.w,
+    height: 45,
+    width: 65,
+    backgroundColor: COLORS.lightpurple,
     position: 'absolute',
     zIndex: 1,
     right: 0,
@@ -668,7 +650,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardDetails: {
-    height: 85,
+    height: 100,
     borderRadius: 15,
     backgroundColor: '#fff',
     position: 'absolute',

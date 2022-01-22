@@ -21,13 +21,13 @@ import FooterContainer from './subScreen/Post/FooterContainer';
 import CustomComments from './subScreen/Post/CommentsList';
 import {BallIndicator} from 'react-native-indicators';
 import Icon from 'react-native-vector-icons/Ionicons';
+import BlogSwitch from '../../config/components/BlogSwitch';
 
 const FullPost = ({navigation, route}) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState('');
   const [CommentsList, setComments] = useState([]);
-  const [likePost, setLikePost] = useState([]);
   const [commenting, setCommenting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isLiked, setLiked] = useState([]);
@@ -236,11 +236,14 @@ const FullPost = ({navigation, route}) => {
 
           <View
             style={{
-              paddingHorizontal: SIZES.padding * 2,
               paddingVertical: SIZES.padding,
             }}>
             <View
-              style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                paddingHorizontal: SIZES.padding * 2,
+              }}>
               {isLiked == 'notLiked' ? (
                 <TouchableOpacity onPress={onLikePress}>
                   <View
@@ -359,6 +362,7 @@ const FullPost = ({navigation, route}) => {
               </Pressable>
             </View>
             {/* <Divider /> */}
+
             <View
               style={{
                 borderWidth: 1,

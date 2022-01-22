@@ -47,6 +47,7 @@ export const SIZES = {
   h4: 18,
   h4_2: 17,
   h5: 16,
+  h5_2: 15,
   h6: 14,
   h7: 12,
   h8: 10,
@@ -100,6 +101,11 @@ export const FONTS = {
   h5: {
     fontFamily: 'DINNextLTArabic-Medium',
     fontSize: SIZES.h5,
+    lineHeight: 22,
+  },
+  h5_2: {
+    fontFamily: 'DINNextLTArabic-Medium',
+    fontSize: SIZES.h5_2,
     lineHeight: 22,
   },
   h6: {

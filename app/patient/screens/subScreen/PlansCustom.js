@@ -143,6 +143,7 @@ const PlansCustom = ({
       );
     return FETCH_PLANS;
   }, []);
+
   return (
     <View>
       <LinearGradient

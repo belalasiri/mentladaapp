@@ -61,6 +61,7 @@ const ProfHome = ({navigation, route}) => {
             professionalName: doc.data().professionalName,
             profEmail: doc.data().profEmail,
             professionalAvatar: doc.data().professionalAvatar,
+            patientId: doc.data().patientId,
           });
         });
       })
@@ -268,12 +269,15 @@ const ProfHome = ({navigation, route}) => {
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
-                <View
+                <TouchableOpacity
                   style={{
                     width: windowWidth / 1 - 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }}>
+                  }}
+                  onPress={() =>
+                    navigation.navigate('HomeProfile', {userId: item.patientId})
+                  }>
                   <LinearGradient
                     colors={[colors.w, '#fffcf4']}
                     start={{x: 0, y: 0}}
@@ -388,7 +392,7 @@ const ProfHome = ({navigation, route}) => {
                       </View>
                     </View>
                   </LinearGradient>
-                </View>
+                </TouchableOpacity>
               )}
             />
           </View>

@@ -403,7 +403,24 @@ const BlogContent = ({navigation, route}) => {
                   </LinearGradient>
                 </TouchableOpacity>
               ) : (
-                <BarIndicator color={COLORS.secondary} size={15} />
+                <LinearGradient
+                  colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                  start={{x: 0, y: 1}}
+                  end={{x: 0, y: 0}}
+                  style={{
+                    borderRadius: 7,
+                    width: '100%',
+                    padding: SIZES.padding,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <BarIndicator color={COLORS.secondary} size={15} />
+                  </View>
+                </LinearGradient>
               )}
             </View>
           </View>

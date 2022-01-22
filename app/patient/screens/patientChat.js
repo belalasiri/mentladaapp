@@ -151,6 +151,7 @@ const patientChat = ({navigation, route}) => {
       .collection('chats')
       .doc()
       .set({
+        professionalName: route.params.professionalName,
         patientName: route.params.patientName,
         message: input,
         sendBy: auth().currentUser.email,
@@ -164,7 +165,14 @@ const patientChat = ({navigation, route}) => {
     setInput('');
   };
   const endSetion = () => {
-    navigation.goBack();
+    navigation.navigate('Rating', {
+      professionalName: route.params.professionalName,
+      isRequested: route.params.isRequested,
+      professionalAvatar: route.params.professionalAvatar,
+      professionalName: route.params.professionalName,
+      isProfessionalVerified: route.params.isProfessionalVerified,
+      professionalId: route.params.professionalId,
+    });
 
     var date = new Date();
     var seconds = date.getTime() / 1000;
@@ -226,6 +234,11 @@ const patientChat = ({navigation, route}) => {
   }, [packageData, formatted]);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Heder
         userImage={{
           uri:
@@ -237,11 +250,6 @@ const patientChat = ({navigation, route}) => {
         onCall={() => onCall()}
         name={route.params.professionalName}
         endSetion={endSetion}
-      />
-      <StatusBar
-        barStyle="light-content"
-        translucent
-        backgroundColor="rgba(0,0,0,0)"
       />
       <KeyboardAvoidingView
         style={styles.container}

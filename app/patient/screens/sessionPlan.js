@@ -251,6 +251,7 @@ const sessionPlan = ({navigation, route}) => {
     );
   };
   const formatted = moment.utc(packageData * 1000).format('DD:HH:mm:ss');
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar

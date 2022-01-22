@@ -169,7 +169,7 @@ const PostContent = ({
     <SafeAreaView style={styles.container}>
       <Avatar
         rounded
-        size={50}
+        size={45}
         source={{
           uri: userData
             ? userData.userImg ||
@@ -358,23 +358,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   UserNameAndtimeContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   UserName: {
-    ...FONTS.h4_2,
+    ...FONTS.h6,
     color: COLORS.secondary,
   },
   Time: {
     ...FONTS.body6,
     color: COLORS.secondary,
-    marginHorizontal: 5,
-    marginTop: 5,
   },
   Content: {
     ...FONTS.body4,
     color: COLORS.secondary,
     lineHeight: 22,
-    marginTop: 5,
+    marginTop: 10,
   },
   iconContainer: {
     flexDirection: 'row',

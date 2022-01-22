@@ -47,7 +47,7 @@ const NameContainer = ({userName, userImg, postTime, onBack, loading}) => {
         </View>
       ) : (
         <>
-          <Avatar rounded size={50} source={userImg} />
+          <Avatar rounded size={40} source={userImg} />
           <View
             style={{
               justifyContent: 'center',

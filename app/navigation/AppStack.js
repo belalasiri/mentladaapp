@@ -27,6 +27,10 @@ import planDetails from '../patient/screens/planDetails';
 import test from '../config/Test/test';
 import FullPost from '../patient/screens/FullPost';
 import LicenseCertificate from '../Professional/screans/subScreens/licenseCertificate';
+import Rating from '../patient/screens/Rating';
+import RatingTheProfessional from '../patient/screens/subScreen/RatingTheProfessional';
+import AfterReview from '../patient/screens/subScreen/AfterReview';
+import ReviewsList from '../patient/screens/ReviewsList';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -87,7 +91,11 @@ export default function AppStack() {
     <SafeAreaProvider>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Homes" component={HomeStack} />
-        <Stack.Screen name="ProfProfile" component={ProfProfile} />
+        <Stack.Screen
+          name="ProfProfile"
+          component={ProfProfile}
+          options={() => ({headerShown: true})}
+        />
         {/* <Stack.Screen name="Chat" component={ChatScreen} /> */}
         <Stack.Screen name="AddPost" component={AddPostScreen} />
         <Stack.Screen name="HomeProfile" component={ProfileScreen} />
@@ -114,6 +122,26 @@ export default function AppStack() {
         <Stack.Screen
           name="LicenseCertificate"
           component={LicenseCertificate}
+        />
+        <Stack.Screen
+          name="Rating"
+          component={Rating}
+          // options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="RatingTheProfessional"
+          component={RatingTheProfessional}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="AfterReview"
+          component={AfterReview}
+          // options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="ReviewsList"
+          component={ReviewsList}
+          options={() => ({headerShown: true})}
         />
       </Stack.Navigator>
     </SafeAreaProvider>
