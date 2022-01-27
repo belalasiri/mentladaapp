@@ -338,21 +338,12 @@ const patientChat = ({navigation, route}) => {
                   disabled={!input}
                   onPress={sendMessage}
                   activeOpacity={0.5}>
-                  {input ? (
-                    <Icon
-                      name="send"
-                      size={20}
-                      color={colors.subtext}
-                      style={styles.icon}
-                    />
-                  ) : (
-                    <Icon
-                      name="add"
-                      size={25}
-                      color={colors.subtext}
-                      style={styles.icon}
-                    />
-                  )}
+                  <Icon
+                    name="send"
+                    size={20}
+                    color={colors.subtext}
+                    style={styles.icon}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -402,7 +393,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
 
-  message: {
+  Message: {
     flexDirection: 'row',
     marginVertical: moderateScale(7, 2),
   },

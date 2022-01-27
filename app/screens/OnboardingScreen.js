@@ -12,6 +12,7 @@ import Onboarding from 'react-native-onboarding-swiper';
 
 import colors from '../config/colors';
 import font from '../config/font';
+import {COLORS, FONTS, icons, SIZES} from '../constants';
 
 const Dots = ({selected}) => {
   let backgroundColor;
@@ -42,7 +43,7 @@ const Done = ({...props}) => (
 const OnboardingScreen = ({navigation}) => {
   return (
     <>
-      <StatusBar hidden />
+      <StatusBar />
       <Onboarding
         SkipButtonComponent={Skip}
         NextButtonComponent={Next}
@@ -52,44 +53,52 @@ const OnboardingScreen = ({navigation}) => {
         onDone={() => navigation.navigate('Routes')}
         pages={[
           {
-            backgroundColor: colors.primary,
+            backgroundColor: COLORS.primary,
             image: (
-              <Image source={require('../assets/image/Onboarding-img3.png')} />
+              // <Image source={require('../assets/image/Onboarding-img3.png')} />
+              <Image
+                source={icons.approved}
+                style={{width: 300, height: 280}}
+              />
             ),
-            title: 'Psychological helth',
-            subtitle: 'Done with React Native Onboarding Swiper',
+            title: 'Get professional help',
+            subtitle: 'Contact with all of our professionals at anytime',
             titleStyles: {
-              color: colors.text,
-              fontFamily: font.title,
+              color: COLORS.secondary,
+              ...FONTS.h1,
+              lineHeight: 30,
             },
             subTitleStyles: {
-              color: colors.text,
-              fontFamily: font.subtitle,
+              color: COLORS.secondary,
+              ...FONTS.body3,
             },
           },
           {
-            backgroundColor: colors.secoundary,
+            backgroundColor: COLORS.yellow,
             image: (
-              <Image source={require('../assets/image/Onboarding-img3.png')} />
+              <Image source={icons.comment} style={{width: 300, height: 280}} />
             ),
-            title: 'Psychological helth',
-            subtitle: 'Done with React Native Onboarding Swiper',
+            title: 'Share your experience',
+            subtitle:
+              'Sharing your experience or feelings can help in your own recovery as well as offer encouragement and support to others',
             titleStyles: {
-              color: colors.text,
-              fontFamily: font.title,
+              color: COLORS.secondary,
+              ...FONTS.h1,
+              lineHeight: 30,
             },
             subTitleStyles: {
-              color: colors.text,
-              fontFamily: font.subtitle,
+              color: COLORS.secondary,
+              ...FONTS.body3,
             },
           },
           {
-            backgroundColor: colors.primary,
+            backgroundColor: COLORS.lime,
             image: (
-              <Image source={require('../assets/image/Onboarding-img3.png')} />
+              <Image source={icons.blog2} style={{width: 300, height: 280}} />
             ),
-            title: 'Psychological helth',
-            subtitle: 'Done with React Native Onboarding Swiper',
+            title: 'Mentlada Blogs',
+            subtitle:
+              'There are several Blogs you have the opportunity to ask any questions to the professionals',
             titleStyles: {
               color: colors.text,
               fontFamily: font.title,

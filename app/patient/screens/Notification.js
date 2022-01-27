@@ -23,6 +23,7 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar, Button, ThemeProvider} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
 
 const Heder = ({userImage, onBacePress, onProfilePress}) => {
   return (
@@ -102,20 +103,12 @@ const Content = ({HederText, Body, professionalExperience, userImage}) => {
   );
 };
 
-const theme = {
-  Avatar: {
-    rounded: true,
-  },
-  Badge: {
-    textStyle: {fontSize: 30},
-  },
-};
-
 const Notification = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [approved, setApproved] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isApproved, setIsApproveddata] = useState([]);
 
   //// patients who are aproved for a session
   let approvedList = [];
@@ -150,6 +143,29 @@ const Notification = ({navigation, route}) => {
     }
   };
 
+  const checkApproval = async () => {
+    await firestore()
+      .collection('packages')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(result => {
+        if (result.exists) {
+          setIsApproveddata(result.data().approved);
+          console.log(isApproved);
+        } else {
+          setIsApproveddata('notExist');
+          console.log(isApproved);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
   const getUser = async () => {
     await firestore()
       .collection('users')
@@ -165,7 +181,8 @@ const Notification = ({navigation, route}) => {
   useEffect(() => {
     fetchapprovedUsers();
     getUser();
-  }, [user]);
+    checkApproval();
+  }, [user, isApproved]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -179,52 +196,49 @@ const Notification = ({navigation, route}) => {
         onBacePress={() => navigation.goBack()}
         onProfilePress={() => navigation.navigate('Profile')}
       />
-
-      {/* <TouchableOpacity
-        // onPress={() => navigation.navigate('ProfProfile')}
-        onPress={() => navigation.navigate('sessionPlan')}>
-        <LinearGradient
-          colors={['#f7f3fc', '#fff']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={{
-            flexDirection: 'row',
-            marginHorizontal: 15,
-            marginVertical: 5,
-            alignItems: 'center',
-            borderRadius: 7,
-            padding: 10,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-              marginHorizontal: 20,
-            }}>
-            <Content
-              HederText="You have been approved 🎉"
-              Body="Your request for a consultation with one of our profitionals has been approved, plese proceed with the payment"
-            />
-          </View>
-          <View
-            style={{
-              // flex: 1,
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-            }}>
-            <Icon name="chevron-forward" size={26} color="#a076cd" />
-          </View>
-        </LinearGradient>
-      </TouchableOpacity> */}
-
       <FlatList
         data={approved}
         keyExtractor={item => item.id}
+        ListHeaderComponent={
+          <>
+            {isApproved == 'approved' ? (
+              <LinearGradient
+                colors={['#f7f3fc', '#fff']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={{
+                  flexDirection: 'row',
+                  marginHorizontal: 15,
+                  marginVertical: 5,
+                  alignItems: 'center',
+                  borderRadius: 7,
+                  padding: 10,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Avatar size={50} rounded source={icons.customerCare} />
+                </TouchableOpacity>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    marginHorizontal: 20,
+                  }}>
+                  <Content
+                    HederText="Your plan request is approved 📅"
+                    Body={`Your request for a free plan with Mentlada has been approved, you have about 1440 min.`}
+                  />
+                </View>
+              </LinearGradient>
+            ) : null}
+          </>
+        }
         renderItem={({item}) => (
-          <TouchableOpacity
-            // onPress={() => navigation.navigate('ProfProfile')}
-            onPress={() => navigation.navigate('sessionPlan')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Message')}>
             <LinearGradient
               colors={['#f7f3fc', '#fff']}
               start={{x: 0, y: 0}}
@@ -232,7 +246,7 @@ const Notification = ({navigation, route}) => {
               style={{
                 flexDirection: 'row',
                 marginHorizontal: 15,
-                marginVertical: 5,
+                marginVertical: 7,
                 alignItems: 'center',
                 borderRadius: 7,
                 padding: 10,
@@ -261,7 +275,7 @@ const Notification = ({navigation, route}) => {
                 }}>
                 <Content
                   HederText="You have been approved 🎉"
-                  Body={`Your request for a consultation with ${item.professionalName} has been approved, plese proceed with the payment`}
+                  Body={`Your request for a consultation with ${item.professionalName} has been approved.`}
                 />
               </View>
               <View

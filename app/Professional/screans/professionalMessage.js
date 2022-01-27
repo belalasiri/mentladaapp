@@ -111,6 +111,7 @@ const professionalMessage = ({navigation, route}) => {
     patientAvatar,
     isRequested,
     patientName,
+    patientId,
   ) => {
     navigation.navigate('Chat', {
       id,
@@ -121,6 +122,7 @@ const professionalMessage = ({navigation, route}) => {
       patientAvatar,
       patientName,
       isRequested,
+      patientId,
     });
   };
 
@@ -202,6 +204,7 @@ const professionalMessage = ({navigation, route}) => {
                     patientAvatar,
                     patientName,
                     isRequested,
+                    patientId,
                   },
                 }) => (
                   <CustomPatientList
@@ -214,6 +217,7 @@ const professionalMessage = ({navigation, route}) => {
                     patientEmail={patientEmail}
                     patientName={patientName}
                     isRequested={isRequested}
+                    patientId={patientId}
                     enterChat={enterChat}
                   />
                 ),

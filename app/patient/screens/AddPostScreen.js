@@ -36,6 +36,8 @@ import font from '../../config/font';
 import {Avatar} from 'react-native-elements';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import Spacer from '../../config/components/Home/Spacer';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
+import {COLORS, SIZES} from '../../constants';
 
 const AddPostScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
@@ -86,6 +88,7 @@ const AddPostScreen = ({navigation, route}) => {
   };
 
   const submitPost = async () => {
+    setUploading(true);
     const imageUrl = await uploadImage();
 
     firestore()
@@ -105,6 +108,7 @@ const AddPostScreen = ({navigation, route}) => {
           ToastAndroid.CENTER,
         );
         setPost(null);
+        setUploading(false);
       })
       .catch(error => {
         console.log(
@@ -203,16 +207,14 @@ const AddPostScreen = ({navigation, route}) => {
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            {uploading ? (
-              <StatusWrapper>
-                <ActivityIndicator size="large" color="#b283e4" />
-                <Text>{transferred} % completed!</Text>
-              </StatusWrapper>
-            ) : (
-              <TouchableOpacity style={styles.button} onPress={submitPost}>
+
+            <TouchableOpacity style={styles.button} onPress={submitPost}>
+              {uploading ? (
+                <BarIndicator color={COLORS.secondary} size={15} />
+              ) : (
                 <Text style={styles.buttonText}>Post</Text>
-              </TouchableOpacity>
-            )}
+              )}
+            </TouchableOpacity>
           </View>
 
           <Spacer size={10} />
@@ -385,8 +387,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: COLORS.lightpurple,
     borderRadius: 40,
+    width: SIZES.width / 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButton: {
     borderRadius: 40,
@@ -405,7 +410,7 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingHorizontal: 30,
     paddingVertical: 5,
-    color: colors.empty,
+    color: COLORS.secondary,
     fontFamily: font.title,
     paddingBottom: 7,
     fontSize: 15,

@@ -48,6 +48,7 @@ const HomeScreen = ({navigation, route}) => {
   useLayoutEffect(() => {
     const fetcBlogs = firestore()
       .collection('Blogs')
+      .limit(3)
       .orderBy('blogTime', 'desc')
       .onSnapshot(snapshot =>
         setAllBlogs(
@@ -265,12 +266,7 @@ const HomeScreen = ({navigation, route}) => {
                 <Animated.View style={{...styles.card, transform: [{scale}]}}>
                   <Animated.View style={{...styles.cardOverLay, opacity}} />
                   <View style={styles.Tag}>
-                    <Text
-                      style={{
-                        color: colors.primary,
-                        fontSize: 14,
-                        fontFamily: font.title,
-                      }}>
+                    <Text style={{color: COLORS.primary, ...FONTS.h6}}>
                       {item.Experience}
                     </Text>
                   </View>
@@ -299,9 +295,9 @@ const HomeScreen = ({navigation, route}) => {
                           }}>
                           <Text
                             style={{
-                              fontFamily: font.title,
                               fontSize: 16,
-                              color: colors.text,
+                              color: COLORS.secondary,
+                              ...FONTS.h4_2,
                               textAlign: 'left',
                             }}>
                             {Profdata ? item.fname || 'Mentlada' : 'Mentlada'}{' '}
@@ -476,6 +472,7 @@ const HomeScreen = ({navigation, route}) => {
                     professionalName: item.professionalName,
                     Category: item.Category,
                     blogTime: item.blogTime,
+                    professionalId: item.professionalId,
                   })
                 }>
                 <View
@@ -543,6 +540,7 @@ const HomeScreen = ({navigation, route}) => {
             )}
           />
         </View>
+
         <View
           style={{
             flex: 1,

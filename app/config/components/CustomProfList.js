@@ -84,7 +84,6 @@ const CustomProfList = ({
           <ListItem.Title style={styles.Title}>
             {professionalName}
           </ListItem.Title>
-          {/* <Text>{isProfessionalVerified}</Text> */}
           {isProfessionalVerified ==
           'notVerified' ? null : isProfessionalVerified == 'Verified' ? (
             <View

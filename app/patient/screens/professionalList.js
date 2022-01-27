@@ -22,6 +22,9 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import Stars from './subScreen/Stars';
+import {COLORS, FONTS, icons} from '../../constants';
+import ProfessionalsStarsList from './subScreen/ProfessionalsStarsList';
 
 const Heder = ({userImage, onBacePress, onProfilePress}) => {
   return (
@@ -82,67 +85,6 @@ const ProfilePic = ({Userimage}) => {
   );
 };
 
-const Content = ({
-  professionalsName,
-  professionalSpecialty,
-  professionalExperience,
-}) => {
-  return (
-    <>
-      <View>
-        <Text
-          style={{fontSize: 15, color: colors.text, fontFamily: font.title}}>
-          {professionalsName}
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 13,
-              color: colors.subtext,
-              fontFamily: font.subtitle,
-              paddingRight: 5,
-            }}>
-            {professionalSpecialty}
-          </Text>
-          <Text
-            style={{
-              fontSize: 15,
-              color: colors.primary,
-              fontFamily: font.title,
-              marginBottom: 2,
-              paddingRight: 5,
-            }}>
-            |
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Icon name="star" size={15} color={colors.secoundary} />
-            <Text
-              style={{
-                fontSize: 11,
-                color: colors.secoundary,
-                fontFamily: font.title,
-                marginBottom: 2,
-                paddingLeft: 5,
-              }}>
-              4.99
-            </Text>
-          </View>
-        </View>
-      </View>
-    </>
-  );
-};
-
 const professionalList = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
@@ -168,6 +110,8 @@ const professionalList = ({navigation, route}) => {
             Specialty: doc.data().Specialty,
             userImg: doc.data().userImg,
             role: doc.data().role,
+            professionalId: doc.data().professionalId,
+            Verified: doc.data().Verified,
           });
         });
       })
@@ -209,7 +153,7 @@ const professionalList = ({navigation, route}) => {
         }}
         onBacePress={() => navigation.goBack()}
         onProfilePress={() => navigation.navigate('Profile')}
-      /> 
+      />
 
       <FlatList
         initialNumToRender={7}
@@ -228,6 +172,8 @@ const professionalList = ({navigation, route}) => {
                 profAbout: item.about,
                 profLicense: item.License,
                 profSpecialty: item.Specialty,
+                professionalId: item.professionalId,
+                Verified: item.Verified,
                 userName: userData.fname + ' ' + userData.lname,
                 userEmail: userData.email,
                 userAvatar: userData.userImg,
@@ -268,21 +214,77 @@ const professionalList = ({navigation, route}) => {
                   justifyContent: 'center',
                   marginHorizontal: 20,
                 }}>
-                <Content
+                {/* <Content
                   professionalsName={item.fname + ' ' + item.lname}
                   professionalExperience={item.Experience}
                   professionalSpecialty={item.Specialty}
-                />
+                /> */}
+
+                <View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                    }}>
+                    <Text style={{color: COLORS.secondary, ...FONTS.h4_2}}>
+                      {item.fname + ' ' + item.lname}
+                    </Text>
+                    {item.Verified == 'notVerified' ? null : item.Verified ==
+                      'Verified' ? (
+                      <View
+                        style={{
+                          paddingTop: 5,
+                        }}>
+                        <Image
+                          source={icons.verifiedUser}
+                          style={{
+                            width: 15,
+                            height: 15,
+                            marginLeft: 5,
+                            tintColor: COLORS.primary,
+                          }}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: COLORS.secondary,
+                        paddingRight: 5,
+                        ...FONTS.body4,
+                      }}>
+                      {item.Specialty}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        color: colors.primary,
+                        fontFamily: font.title,
+                        marginBottom: 2,
+                        paddingRight: 5,
+                      }}>
+                      |
+                    </Text>
+
+                    <ProfessionalsStarsList item={item} />
+                  </View>
+                </View>
               </View>
               <View
                 style={{
-                  // flex: 1,
                   alignItems: 'flex-end',
                   justifyContent: 'center',
                 }}>
                 <Icon name="chevron-forward" size={26} color="#a076cd" />
               </View>
-              {/* <Text>{Profdata ? item.fname || 'Mentlada' : 'Mentlada'}</Text>*/}
             </LinearGradient>
           </TouchableOpacity>
         )}

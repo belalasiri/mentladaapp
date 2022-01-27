@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
 
@@ -31,6 +31,7 @@ const ProfProfile = ({route, item, navigation}) => {
   const [profPationts, setprofPationts] = useState();
   const [loading, setLoading] = useState(true);
   const [isVerified, setVerified] = useState(null);
+  const [professionalRating, setProfessionalRating] = useState([]);
 
   const getUser = async () => {
     await firestore()
@@ -65,7 +66,26 @@ const ProfProfile = ({route, item, navigation}) => {
       setLoading(false);
     }
   };
+  useLayoutEffect(() => {
+    const getProfessionalRaiting = firestore()
+      .collection('Professional')
+      .doc(route.params ? route.params.userId : user.uid)
+      .collection('Rating')
+      .orderBy('ReviewTime', 'desc')
+      .onSnapshot(snapshot =>
+        setProfessionalRating(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            ReviewerId: doc.data().ReviewerId,
+            ReviewContent: doc.data().ReviewContent,
+            ReviewTime: doc.data().ReviewTime,
+            Review: doc.data().Review,
+          })),
+        ),
+      );
 
+    return getProfessionalRaiting;
+  }, [navigation]);
   let approvedPatientsList = [];
   const fetchapprovedPatients = async () => {
     await firestore()
@@ -97,7 +117,10 @@ const ProfProfile = ({route, item, navigation}) => {
     checkApproval();
     fetchapprovedPatients();
   }, [profData]);
-
+  let starRatings = 0;
+  professionalRating.forEach(item => {
+    starRatings += item.Review / professionalRating.length;
+  });
   return (
     <SafeAreaView
       style={{
@@ -213,12 +236,71 @@ const ProfProfile = ({route, item, navigation}) => {
                 flex: 1,
                 margin: 5,
               }}>
-              <ProfInfo
-                icon="star"
-                iconColor={COLORS.yellow}
-                Title1="4.98"
-                Title2="Reviews"
-              />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ReviewsList', {
+                    professionalId: user.uid,
+                    profName: user.email,
+                  })
+                }>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    borderRadius: 7,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    justifyContent: 'center',
+                  }}>
+                  <Icon name="star" size={20} color={COLORS.yellow} />
+                  {starRatings ? (
+                    <View
+                      style={{
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                        flexDirection: 'row',
+                      }}>
+                      {starRatings == 5 ? (
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            color: COLORS.secondary,
+                            textAlign: 'center',
+                          }}>
+                          {starRatings}
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            color: COLORS.secondary,
+                            textAlign: 'center',
+                          }}>
+                          {starRatings.toFixed(1)}
+                        </Text>
+                      )}
+                      <Text
+                        style={{
+                          ...FONTS.h7,
+                          color: COLORS.primary,
+                          marginTop: 5,
+                        }}>
+                        /5
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text
+                      style={{
+                        ...FONTS.h7,
+                        width: 100,
+                        textAlign: 'center',
+                        marginTop: 5,
+                      }}>
+                      No Ratings Yet
+                    </Text>
+                  )}
+                  <Text style={{...FONTS.body5}}>Reviews</Text>
+                </View>
+              </TouchableOpacity>
             </LinearGradient>
             <LinearGradient
               colors={[COLORS.lightpurple, COLORS.lightGreen]}

@@ -35,7 +35,6 @@ const ProfProfile = ({navigation, route}) => {
   const [isVerified, setVerified] = useState(null);
   const [isReloading, setReloading] = useState(false);
   const [professionalRating, setProfessionalRating] = useState([]);
-  const [professional, setProfessional] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,6 +59,7 @@ const ProfProfile = ({navigation, route}) => {
   }, []);
 
   const checkApproval = async () => {
+    // setReloading(true);
     await firestore()
       .collection('session')
       .doc(auth().currentUser.email + route.params.profEmail)
@@ -67,7 +67,7 @@ const ProfProfile = ({navigation, route}) => {
       .then(result => {
         if (result.exists) {
           setIsApproveddata(result.data().approved);
-          console.log(result.data().approved);
+          // console.log(result.data().approved);
           // setReloading(false);
         } else {
           setIsApproveddata('notExist');
@@ -221,29 +221,22 @@ const ProfProfile = ({navigation, route}) => {
     return getProfessionalRaiting;
   }, [navigation]);
 
-  const getUser = async () => {
-    await firestore()
-      .collection('Professional')
-      .doc(route.params.professionalId)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          setProfessional(documentSnapshot.data());
-        }
-      });
-  };
-
   useEffect(() => {
     checkApproval();
     checkVerified();
-    getUser();
     fetchapprovedPatients();
-  }, [isApproved, route]);
+  }, [isApproved, route, isReloading, profPationts]);
 
   let starRatings = 0;
   professionalRating.forEach(item => {
     starRatings += item.Review / professionalRating.length;
   });
+  let Ratings = starRatings.toFixed(2);
+
+  // var str = 'Your string';
+  // str = str.slice(0, 2);
+  // console.log(str);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {/* Profile pic and name with Specialty */}
@@ -282,10 +275,6 @@ const ProfProfile = ({navigation, route}) => {
                     color: colors.text,
                   }}>
                   {route.params.profName}
-                  {/* {professional
-                    ? professional.fname + ' ' + professional.lname ||
-                      'Professional'
-                    : 'Professional'} */}
                 </Text>
                 {isVerified == 'notVerified' ? null : isVerified ==
                   'Verified' ? (
@@ -312,9 +301,6 @@ const ProfProfile = ({navigation, route}) => {
                   color: colors.primary,
                 }}>
                 {route.params.profSpecialty}
-                {/* {professional
-                  ? professional.Specialty || 'Specialty'
-                  : 'Specialty'} */}
               </Text>
             </View>
           </View>
@@ -355,14 +341,25 @@ const ProfProfile = ({navigation, route}) => {
                         justifyContent: 'flex-end',
                         flexDirection: 'row',
                       }}>
-                      <Text
-                        style={{
-                          ...FONTS.h5,
-                          color: COLORS.secondary,
-                          textAlign: 'center',
-                        }}>
-                        {starRatings}
-                      </Text>
+                      {starRatings == 5 ? (
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            color: COLORS.secondary,
+                            textAlign: 'center',
+                          }}>
+                          {starRatings}
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            ...FONTS.h5,
+                            color: COLORS.secondary,
+                            textAlign: 'center',
+                          }}>
+                          {starRatings.toFixed(1)}
+                        </Text>
+                      )}
                       <Text
                         style={{
                           ...FONTS.h7,
@@ -516,6 +513,40 @@ const ProfProfile = ({navigation, route}) => {
           </View>
           <View style={{marginBottom: 10}}>
             {isApproved == 'notExist' ? (
+              <LinearGradient
+                colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                start={{x: 0, y: 1}}
+                end={{x: 0, y: 0}}
+                style={{
+                  marginTop: 10,
+                  paddingBottom: 3,
+                  width: '100%',
+                  height: SIZES.height / 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => onRequest()}>
+                  {isReloading ? (
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <BallIndicator color={COLORS.secondary} size={15} />
+                    </View>
+                  ) : (
+                    <Text
+                      style={[styles.buttonText, {color: COLORS.secondary}]}>
+                      Request for a counselling session
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </LinearGradient>
+            ) : isApproved == 'rejected' ? (
               <LinearGradient
                 colors={[COLORS.lightpurple, COLORS.lightGreen]}
                 start={{x: 0, y: 1}}

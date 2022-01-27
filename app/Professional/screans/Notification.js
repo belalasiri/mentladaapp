@@ -23,15 +23,16 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-import {COLORS, icons} from '../../constants';
+import {COLORS, FONTS, icons} from '../../constants';
 
-const Heder = ({userImage, onBacePress, onProfilePress}) => {
+const Heder = ({userImage, onBacePress, onProfilePress, navigation}) => {
   return (
     <View
       style={{
         flexDirection: 'row',
         paddingHorizontal: 15,
         paddingVertical: 10,
+        paddingTop: 30,
         alignItems: 'center',
       }}>
       {/* GoBack */}
@@ -82,6 +83,28 @@ const Notification = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(true);
   const [fetchPending, setFetchPending] = useState(false);
+
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     title: 'Notification',
+  //     headerStyle: {elevation: 0, backgroundColor: '#F0E6FA'},
+  //     headerTitleStyle: {color: COLORS.secondary, ...FONTS.h5},
+  //     headerTitleAlign: 'center',
+  //     headerTintColor: COLORS.secondary,
+
+  //     headerLeft: () => (
+  //       <View style={{marginLeft: 10}}>
+  //         <TouchableOpacity
+  //           activeOpacity={0.5}
+  //           onPress={() => {
+  //             navigation.goBack();
+  //           }}>
+  //           <Icon name="chevron-back" size={25} color={COLORS.secondary} />
+  //         </TouchableOpacity>
+  //       </View>
+  //     ),
+  //   });
+  // }, []);
 
   const getUser = async () => {
     await firestore()

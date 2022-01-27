@@ -18,6 +18,7 @@ const CustomPatientList = ({
   patientAvatar,
   isRequested,
   patientName,
+  patientId,
 }) => {
   const [lastMessages, setLastMessages] = useState([]);
 
@@ -46,6 +47,7 @@ const CustomPatientList = ({
           patientAvatar,
           isRequested,
           patientName,
+          patientId,
         )
       }
       bottomDivider>
@@ -65,6 +67,7 @@ const CustomPatientList = ({
           {lastMessages?.[0]?.displayName}:
           {lastMessages?.[0]?.message || 'No messages'}
         </ListItem.Subtitle>
+        {/* <Text>{patientId}</Text> */}
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>

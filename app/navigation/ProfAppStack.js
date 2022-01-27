@@ -34,6 +34,9 @@ import LicenseCertificate from '../Professional/screans/subScreens/licenseCertif
 import Details from '../Professional/screans/subScreens/categoryDetails';
 import ProfileScreen from '../patient/screens/profileScreen';
 import FullPost from '../patient/screens/FullPost';
+import BlogQuestion from '../patient/screens/subScreen/BlogQuestion';
+import ReviewsList from '../patient/screens/ReviewsList';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -106,7 +109,11 @@ export default function AppStack() {
           component={ProfessionalChat}
           options={() => ({headerShown: true})}
         />
-        <Stack.Screen name="Notification" component={Notification} />
+        <Stack.Screen
+          name="Notification"
+          component={Notification}
+          // options={() => ({headerShown: true})}
+        />
         <Stack.Screen name="profileScreen" component={profileScreen} />
         <Stack.Screen name="BlogContent" component={BlogContent} />
         <Stack.Screen name="addBlog" component={addBlog} />
@@ -129,6 +136,16 @@ export default function AppStack() {
           options={() => ({headerShown: true})}
         />
         <Stack.Screen name="FullPost" component={FullPost} />
+        <Stack.Screen
+          name="BlogQuestion"
+          component={BlogQuestion}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="ReviewsList"
+          component={ReviewsList}
+          options={() => ({headerShown: true})}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );

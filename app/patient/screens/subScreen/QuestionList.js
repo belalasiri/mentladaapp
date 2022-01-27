@@ -7,35 +7,39 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {COLORS, icons, SIZES, FONTS} from '../../../../constants';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {Avatar} from 'react-native-elements';
-import NameContainer from './NameContainer';
 import {BallIndicator, BarIndicator} from 'react-native-indicators';
 import moment from 'moment';
+import {COLORS, icons, SIZES, FONTS} from '../../../constants';
 
-const CommentsList = ({item, navigation, deleting, onDelete}) => {
+const QuestionList = ({item, navigation, deleting, onDelete}) => {
   const [userData, setUserData] = useState(null);
   const [profData, setProfData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(false);
 
   const getUser = async () => {
+    setUserLoading(true);
+
     await firestore()
       .collection('users')
-      .doc(item.CommenterId)
+      .doc(item.QuestionerId)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
           setUserData(documentSnapshot.data());
+          setUserLoading(false);
         }
       });
-    setLoading(false);
   };
+
   const getProf = async () => {
+    setLoading(true);
     await firestore()
       .collection('Professional')
-      .doc(item.CommenterId)
+      .doc(item.QuestionerId)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
@@ -50,7 +54,7 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
     getProf();
   }, [userData, profData]);
 
-  let postTime = moment(item.CommentTime.toDate()).fromNow();
+  let QuestionTime = moment(item.QuestionTime.toDate()).fromNow();
 
   return (
     <View
@@ -67,17 +71,21 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
           justifyContent: 'center',
         }}>
         <View style={{alignSelf: 'flex-start'}}>
-          <Avatar
-            rounded
-            size={35}
-            source={{
-              uri: userData
-                ? userData.userImg || 'https://i.ibb.co/2kR5zq0/Final-Logo.png'
-                : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
-            }}
-          />
+          {userLoading ? (
+            <Avatar
+              rounded
+              size={35}
+              source={{
+                uri: userData
+                  ? userData.userImg ||
+                    'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                  : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
+              }}
+            />
+          ) : (
+            <BallIndicator color={COLORS.secondary} size={15} />
+          )}
         </View>
-
         <View
           style={{
             flex: 1,
@@ -102,7 +110,7 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
                 : null}
             </Text>
             <Text style={{...FONTS.body6, color: COLORS.secondary}}>
-              {postTime}
+              {QuestionTime}
             </Text>
           </View>
           <View
@@ -111,12 +119,11 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
               paddingVertical: SIZES.padding - 5,
             }}>
             <Text style={{...FONTS.body4, color: COLORS.secondary}}>
-              {item.Comment}
+              {item.Question}
             </Text>
           </View>
         </View>
-
-        {item.CommenterId != auth().currentUser.uid ? null : (
+        {item.QuestionerId != auth().currentUser.uid ? null : (
           <TouchableOpacity onPress={() => onDelete()}>
             <Image
               source={icons.Delete}
@@ -130,18 +137,16 @@ const CommentsList = ({item, navigation, deleting, onDelete}) => {
           </TouchableOpacity>
         )}
       </View>
-      {/* <Text>{item.Comment}</Text> */}
     </View>
   );
 };
 
-export default CommentsList;
+export default QuestionList;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: SIZES.padding,
+    alignItems: 'center',
   },
 });

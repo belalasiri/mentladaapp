@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -24,6 +25,7 @@ import auth from '@react-native-firebase/auth';
 
 import font from '../../../config/font';
 import colors from '../../../config/colors';
+import {COLORS, FONTS, icons} from '../../../constants';
 
 const ProfessionalChat = ({navigation, route}) => {
   const [input, setInput] = useState('');
@@ -42,12 +44,17 @@ const ProfessionalChat = ({navigation, route}) => {
       },
 
       headerTitle: () => (
-        <View
+        <TouchableOpacity
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             marginHorizontal: -10,
-          }}>
+          }}
+          onPress={() =>
+            navigation.navigate('HomeProfile', {
+              userId: route.params.patientId,
+            })
+          }>
           <Avatar
             rounded
             source={{
@@ -58,14 +65,14 @@ const ProfessionalChat = ({navigation, route}) => {
           />
           <Text
             style={{
-              color: colors.empty,
-              fontFamily: font.title,
+              color: COLORS.lightpurple,
+              ...FONTS.h6,
               marginLeft: 15,
               textTransform: 'uppercase',
             }}>
             {route.params.patientName}
           </Text>
-        </View>
+        </TouchableOpacity>
       ),
 
       headerRight: () => (
@@ -76,7 +83,11 @@ const ProfessionalChat = ({navigation, route}) => {
             justifyContent: 'space-between',
           }}>
           <TouchableOpacity activeOpacity={0.5} onPress={() => onCall()}>
-            <Icon name="videocam-outline" size={25} color={colors.empty} />
+            <Icon
+              name="information-circle-outline"
+              size={25}
+              color={colors.empty}
+            />
           </TouchableOpacity>
         </View>
       ),
@@ -90,6 +101,7 @@ const ProfessionalChat = ({navigation, route}) => {
       .collection('chats')
       .doc()
       .set({
+        professionalName: route.params.professionalName,
         patientName: route.params.patientName,
         message: input,
         sendBy: auth().currentUser.email,
@@ -103,7 +115,7 @@ const ProfessionalChat = ({navigation, route}) => {
     setInput('');
   };
   const onCall = () => {
-    Alert.alert('Patient Prof ID!', ` ${route.params.isRequested}`);
+    Alert.alert('Session ID!', ` ${route.params.isRequested}`);
   };
 
   useLayoutEffect(() => {
@@ -126,6 +138,7 @@ const ProfessionalChat = ({navigation, route}) => {
             professionalAvatar: doc.data().professionalAvatar,
             sendBy: doc.data().sendBy,
             timestamp: doc.data().timestamp,
+            patientId: doc.data().patientId,
           })),
         ),
       );
@@ -133,7 +146,7 @@ const ProfessionalChat = ({navigation, route}) => {
   }, [route]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar
         barStyle="light-content"
         translucent
@@ -156,38 +169,13 @@ const ProfessionalChat = ({navigation, route}) => {
                 <FlatList
                   inverted
                   initialNumToRender={7}
-                  // ListFooterComponent={() => (
-                  //   <View style={{padding: 20, alignItems: 'center'}}>
-                  //     <Text
-                  //       style={{
-                  //         fontFamily: font.subtitle,
-                  //         color: colors.subtext,
-                  //       }}>
-                  //       Consultation session with {route.params.patientName}
-                  //     </Text>
-                  //   </View>
-                  // )}
                   data={messages}
                   keyExtractor={item => item.id}
                   renderItem={({id, item}) =>
                     item.sendBy === auth().currentUser.email ? (
-                      <View key={id} style={[styles.Message, styles.patient]}>
+                      <View key={id} style={[styles.message, styles.patient]}>
                         <View
                           style={[styles.cloud, {backgroundColor: '#e8daf7'}]}>
-                          {/* <Avatar
-                            rounded
-                            position="absolute"
-                            size={25}
-                            bottom={-15}
-                            right={-5}
-                            // for the web in case anything happend
-                            containerStyle={{
-                              position: 'absolute',
-                              bottom: -15,
-                              right: -5,
-                            }}
-                            source={{uri: item.professionalAvatar}}
-                          /> */}
                           <Text style={[styles.text, {color: 'black'}]}>
                             {item.message}
                           </Text>
@@ -207,9 +195,9 @@ const ProfessionalChat = ({navigation, route}) => {
                     ) : (
                       <View
                         key={id}
-                        style={[styles.Message, styles.professional]}>
+                        style={[styles.message, styles.professional]}>
                         <View
-                          style={[styles.cloud, {backgroundColor: '#ececec'}]}>
+                          style={[styles.cloud, {backgroundColor: '#f9f9f9'}]}>
                           <Text style={[styles.text, {color: 'black'}]}>
                             {item.message}
                           </Text>
@@ -219,18 +207,6 @@ const ProfessionalChat = ({navigation, route}) => {
                               'LT',
                             )}
                           </Text>
-
-                          {/* <View style={{alignSelf: 'flex-start'}}>
-                            <Avatar
-                              rounded
-                              position="absolute"
-                              size={25}
-                              justifyContent="center"
-                              bottom={-15}
-                              right={-5}
-                              source={{uri: item.patientAvatar}}
-                            />
-                          </View> */}
                         </View>
                       </View>
                     )
@@ -238,6 +214,7 @@ const ProfessionalChat = ({navigation, route}) => {
                 />
 
                 <View style={styles.footer}>
+                  {/* <Text>{route.params.patientId}</Text> */}
                   <TextInput
                     value={input}
                     multiline
@@ -250,21 +227,12 @@ const ProfessionalChat = ({navigation, route}) => {
                     disabled={!input}
                     onPress={sendMessage}
                     activeOpacity={0.5}>
-                    {input ? (
-                      <Icon
-                        name="send"
-                        size={20}
-                        color={colors.subtext}
-                        style={styles.icon}
-                      />
-                    ) : (
-                      <Icon
-                        name="add"
-                        size={25}
-                        color={colors.subtext}
-                        style={styles.icon}
-                      />
-                    )}
+                    <Icon
+                      name="send"
+                      size={20}
+                      color={!input ? COLORS.lightpurple : COLORS.primary}
+                      style={styles.icon}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -314,8 +282,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     textAlign: 'left',
     lineHeight: 20,
-    backgroundColor: '#ececec',
-    color: colors.text,
+    backgroundColor: COLORS.lightpurple,
+    color: COLORS.secondary,
     overflow: 'hidden',
     flexWrap: 'wrap',
   },
@@ -361,7 +329,7 @@ const styles = StyleSheet.create({
   },
   Timetext: {
     paddingTop: 3,
-    fontSize: 12,
+    fontSize: 10,
     lineHeight: 12,
     alignSelf: 'flex-end',
     fontFamily: font.subtitle,

@@ -1,40 +1,36 @@
 import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
-  Dimensions,
   FlatList,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   Image,
-  Animated,
-  ActivityIndicator,
 } from 'react-native';
 
-import firestore, {firebase} from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+//DataBase
+import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../navigation/AuthProvider';
 
-import {Avatar, ListItem} from 'react-native-elements';
+//Libraries
+import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 
+//Imports
 import colors from '../../config/colors';
 import font from '../../config/font';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import BlogSwitch from '../../config/components/BlogSwitch';
 import BlogCustom from './subScreen/BlogCustom';
+import {COLORS, FONTS, SIZES} from '../../constants';
 
 const BlogScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  const [profData, setProfData] = useState(null);
   const [allPosts, setAllPost] = useState(null);
-  const [ownPosts, setOwnPosts] = useState(null);
   const [requests, setRequests] = useState(true);
-  const [isVerified, setVerified] = useState(null);
-  const [uploading, setUploading] = useState(false);
+
   const Categories = [
     {
       id: 1,
@@ -112,15 +108,14 @@ const BlogScreen = ({navigation, route}) => {
       title: 'Mentlada Blog',
       headerStyle: {elevation: 0},
       headerTitleStyle: {
-        color: colors.text,
-        fontFamily: font.title,
-        // textTransform: 'uppercase',
+        color: COLORS.secondary,
+        ...FONTS.h4,
       },
       headerTitleAlign: 'center',
-      headerTintColor: colors.text,
+      headerTintColor: COLORS.secondary,
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => {}}>
+          <View>
             <Avatar
               rounded
               source={{
@@ -130,7 +125,7 @@ const BlogScreen = ({navigation, route}) => {
                   : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
               }}
             />
-          </TouchableOpacity>
+          </View>
         </View>
       ),
     });
@@ -176,11 +171,7 @@ const BlogScreen = ({navigation, route}) => {
   }, [navigation]);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: '#fff',
-      }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <BlogSwitch
         selectionMode={1}
         option1="RECENT"
@@ -267,10 +258,7 @@ const BlogScreen = ({navigation, route}) => {
           data={Categories}
           keyExtractor={item => item.id}
           numColumns={2}
-          renderItem={({id, item}) => (
-            <Card Categories={item} />
-            //     return <Card Categories={item} />;
-          )}
+          renderItem={({item}) => <Card Categories={item} />}
         />
       )}
     </SafeAreaView>
@@ -280,45 +268,21 @@ const BlogScreen = ({navigation, route}) => {
 export default BlogScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickerStyles: {
-    width: '70%',
-    backgroundColor: 'gray',
-    color: 'white',
-  },
   boxGred: {
     alignItems: 'center',
     borderRadius: 7,
     height: 180,
     zIndex: 100,
-    width: windowWidth / 2 - 30,
+    width: SIZES.width / 2 - 30,
     padding: 10,
   },
   boxContainer: {
-    // margin: 10,
     height: 180,
-    width: windowWidth / 2 - 30,
+    width: SIZES.width / 2 - 30,
     borderRadius: 7,
     justifyContent: 'center',
     elevation: 1,
     alignItems: 'center',
-  },
-  card: {
-    height: 280,
-    width: windowWidth / 2 - 30,
-    elevation: 1,
-    marginRight: 10,
-    borderRadius: 7,
-    backgroundColor: '#fff',
-  },
-  cardImage: {
-    height: 200,
-    // width: '100%',
   },
   cardDetails: {
     bottom: 0,
@@ -326,5 +290,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  Title: {fontFamily: font.title, fontSize: 15, color: colors.text},
+  Title: {fontFamily: font.title, fontSize: 15, color: COLORS.secondary},
 });

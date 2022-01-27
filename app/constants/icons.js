@@ -33,8 +33,26 @@ const heart = require('../assets/icons/heart.png');
 const heartFill = require('../assets/icons/heartFill.png');
 const uploading = require('../assets/icons/uploading.jpg');
 const Review = require('../assets/image/Review.png');
+const blogComment = require('../assets/icons/blogComment.png');
+const question = require('../assets/icons/question.png');
+const done = require('../assets/icons/Done.png');
+const customerCare = require('../assets/icons/customer-care.png');
+const clap = require('../assets/icons/clap.png');
+const clapFill = require('../assets/icons/clapFill.png');
+const Chat = require('../assets/icons/chat.png');
+const blogonBor = require('../assets/icons/blogonBor.png');
+const blog2 = require('../assets/icons/blogs2.png');
 
 export default {
+  blog2,
+  blogonBor,
+  Chat,
+  customerCare,
+  clapFill,
+  clap,
+  done,
+  question,
+  blogComment,
   Review,
   uploading,
   heartFill,

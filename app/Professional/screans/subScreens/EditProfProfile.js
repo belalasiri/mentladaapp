@@ -27,6 +27,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {windowWidth} from '../../../utils/Dimentions';
 import font from '../../../config/font';
 import colors from '../../../config/colors';
+import {COLORS} from '../../../constants';
 
 const EditProfProfile = ({navigation}) => {
   const {user} = useContext(AuthContext);
@@ -186,7 +187,7 @@ const EditProfProfile = ({navigation}) => {
                 {uploading ? (
                   <View
                     style={{alignItems: 'center', justifyContent: 'center'}}>
-                    <ActivityIndicator size="small" color={colors.empty} />
+                    <ActivityIndicator size="small" color={COLORS.primary} />
                   </View>
                 ) : (
                   <Text style={styles.buttonText}>Update</Text>
@@ -430,13 +431,13 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingHorizontal: 30,
     paddingVertical: 5,
-    color: colors.empty,
+    color: COLORS.primary,
     fontFamily: font.title,
     paddingBottom: 7,
     fontSize: 15,
   },
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: COLORS.lightpurple,
     borderRadius: 50,
     width: windowWidth / 3 - 20,
     alignItems: 'center',

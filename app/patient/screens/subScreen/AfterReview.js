@@ -1,15 +1,75 @@
-import React from 'react';
+import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {
-  Text,
   View,
   StyleSheet,
-  Image,
   SafeAreaView,
   TouchableOpacity,
+  Text,
+  FlatList,
+  Image,
+  ActivityIndicator,
+  TextInput,
+  StatusBar,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
 } from 'react-native';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
 import {COLORS, FONTS, icons, SIZES} from '../../../constants';
 
-const AfterReview = ({navigation}) => {
+const AfterReview = ({navigation, route}) => {
+  const [professionalData, setProfessionalData] = useState([]);
+  const [professionalRating, setProfessionalRating] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isVerified, setVerified] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [defaultRating, setDefaultRating] = useState(5);
+  const [maxRating] = useState([1, 2, 3, 4, 5]);
+  const [submitting, setSubmitting] = useState(false);
+  const [review, setReview] = useState(null);
+
+  useLayoutEffect(() => {
+    const getProfessionalRaiting = firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .collection('Rating')
+      .orderBy('ReviewTime', 'desc')
+      .onSnapshot(
+        snapshot =>
+          setProfessionalRating(
+            snapshot.docs.map(doc => ({
+              id: doc.id,
+              ReviewerId: doc.data().ReviewerId,
+              ReviewContent: doc.data().ReviewContent,
+              ReviewTime: doc.data().ReviewTime,
+              Review: doc.data().Review,
+            })),
+          ),
+        // console.log(professionalRating),
+      );
+
+    return getProfessionalRaiting;
+  }, []);
+  const onHome = () => {
+    firebase
+      .firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .update({
+        starRatings: starRatings,
+      })
+      .then(() => {
+        navigation.navigate('Home');
+      });
+  };
+
+  let starRatings = 0;
+  professionalRating.forEach(item => {
+    starRatings += item.Review / professionalRating.length;
+  });
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -60,7 +120,7 @@ const AfterReview = ({navigation}) => {
             padding: 10,
             width: SIZES.width - 30,
           }}
-          onPress={() => navigation.navigate('Home')}>
+          onPress={onHome}>
           <Text
             style={{
               textAlign: 'center',

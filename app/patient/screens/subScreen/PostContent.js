@@ -20,7 +20,7 @@ import {AuthContext} from '../../../navigation/AuthProvider';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
 import Feather from 'react-native-vector-icons/Feather';
-import {BallIndicator} from 'react-native-indicators';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
 // Imports
 import {COLORS, FONTS, SIZES} from '../../../constants';
 import {Avatar} from 'react-native-elements';
@@ -33,6 +33,7 @@ const PostContent = ({
   onPress,
   onContainerPress,
   onCommentPress,
+  DeletingPost,
 }) => {
   const {user} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
@@ -165,6 +166,7 @@ const PostContent = ({
     checkLiker();
     setDeleting(false);
   }, [deleting, isLiked, likeList]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Avatar
@@ -197,6 +199,7 @@ const PostContent = ({
           </View>
 
           <Text style={styles.Content}>{item.post}</Text>
+
           <TouchableOpacity
             style={{marginVertical: 10}}
             onPress={() => setDialog(true)}>
@@ -223,7 +226,7 @@ const PostContent = ({
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    paddingHorizontal: SIZES.padding,
+                    paddingRight: SIZES.padding,
                   }}>
                   <TouchableOpacity onPress={onLikePress} style={{}}>
                     {isReloading ? (
@@ -260,7 +263,7 @@ const PostContent = ({
                     flexDirection: 'row',
                     alignSelf: 'center',
                     justifyContent: 'center',
-                    paddingHorizontal: SIZES.padding,
+                    paddingRight: SIZES.padding,
                   }}>
                   <TouchableOpacity onPress={disLikeThePost} style={{}}>
                     {isReloading ? (
@@ -301,7 +304,7 @@ const PostContent = ({
             )}
             <TouchableOpacity
               style={styles.iconContainer}
-              onPress={onCommentPress}>
+              onPress={onContainerPress}>
               <Feather name={'message-circle'} size={22} color="grey" />
               <Text style={styles.number}>{CommentsList.length}</Text>
             </TouchableOpacity>
@@ -326,7 +329,6 @@ const PostContent = ({
           source={dialog !== false ? {uri: item.postImg} : null}
           style={styles.zoomedImage}
         />
-        {/* </SafeAreaView> */}
       </Modal>
     </SafeAreaView>
   );

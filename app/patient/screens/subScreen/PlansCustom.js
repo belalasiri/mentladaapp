@@ -96,7 +96,7 @@ const PlansCustom = ({
               justifyContent: 'space-around',
             }}>
             <LinearGradient
-              colors={[COLORS.primary, COLORS.lightpurple]}
+              colors={[COLORS.lightpurple, COLORS.lightpurple]}
               start={{x: 0.4, y: 2}}
               end={{x: 0.4, y: 0}}
               style={{
@@ -113,8 +113,7 @@ const PlansCustom = ({
                 onPress={onPress}>
                 <Text
                   style={{
-                    fontSize: 12,
-                    color: COLORS.secondary,
+                    color: COLORS.primary,
                     ...FONTS.h7,
                   }}>
                   Subscribe now

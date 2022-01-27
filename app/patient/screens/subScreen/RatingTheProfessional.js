@@ -29,9 +29,7 @@ import {AirbnbRating} from 'react-native-elements';
 import {COLORS, FONTS, icons, SIZES} from '../../../constants';
 const RatingTheProfessional = ({navigation, route}) => {
   const [professionalData, setProfessionalData] = useState([]);
-  const [professionalRating, setProfessionalRating] = useState(null);
-  const [profData, setProfData] = useState(null);
-  const [ratingData, setRatingData] = React.useState(0);
+  const [professionalRating, setProfessionalRating] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isVerified, setVerified] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -79,21 +77,6 @@ const RatingTheProfessional = ({navigation, route}) => {
       });
   };
 
-  // const getProfessionalRaiting = async () => {
-  //   await firestore()
-  //     .collection('Professional')
-  //     .doc(route.params.professionalId)
-  //     .collection('Rating')
-  //     .doc(auth().currentUser.uid)
-  //     .get()
-  //     .then(documentSnapshot => {
-  //       if (documentSnapshot.exists) {
-  //         setProfessionalRating(documentSnapshot.data());
-  //         console.log(professionalRating);
-  //       }
-  //     });
-  // };
-
   const checkVerified = async () => {
     setUploading(true);
 
@@ -134,12 +117,6 @@ const RatingTheProfessional = ({navigation, route}) => {
     </Text>
   );
 
-  const ratingCompleted = rating => {
-    console.log('Rating is: ' + rating);
-    setRatingData(rating);
-    console.log('Rating is: ' + ratingData);
-  };
-
   const CustomRatingBar = () => {
     return (
       <View style={styles.CustomRatingBarStyle}>
@@ -166,7 +143,6 @@ const RatingTheProfessional = ({navigation, route}) => {
 
   const onSubmitReview = () => {
     setSubmitting(true);
-
     firebase
       .firestore()
       .collection('Professional')
@@ -181,14 +157,42 @@ const RatingTheProfessional = ({navigation, route}) => {
       })
       .then(() => {
         setSubmitting(false);
-        navigation.navigate('AfterReview');
+
+        navigation.navigate('AfterReview', {
+          professionalId: route.params.professionalId,
+        });
       });
-    setReview('');
-    // .then(() =>{
-    // setSubmitting(false);
-    // navigation.navigate('AfterReview'), setReview(''))}
   };
 
+  useLayoutEffect(() => {
+    const getProfessionalRaiting = firestore()
+      .collection('Professional')
+      .doc(route.params.professionalId)
+      .collection('Rating')
+      .orderBy('ReviewTime', 'desc')
+      .onSnapshot(
+        snapshot =>
+          setProfessionalRating(
+            snapshot.docs.map(doc => ({
+              id: doc.id,
+              ReviewerId: doc.data().ReviewerId,
+              ReviewContent: doc.data().ReviewContent,
+              ReviewTime: doc.data().ReviewTime,
+              Review: doc.data().Review,
+            })),
+          ),
+        // console.log(professionalRating),
+      );
+
+    return getProfessionalRaiting;
+  }, []);
+
+  let starRatings = 0;
+  professionalRating.forEach(item => {
+    starRatings += item.Review / professionalRating.length;
+  });
+
+  // It was the first time in my life I heard about cognitive training (brain training), thus, I decided to join Mentlada sessions. I have learned many things during the sessions to improve my brain functions. I feel like I become cleverer, and my stress level reduced. I am so happy and accept this cognitive training (brain training). Thank you, Dr.Asma and thanks to Mentlada team
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView>

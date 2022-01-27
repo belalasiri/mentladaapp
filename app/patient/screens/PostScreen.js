@@ -1,74 +1,54 @@
-import React, {useEffect, useState, useContext, useLayoutEffect} from 'react';
+import React, {useState, useLayoutEffect} from 'react';
 import {
   FlatList,
-  Alert,
   SafeAreaView,
-  ScrollView,
   View,
   TouchableOpacity,
   Text,
-  StatusBar,
-  Modal,
-  Button,
-  ToastAndroid,
   Image,
 } from 'react-native';
-import firestore, {firebase} from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import auth from '@react-native-firebase/auth';
-import {AuthContext} from '../../navigation/AuthProvider';
 
+//DataBase
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
+//Libraries
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Avatar} from 'react-native-elements';
+
+//Imports
 import colors from '../../config/colors';
 import font from '../../config/font';
-
-import Icon from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
-
-import {Avatar} from 'react-native-elements';
-import CustomPost from '../../config/components/CustomPost';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import PostContent from './subScreen/PostContent';
+import {COLORS, FONTS} from '../../constants';
 
 const PostScreen = ({navigation, route}) => {
-  const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState(null);
-  const [userData, setUserData] = useState([]);
+  const [patientData, setPatientData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [deleted, setDeleted] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [CommentsList, setComments] = useState([]);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Mentlada Social',
       headerStyle: {elevation: 0},
       headerTitleStyle: {
-        color: colors.text,
-        fontFamily: font.title,
+        color: COLORS.secondary,
+        ...FONTS.h4,
       },
       headerTitleAlign: 'center',
-      headerTintColor: colors.text,
+      headerTintColor: COLORS.secondary,
       headerLeft: () => (
         <View style={{marginLeft: 20}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-              // navigation.openDrawer();
-            }}>
-            <Avatar
-              rounded
-              source={{
-                uri: userData
-                  ? userData.userImg ||
-                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-              }}
-            />
-          </TouchableOpacity>
+          <Avatar
+            rounded
+            source={{
+              uri: patientData
+                ? patientData.userImg ||
+                  'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
+                : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+            }}
+          />
         </View>
       ),
       headerRight: () => (
@@ -78,28 +58,28 @@ const PostScreen = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('AddPost');
             }}>
-            <Icon name="create-outline" size={25} color={colors.subtext} />
+            <Icon name="create-outline" size={25} color={COLORS.secondary} />
           </TouchableOpacity>
         </View>
       ),
     });
-  }, [userData]);
+  }, [patientData]);
 
-  const getUser = async () => {
+  const getPatientData = async () => {
     await firestore()
       .collection('users')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          setUserData(documentSnapshot.data());
+          setPatientData(documentSnapshot.data());
         }
       });
   };
 
   useLayoutEffect(() => {
-    getUser();
-    const fetchPosts = firestore()
+    getPatientData();
+    const FETCHPOSTS = firestore()
       .collection('posts')
       .orderBy('postTime', 'desc')
       .onSnapshot(snapshot =>
@@ -121,89 +101,14 @@ const PostScreen = ({navigation, route}) => {
     if (loading) {
       setLoading(false);
     }
-    return fetchPosts;
+    return FETCHPOSTS;
   }, [route, navigation]);
-
-  const deletePost = postId => {
-    console.log('Current Post Id: ', postId);
-    setDeleting(true);
-
-    firestore()
-      .collection('posts')
-      .doc(postId)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          const {postImg} = documentSnapshot.data();
-
-          if (postImg != null) {
-            const storageRef = storage().refFromURL(postImg);
-            const imageRef = storage().ref(storageRef.fullPath);
-
-            imageRef
-              .delete()
-              .then(() => {
-                // console.log(`${postImg} has been deleted successfully.`);
-                deleteFirestoreData(postId);
-              })
-              .catch(e => {
-                console.log('Error while deleting the image. ', e);
-              });
-            //  If the post image is not available
-          } else {
-            deleteFirestoreData(postId);
-          }
-        }
-      });
-  };
-
-  const handleDelete = postId => {
-    Alert.alert(
-      'Delete post',
-      'Are you sure you want to delete this post?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed!'),
-          style: 'cancel',
-        },
-        {
-          text: 'Confirm',
-          onPress: () => deletePost(postId),
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  const deleteFirestoreData = postId => {
-    firestore()
-      .collection('posts')
-      .doc(postId)
-      .delete()
-      .then(() => {
-        // Alert.alert(
-        //   'Post deleted!',
-        //   'Your post has been deleted successfully!',
-        // );
-        setDeleting(false);
-        ToastAndroid.showWithGravityAndOffset(
-          'Your post has been deleted successfully!',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-          0,
-          200,
-        );
-        setDeleted(true);
-      })
-      .catch(e => console.log('Error deleting posst.', e));
-  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       {posts?.[0] ? (
         <FlatList
-          initialNumToRender={7}
+          initialNumToRender={3}
           data={posts}
           keyExtractor={item => item.id}
           renderItem={({id, item}) =>

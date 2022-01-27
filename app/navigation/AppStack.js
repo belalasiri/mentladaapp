@@ -31,6 +31,9 @@ import Rating from '../patient/screens/Rating';
 import RatingTheProfessional from '../patient/screens/subScreen/RatingTheProfessional';
 import AfterReview from '../patient/screens/subScreen/AfterReview';
 import ReviewsList from '../patient/screens/ReviewsList';
+import BlogQuestion from '../patient/screens/subScreen/BlogQuestion';
+import FreeSession from '../patient/screens/subScreen/FreeSession';
+import Done from '../patient/screens/subScreen/Done';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,7 +84,11 @@ function HomeStack() {
       <Tab.Screen name="Feed" component={PostScreen} />
       <Tab.Screen name="Blog" component={BlogScreen} />
       <Tab.Screen name="Message" component={MessageScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={() => ({headerShown: false})}
+      />
     </Tab.Navigator>
   );
 }
@@ -98,7 +105,11 @@ export default function AppStack() {
         />
         {/* <Stack.Screen name="Chat" component={ChatScreen} /> */}
         <Stack.Screen name="AddPost" component={AddPostScreen} />
-        <Stack.Screen name="HomeProfile" component={ProfileScreen} />
+        <Stack.Screen
+          name="HomeProfile"
+          component={ProfileScreen}
+          options={() => ({headerShown: true})}
+        />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="Chat" component={patientChat} />
         <Stack.Screen name="professionaList" component={professionalList} />
@@ -118,7 +129,11 @@ export default function AppStack() {
           component={test}
           options={() => ({headerShown: true})}
         />
-        <Stack.Screen name="FullPost" component={FullPost} />
+        <Stack.Screen
+          name="FullPost"
+          component={FullPost}
+          options={() => ({headerShown: true})}
+        />
         <Stack.Screen
           name="LicenseCertificate"
           component={LicenseCertificate}
@@ -142,6 +157,21 @@ export default function AppStack() {
           name="ReviewsList"
           component={ReviewsList}
           options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="BlogQuestion"
+          component={BlogQuestion}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="FreeSession"
+          component={FreeSession}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="Done"
+          component={Done}
+          // options={() => ({headerShown: true})}
         />
       </Stack.Navigator>
     </SafeAreaProvider>

@@ -5,7 +5,6 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Button,
   Alert,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -27,10 +26,10 @@ import {windowWidth} from '../../utils/Dimentions';
 import DatePicker from 'react-native-date-picker';
 import MonthPicker from 'react-native-month-year-picker';
 
-import {Avatar} from 'react-native-elements';
+import {Avatar, Button} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 import {BallIndicator} from 'react-native-indicators';
-import {COLORS} from '../../constants';
+import {COLORS, FONTS, SIZES} from '../../constants';
 
 const planDetails = ({navigation, route}) => {
   const [cardDetails, setCardDetails] = useState();
@@ -129,6 +128,7 @@ const planDetails = ({navigation, route}) => {
         subscribedAt: firestore.Timestamp.fromDate(new Date()),
         Price: plan.Price,
         planCategory: plan.HederText,
+        // approved: 'approved',
       })
       .then(() => {
         navigation.navigate('Home');
@@ -150,28 +150,85 @@ const planDetails = ({navigation, route}) => {
         backgroundColor="rgba(0,0,0,0)"
       />
       {/* Header */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          marginBottom: 5,
-          alignItems: 'flex-start',
-          paddingTop: 15,
-        }}>
-        <Text
+      <ScrollView>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+        <View
           style={{
-            fontFamily: font.title,
-            color: colors.text,
-            fontSize: 16,
+            marginBottom: 5,
+            alignItems: 'flex-start',
+            paddingTop: 15,
           }}>
-          Add your payment infromation{plan.seconds}
-        </Text>
-      </View>
+          <Text
+            style={{
+              fontFamily: font.title,
+              color: colors.text,
+              fontSize: 16,
+            }}>
+            Add your payment infromation{plan.seconds}
+          </Text>
+        </View>
 
-      <View>
+        <View>
+          <Text
+            style={{
+              fontFamily: font.subtitle,
+              color: colors.subtext,
+              paddingTop: 15,
+              fontSize: 14,
+            }}>
+            Plan infromation
+          </Text>
+          <LinearGradient
+            colors={['#f7f3fc', '#fff', '#f7f3fc']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={{
+              flexDirection: 'row',
+              marginVertical: 5,
+              alignItems: 'center',
+              borderRadius: 7,
+            }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+              }}>
+              {plan.HederText == 'Premium' ? (
+                <View
+                  style={{
+                    backgroundColor: colors.primary,
+                    width: windowWidth / 2 - 20,
+                    borderBottomRightRadius: 30,
+                    borderTopRightRadius: 30,
+                    marginTop: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.title,
+                      color: colors.w,
+                      fontSize: 16,
+                      paddingLeft: 20,
+                    }}>
+                    Best value
+                  </Text>
+                </View>
+              ) : null}
+
+              <View style={{padding: 10}}>
+                <Content
+                  HederText={plan.HederText}
+                  Body={plan.Body}
+                  Price={plan.Price}
+                  priceInfo={plan.priceInfo}
+                />
+              </View>
+            </View>
+          </LinearGradient>
+        </View>
         <Text
           style={{
             fontFamily: font.subtitle,
@@ -179,125 +236,69 @@ const planDetails = ({navigation, route}) => {
             paddingTop: 15,
             fontSize: 14,
           }}>
-          Plan infromation
+          Card information
         </Text>
-        <LinearGradient
-          colors={['#f7f3fc', '#fff', '#f7f3fc']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
+        <View style={styles.action}>
+          <AntDesign name="user" color="#707070" size={20} />
+          <TextInput
+            placeholder="Name on card"
+            placeholderTextColor="#707070"
+            autoCorrect={false}
+            value={name}
+            onChangeText={userName => setName(userName)}
+            style={styles.textInput}
+          />
+        </View>
+        <View style={styles.action}>
+          <Icon name="card-outline" color="#707070" size={20} />
+          <TextInput
+            placeholder="1234 1234 1234 1234"
+            placeholderTextColor="#707070"
+            returnKeyType="next"
+            keyboardType={'numeric'}
+            underlineColorAndroid="transparent"
+            maxLength={16}
+            autoCorrect={false}
+            value={cardNumber}
+            onChangeText={userCardNumber => setCardNumber(userCardNumber)}
+            style={styles.textInput}
+          />
+        </View>
+        <View
           style={{
             flexDirection: 'row',
-            marginVertical: 5,
-            alignItems: 'center',
-            borderRadius: 7,
+            justifyContent: 'space-between',
           }}>
-          <View
+          <DatePicker
+            modal
+            mode="date"
+            open={open}
+            date={date}
+            onConfirm={date => {
+              setOpen(false);
+              setDate(date);
+              console.log(date);
+            }}
+            onCancel={() => {
+              setOpen(false);
+            }}
+          />
+
+          <TouchableOpacity
             style={{
-              flex: 1,
-              justifyContent: 'center',
-            }}>
-            {plan.HederText == 'Premium' ? (
-              <View
-                style={{
-                  backgroundColor: colors.primary,
-                  width: windowWidth / 2 - 20,
-                  borderBottomRightRadius: 30,
-                  borderTopRightRadius: 30,
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.title,
-                    color: colors.w,
-                    fontSize: 16,
-                    paddingLeft: 20,
-                  }}>
-                  Best value
-                </Text>
-              </View>
-            ) : null}
-
-            <View style={{padding: 10}}>
-              <Content
-                HederText={plan.HederText}
-                Body={plan.Body}
-                Price={plan.Price}
-                priceInfo={plan.priceInfo}
-              />
-            </View>
-          </View>
-        </LinearGradient>
-      </View>
-      <Text
-        style={{
-          fontFamily: font.subtitle,
-          color: colors.subtext,
-          paddingTop: 15,
-          fontSize: 14,
-        }}>
-        Card information
-      </Text>
-      <View style={styles.action}>
-        <AntDesign name="user" color="#707070" size={20} />
-        <TextInput
-          placeholder="Name on card"
-          placeholderTextColor="#707070"
-          autoCorrect={false}
-          value={name}
-          onChangeText={userName => setName(userName)}
-          style={styles.textInput}
-        />
-      </View>
-      <View style={styles.action}>
-        <Icon name="card-outline" color="#707070" size={20} />
-        <TextInput
-          placeholder="1234 1234 1234 1234"
-          placeholderTextColor="#707070"
-          returnKeyType="next"
-          keyboardType={'numeric'}
-          underlineColorAndroid="transparent"
-          maxLength={16}
-          autoCorrect={false}
-          value={cardNumber}
-          onChangeText={userCardNumber => setCardNumber(userCardNumber)}
-          style={styles.textInput}
-        />
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <DatePicker
-          modal
-          mode="date"
-          open={open}
-          date={date}
-          onConfirm={date => {
-            setOpen(false);
-            setDate(date);
-            console.log(date);
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
-
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            marginTop: 10,
-            borderColor: colors.empty,
-            alignItems: 'center',
-            borderWidth: 2,
-            borderRadius: 7,
-            paddingLeft: 10,
-            width: windowWidth / 3 + 80,
-          }}
-          //   onPress={() => setOpen(true)}>
-          onPress={() => setOpen(true)}>
-          <Text>{date.toUTCString()}</Text>
-          {/* <TextInput
+              flexDirection: 'row',
+              marginTop: 10,
+              borderColor: colors.empty,
+              alignItems: 'center',
+              borderWidth: 2,
+              borderRadius: 7,
+              paddingLeft: 10,
+              width: windowWidth / 3 + 80,
+            }}
+            //   onPress={() => setOpen(true)}>
+            onPress={() => setOpen(true)}>
+            <Text>{date.toUTCString()}</Text>
+            {/* <TextInput
             placeholder="Date"
             placeholderTextColor="#707070"
             keyboardType="number-pad"
@@ -306,65 +307,64 @@ const planDetails = ({navigation, route}) => {
             onChangeText={userCardNumber => setCardNumber(userCardNumber)}
             style={styles.textInput}
           /> */}
-        </TouchableOpacity>
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 10,
+              borderColor: colors.empty,
+              alignItems: 'center',
+              borderWidth: 2,
+              borderRadius: 7,
+              width: windowWidth / 3,
+              paddingLeft: 10,
+            }}>
+            <TextInput
+              placeholder="CVC"
+              placeholderTextColor="#707070"
+              keyboardType="number-pad"
+              autoCorrect={false}
+              maxLength={3}
+              value={CVC}
+              onChangeText={CVC => setCVC(CVC)}
+              style={styles.textInput}
+            />
+          </View>
+        </View>
         <View
           style={{
-            flexDirection: 'row',
-            marginTop: 10,
-            borderColor: colors.empty,
-            alignItems: 'center',
-            borderWidth: 2,
-            borderRadius: 7,
-            width: windowWidth / 3,
-            paddingLeft: 10,
+            marginTop: 20,
           }}>
-          <TextInput
-            placeholder="CVC"
-            placeholderTextColor="#707070"
-            keyboardType="number-pad"
-            autoCorrect={false}
-            maxLength={3}
-            value={CVC}
-            onChangeText={CVC => setCVC(CVC)}
-            style={styles.textInput}
+          <Button
+            title={'PAY' + plan.Price}
+            titleStyle={{...FONTS.h6, color: COLORS.primary}}
+            loading={uploading ? true : false}
+            onPress={submitPlan}
+            disabled={!name}
+            disabled={!date}
+            disabled={!cardNumber}
+            disabled={!CVC}
+            loadingProps={{
+              size: 'small',
+              color: COLORS.primary,
+            }}
+            buttonStyle={{
+              borderColor: 'transparent',
+              borderWidth: 0,
+              borderRadius: 7,
+              backgroundColor: COLORS.lightpurple,
+            }}
+            containerStyle={{
+              alignSelf: 'center',
+              justifyContent: 'center',
+              width: SIZES.width - 40,
+            }}
           />
         </View>
-      </View>
-      {plan.HederText == 'Premium' ? (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={submitPlan}
-          disabled={uploading}
-          disabled={!name}
-          disabled={!date}
-          disabled={!cardNumber}
-          disabled={!CVC}>
-          {uploading ? (
-            <BallIndicator color={COLORS.purple} size={15} />
-          ) : (
-            <Text style={styles.buttonText}>PAY {plan.Price}</Text>
-          )}
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          onPress={submitPlan}
-          disabled={uploading}
-          disabled={!name}
-          disabled={!date}
-          disabled={!cardNumber}
-          style={styles.button}
-          disabled={!CVC}>
-          {uploading ? (
-            <BallIndicator color={COLORS.purple} size={15} />
-          ) : (
-            <Text style={styles.buttonText}>PAY {plan.Price}</Text>
-          )}
-        </TouchableOpacity>
-      )}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
-
 export default planDetails;
 
 const styles = StyleSheet.create({

@@ -282,7 +282,7 @@ const BlogContent = ({navigation, route, onDelete}) => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: 15,
+              padding: SIZES.padding * 2 - 5,
             }}>
             <View
               style={{
@@ -349,26 +349,54 @@ const BlogContent = ({navigation, route, onDelete}) => {
                 <Text style={styles.text}>Last updated {blogTime}</Text>
               </View>
             </View>
-
             <View
               style={{
+                flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              {isLiked == 'notLiked' ? (
-                <TouchableOpacity onPress={onLikePress}>
-                  <LinearGradient
-                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                    start={{x: 0, y: 1}}
-                    end={{x: 0, y: 0}}
-                    style={{
-                      borderRadius: 7,
-                      padding: SIZES.padding,
-                      width: '100%',
-                    }}>
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onPress={() =>
+                  navigation.navigate('BlogQuestion', {
+                    id: route.params.id,
+                    professionalName: route.params.professionalName,
+                    professionalId: route.params.professionalId,
+                    professionalAvatar: route.params.professionalAvatar,
+                    blogTime: route.params.blogTime,
+                    Blog: route.params.Blog,
+                  })
+                }>
+                <Image
+                  source={icons.Chat}
+                  style={{
+                    width: 19,
+                    height: 19,
+                    tintColor: COLORS.secondary,
+                  }}
+                />
+                <Text
+                  style={{
+                    ...FONTS.body5,
+                    color: COLORS.secondary,
+                  }}>
+                  Ask Dr.
+                </Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingRight: 5,
+                }}>
+                {isLiked == 'notLiked' ? (
+                  <TouchableOpacity onPress={onLikePress}>
                     <View
                       style={{
-                        flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-around',
                       }}>
@@ -388,10 +416,13 @@ const BlogContent = ({navigation, route, onDelete}) => {
                             <BallIndicator color={COLORS.secondary} size={15} />
                           </View>
                         ) : (
-                          <Icon
-                            name="heart-outline"
-                            size={23}
-                            color={COLORS.secondary}
+                          <Image
+                            source={icons.clap}
+                            style={{
+                              width: 23,
+                              height: 23,
+                              tintColor: COLORS.secondary,
+                            }}
                           />
                         )}
                       </TouchableOpacity>
@@ -399,29 +430,18 @@ const BlogContent = ({navigation, route, onDelete}) => {
                         style={{
                           ...FONTS.body4,
                           color: COLORS.secondary,
-                          paddingLeft: SIZES.padding / 2,
+                          marginTop: -2,
                         }}>
                         {likeList.length || 0}
                       </Text>
                     </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ) : isLiked == auth().currentUser.uid ? (
-                <TouchableOpacity onPress={disLikeThePost}>
-                  <LinearGradient
-                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                    start={{x: 0, y: 1}}
-                    end={{x: 0, y: 0}}
-                    style={{
-                      borderRadius: 7,
-                      width: '100%',
-                      padding: SIZES.padding,
-                    }}>
+                  </TouchableOpacity>
+                ) : isLiked == auth().currentUser.uid ? (
+                  <TouchableOpacity onPress={disLikeThePost}>
                     <View
                       style={{
-                        flexDirection: 'row',
-                        alignSelf: 'center',
-                        justifyContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
                       }}>
                       <TouchableOpacity
                         onPress={disLikeThePost}
@@ -439,53 +459,37 @@ const BlogContent = ({navigation, route, onDelete}) => {
                             <BallIndicator color={COLORS.secondary} size={15} />
                           </View>
                         ) : (
-                          <Icon name="heart" size={22} color={COLORS.primary} />
+                          <Image
+                            source={icons.clapFill}
+                            style={{
+                              width: 23,
+                              height: 23,
+                              tintColor: COLORS.primary,
+                            }}
+                          />
                         )}
                       </TouchableOpacity>
                       <Text
                         style={{
                           ...FONTS.body4,
                           color: COLORS.secondary,
-                          paddingLeft: SIZES.padding / 2,
                         }}>
                         {likeList.length || 0}
                       </Text>
                     </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ) : (
-                <LinearGradient
-                  colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                  start={{x: 0, y: 1}}
-                  end={{x: 0, y: 0}}
-                  style={{
-                    borderRadius: 7,
-                    width: '100%',
-                    paddingHorizontal: SIZES.padding * 2 - 5,
-                    height: '100%',
-                  }}>
-                  <BarIndicator color={COLORS.secondary} size={15} />
-                </LinearGradient>
-              )}
+                  </TouchableOpacity>
+                ) : (
+                  <View
+                    style={{
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      paddingHorizontal: -1,
+                    }}>
+                    <BarIndicator color={COLORS.secondary} size={15} />
+                  </View>
+                )}
+              </View>
             </View>
-
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                margin: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity>
-                <Icon
-                  name="heart-outline"
-                  size={25}
-                  color={colors.subtext}
-                  style={{marginLeft: 10}}
-                  onPress={() => Alert.alert('aaa', 'aa')}
-                />
-              </TouchableOpacity>
-            </View> */}
           </View>
         </View>
 
@@ -517,45 +521,6 @@ const BlogContent = ({navigation, route, onDelete}) => {
               }}>
               {route.params.Content}
             </Text>
-            <View style={styles.textPrivate}>
-              <Text style={styles.color_textPrivate}>
-                If someone you know needs help, Share this app with them by
-              </Text>
-              <TouchableOpacity onPress={myCustomShare}>
-                <Text
-                  style={[
-                    styles.color_textPrivate,
-                    {color: '#6b4f89', textDecorationLine: 'underline'},
-                  ]}>
-                  Clicking here.
-                </Text>
-              </TouchableOpacity>
-              <Text style={styles.color_textPrivate}>
-                If you need support now, call our Lifeline at
-              </Text>
-              <TouchableOpacity onPress={() => {}}>
-                <Text
-                  style={[
-                    styles.color_textPrivate,
-                    {color: '#6b4f89', textDecorationLine: 'underline'},
-                  ]}>
-                  6-800-800-2021
-                </Text>
-              </TouchableOpacity>
-              <Text style={styles.color_textPrivate}>
-                {' '}
-                or Choose a professional by{' '}
-              </Text>
-              <TouchableOpacity onPress={() => {}}>
-                <Text
-                  style={[
-                    styles.color_textPrivate,
-                    {color: '#6b4f89', textDecorationLine: 'underline'},
-                  ]}>
-                  Clicking here.
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </ScrollView>

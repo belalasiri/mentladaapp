@@ -28,7 +28,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {COLORS, FONTS} from '../../constants';
 import BlogCustom from '../components/BlogCustom';
 import {BallIndicator} from 'react-native-indicators';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 const {width} = Dimensions.get('screen');
 
 const ProfHome = ({navigation, route}) => {
@@ -40,7 +40,8 @@ const ProfHome = ({navigation, route}) => {
   const [pending, setPending] = useState(true);
   const [pendingNew, setPendingNew] = useState(true);
   const [fetchPending, setFetchPending] = useState(false);
-  const [allPosts, setAllPost] = useState(null);
+  const [allBlogs, setAllBlogs] = useState(null);
+  const [titleHeader, setTitleHeader] = useState('Loading..');
 
   let pendingList = [];
   const fetchPendingUsers = async () => {
@@ -179,16 +180,29 @@ const ProfHome = ({navigation, route}) => {
   useEffect(() => {
     getProf();
     fetchUsers();
+    checkProfits();
+
     fetchPendingUsers();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, pending]);
+
+  const checkProfits = async () => {
+    await firestore()
+      .collection('Header')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          setTitleHeader(doc.data().HeaderText);
+        });
+      });
+  };
 
   useLayoutEffect(() => {
     const fetcBlogs = firestore()
       .collection('Blogs')
       .orderBy('blogTime', 'desc')
       .onSnapshot(snapshot =>
-        setAllPost(
+        setAllBlogs(
           snapshot.docs.map(doc => ({
             id: doc.id,
             data: doc.data(),
@@ -230,6 +244,47 @@ const ProfHome = ({navigation, route}) => {
           onNotificationPress={() => navigation.navigate('Notification')}
         />
         <Spacer size={10} />
+
+        <LinearGradient
+          colors={['#f7f3fc', '#fff']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={{
+            marginHorizontal: 15,
+            paddingHorizontal: 15,
+            marginVertical: 5,
+            paddingVertical: 20,
+            borderRadius: 7,
+            padding: 10,
+          }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Icon name="trophy-outline" size={35} color={COLORS.secondary} />
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                marginHorizontal: 20,
+              }}>
+              <View>
+                <Text
+                  style={{
+                    color: COLORS.secondary,
+                    ...FONTS.h5,
+                    lineHeight: 25,
+                  }}>
+                  {titleHeader}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
 
         {/* Prof List */}
         {/* Title */}
@@ -460,7 +515,7 @@ const ProfHome = ({navigation, route}) => {
         <View style={{flex: 1}}>
           <FlatList
             horizontal
-            data={allPosts}
+            data={allBlogs}
             keyExtractor={item => item.id}
             showsHorizontalScrollIndicator={false}
             renderItem={({id, item}) =>

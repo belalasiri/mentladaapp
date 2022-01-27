@@ -1,33 +1,31 @@
-import React, {useState, useEffect, useContext, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {
   Text,
   View,
   StyleSheet,
   Image,
-  SafeAreaView,
   ScrollView,
   StatusBar,
-  Alert,
   TouchableOpacity,
 } from 'react-native';
-import colors from '../../config/colors';
-import font from '../../config/font';
 
-import Icon from 'react-native-vector-icons/Ionicons';
-
-//Firebase
+//DataBase
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-// import {AuthContext} from '../../../navigation/AuthProvider';
 
+//Libraries
+import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
-import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import Share from 'react-native-share';
-import File from '../../assets/filesBase64';
-import moment from 'moment';
-import {COLORS, FONTS, icons, SIZES} from '../../constants';
-import {BallIndicator, BarIndicator} from 'react-native-indicators';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import {BallIndicator, BarIndicator} from 'react-native-indicators';
+
+//Imports
+import colors from '../../config/colors';
+import font from '../../config/font';
+import File from '../../assets/filesBase64';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
 
 const BlogContent = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
@@ -56,7 +54,6 @@ const BlogContent = ({navigation, route}) => {
       })
       .then(() => {
         setReloading(false);
-        // console.log('Blog liked!');
       })
       .catch(error => {
         console.log('Something went wrong with liking the Blog.', error);
@@ -73,7 +70,6 @@ const BlogContent = ({navigation, route}) => {
       .delete()
       .then(() => {
         setReloading(false);
-        // console.log('Blog disLiked!');
       })
       .catch(error => {
         console.log('Something went wrong with liking the post.', error);
@@ -104,7 +100,6 @@ const BlogContent = ({navigation, route}) => {
       .then(result => {
         if (result.exists) {
           setVerified(result.data().Verified);
-          // console.log(result.data().Verified);
         } else {
           setVerified('notVerified');
         }
@@ -126,7 +121,6 @@ const BlogContent = ({navigation, route}) => {
       .then(result => {
         if (result.exists) {
           setLiked(result.data().likerId);
-          // console.log(isLiked);
         } else {
           setLiked('notLiked');
         }
@@ -182,11 +176,12 @@ const BlogContent = ({navigation, route}) => {
             }}
             resizeMode="cover"
             style={{
-              width: windowWidth,
-              height: windowHeight / 3 - 10,
+              width: SIZES.width,
+              height: SIZES.height / 3 - 10,
             }}
           />
         </View>
+
         <View
           style={{
             alignItems: 'center',
@@ -301,23 +296,58 @@ const BlogContent = ({navigation, route}) => {
 
             <View
               style={{
+                flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              {isLiked == 'notLiked' ? (
-                <TouchableOpacity onPress={onLikePress}>
-                  <LinearGradient
-                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                    start={{x: 0, y: 1}}
-                    end={{x: 0, y: 0}}
-                    style={{
-                      borderRadius: 7,
-                      padding: SIZES.padding,
-                      width: '100%',
-                    }}>
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onPress={() =>
+                  navigation.navigate('BlogQuestion', {
+                    id: route.params.id,
+                    professionalName: route.params.professionalName,
+                    professionalId: route.params.professionalId,
+                    professionalAvatar: route.params.professionalAvatar,
+                    blogTime: route.params.blogTime,
+                    Blog: route.params.Blog,
+                  })
+                }>
+                {/* <Icon
+                  name="chatbox-ellipses-outline"
+                  size={23}
+                  color={COLORS.secondary}
+                /> */}
+                <Image
+                  source={icons.Chat}
+                  style={{
+                    width: 19,
+                    height: 19,
+                    tintColor: COLORS.secondary,
+                  }}
+                />
+                <Text
+                  style={{
+                    ...FONTS.body5,
+                    color: COLORS.secondary,
+                  }}>
+                  Ask Dr.
+                </Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingRight: 5,
+                }}>
+                {isLiked == 'notLiked' ? (
+                  <TouchableOpacity onPress={onLikePress}>
                     <View
                       style={{
-                        flexDirection: 'row',
+                        // flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-around',
                       }}>
@@ -337,10 +367,13 @@ const BlogContent = ({navigation, route}) => {
                             <BallIndicator color={COLORS.secondary} size={15} />
                           </View>
                         ) : (
-                          <Icon
-                            name="heart-outline"
-                            size={23}
-                            color={COLORS.secondary}
+                          <Image
+                            source={icons.clap}
+                            style={{
+                              width: 23,
+                              height: 23,
+                              tintColor: COLORS.secondary,
+                            }}
                           />
                         )}
                       </TouchableOpacity>
@@ -348,29 +381,19 @@ const BlogContent = ({navigation, route}) => {
                         style={{
                           ...FONTS.body4,
                           color: COLORS.secondary,
-                          paddingLeft: SIZES.padding / 2,
+                          marginTop: -2,
                         }}>
                         {likeList.length || 0}
                       </Text>
                     </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ) : isLiked == auth().currentUser.uid ? (
-                <TouchableOpacity onPress={disLikeThePost}>
-                  <LinearGradient
-                    colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                    start={{x: 0, y: 1}}
-                    end={{x: 0, y: 0}}
-                    style={{
-                      borderRadius: 7,
-                      width: '100%',
-                      padding: SIZES.padding,
-                    }}>
+                  </TouchableOpacity>
+                ) : isLiked == auth().currentUser.uid ? (
+                  <TouchableOpacity onPress={disLikeThePost}>
                     <View
                       style={{
-                        flexDirection: 'row',
-                        alignSelf: 'center',
-                        justifyContent: 'center',
+                        // flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
                       }}>
                       <TouchableOpacity
                         onPress={disLikeThePost}
@@ -388,40 +411,37 @@ const BlogContent = ({navigation, route}) => {
                             <BallIndicator color={COLORS.secondary} size={15} />
                           </View>
                         ) : (
-                          <Icon name="heart" size={22} color={COLORS.primary} />
+                          // <Icon name="heart" size={23} color={COLORS.primary} />
+                          <Image
+                            source={icons.clapFill}
+                            style={{
+                              width: 23,
+                              height: 23,
+                              tintColor: COLORS.primary,
+                            }}
+                          />
                         )}
                       </TouchableOpacity>
                       <Text
                         style={{
                           ...FONTS.body4,
                           color: COLORS.secondary,
-                          paddingLeft: SIZES.padding / 2,
                         }}>
                         {likeList.length || 0}
                       </Text>
                     </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ) : (
-                <LinearGradient
-                  colors={[COLORS.lightpurple, COLORS.lightGreen]}
-                  start={{x: 0, y: 1}}
-                  end={{x: 0, y: 0}}
-                  style={{
-                    borderRadius: 7,
-                    width: '100%',
-                    padding: SIZES.padding,
-                  }}>
+                  </TouchableOpacity>
+                ) : (
                   <View
                     style={{
-                      flexDirection: 'row',
                       alignSelf: 'center',
                       justifyContent: 'center',
+                      paddingHorizontal: -1,
                     }}>
                     <BarIndicator color={COLORS.secondary} size={15} />
                   </View>
-                </LinearGradient>
-              )}
+                )}
+              </View>
             </View>
           </View>
         </View>
@@ -440,7 +460,7 @@ const BlogContent = ({navigation, route}) => {
                 color: colors.text,
                 lineHeight: 30,
                 fontFamily: font.title,
-                width: windowWidth / 2 + 120,
+                width: SIZES.width / 2 + 120,
               }}>
               {route.params.Blog}
             </Text>

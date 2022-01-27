@@ -478,7 +478,7 @@ const Profrequests = ({navigation, route}) => {
                         </Text>
                       </View>
                       <LinearGradient
-                        colors={['#d1b5ef', '#b283e4', '#d1b5ef']}
+                        colors={['#d1b5ef', '#b283e4', COLORS.primary]}
                         start={{x: 1, y: 0}}
                         end={{x: 0, y: 0.25}}
                         style={{
@@ -495,12 +495,12 @@ const Profrequests = ({navigation, route}) => {
                           {/* onPress={() => {}}> */}
                           <Text
                             style={{
-                              color: COLORS.white,
+                              color: COLORS.lightpurple,
                               textAlign: 'center',
                               ...FONTS.h6,
                               marginBottom: 1,
                             }}>
-                            Delete this patient
+                            Unapprove this patient
                           </Text>
                         </TouchableOpacity>
                       </LinearGradient>
@@ -608,7 +608,7 @@ const Profrequests = ({navigation, route}) => {
                         </Text>
                       </View>
                       <LinearGradient
-                        colors={['#b3ecd7', '#67d8af', '#b3ecd7']}
+                        colors={[COLORS.green, '#67d8af', COLORS.green]}
                         start={{x: 0, y: 0.5}}
                         end={{x: 1, y: 0}}
                         style={{

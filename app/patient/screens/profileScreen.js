@@ -25,9 +25,10 @@ import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import moment from 'moment';
-import {COLORS, FONTS} from '../../constants';
+import {COLORS, FONTS, SIZES} from '../../constants';
 import {BarIndicator} from 'react-native-indicators';
 import PostContent from './subScreen/PostContent';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
@@ -38,6 +39,7 @@ const ProfileScreen = ({navigation, route}) => {
   const [ApprovedChats, setApprovedChats] = useState([]);
   const [PendingChats, setPendingChats] = useState([]);
   const [packageData, setPackageData] = useState(0);
+  const [deleting, setDeleting] = useState(false);
 
   const Heder = ({onBacePress, onAddPress, name}) => {
     return (
@@ -103,11 +105,13 @@ const ProfileScreen = ({navigation, route}) => {
       headerTintColor: colors.text,
       headerLeft: () => (
         <View style={{marginLeft: 10}}>
+          {/* {route.params.userId !== auth().currentUser.uid ? ( */}
           <TouchableOpacity
             style={{alignItems: 'center', justifyContent: 'center'}}
             onPress={() => navigation.goBack()}>
             <Icon name="chevron-back" size={25} color={colors.text} />
           </TouchableOpacity>
+          {/* ) : null} */}
         </View>
       ),
     });
@@ -184,6 +188,7 @@ const ProfileScreen = ({navigation, route}) => {
 
   const deletePost = postId => {
     console.log('Current Post Id: ', postId);
+    setDeleting(true);
 
     firestore()
       .collection('posts')
@@ -220,6 +225,7 @@ const ProfileScreen = ({navigation, route}) => {
       .doc(postId)
       .delete()
       .then(() => {
+        setDeleting(false);
         ToastAndroid.showWithGravityAndOffset(
           'Your post has been deleted successfully!',
           ToastAndroid.LONG,
@@ -282,7 +288,7 @@ const ProfileScreen = ({navigation, route}) => {
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
           setPackageData(documentSnapshot.data().seconds);
-          console.log(packageData);
+          // console.log(packageData);
         } else return 0;
       })
       .catch(e => {
@@ -303,35 +309,11 @@ const ProfileScreen = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      {/* <StatusBar barStyle="dark-content" backgroundColor="#f7f3fc" /> */}
-      {/* 
-      <View style={styles.userBtnWrapper}>
-        {route.params ? (
-          <>
-            {route.params.userId !== auth().currentUser.uid ? (
-              <View style={{paddingTop: 30}} />
-            ) : null}
-          </>
-        ) : null}
-      </View> */}
-
       <ScrollView showsVerticalScrollIndicator={false}>
         {route.params ? (
           <>
             {route.params.userId !== auth().currentUser.uid ? (
               <>
-                {/* other users view */}
-                {/* <Heder
-                  name={
-                    userData
-                      ? userData.fname + ' ' + userData.lname || 'Mentlada'
-                      : 'Mentlada'
-                  }
-                  userImage={{
-                    uri: 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-                  }}
-                  onBacePress={() => navigation.goBack()}
-                /> */}
                 <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
                   <View
                     style={{
@@ -522,9 +504,20 @@ const ProfileScreen = ({navigation, route}) => {
         ) : (
           <>
             {/* current user view */}
-            <View style={{marginRight: 15, marginTop: 2, marginLeft: 15}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View style={{flex: 1.4, alignItems: 'flex-start'}}>
+            <View style={{marginRight: 15, marginTop: 30, marginLeft: 15}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingTop: 20,
+                  }}>
                   <Image
                     style={styles.userImg}
                     source={{
@@ -535,55 +528,132 @@ const ProfileScreen = ({navigation, route}) => {
                     }}
                   />
                 </View>
-
-                {/* posts, followers, folowing */}
-
-                <View style={{flex: 3}}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-around',
-                      alignItems: 'center',
-                    }}>
-                    <View style={styles.userInfoItem}>
-                      <Text style={styles.userInfoTitle}>{posts.length}</Text>
-                      <Text style={styles.userInfoSubTitle}>Posts</Text>
-                    </View>
-                    <View style={styles.userInfoItem}>
-                      {packageData ? (
-                        <Text
-                          style={{
-                            ...FONTS.h5,
-                            color: COLORS.secondary,
-                            marginBottom: 5,
-                          }}>
-                          {formatted}
-                        </Text>
-                      ) : (
-                        <Text style={styles.userInfoTitle}>No plan</Text>
-                      )}
-
-                      <Text style={styles.userInfoSubTitle}>Mentlada Plan</Text>
-                    </View>
-                    <View style={styles.userInfoItem}>
-                      <Text style={styles.userInfoTitle}>
-                        {ApprovedChats.length}
-                      </Text>
-                      <Text style={styles.userInfoSubTitle}>Professionals</Text>
-                    </View>
-                  </View>
-                </View>
               </View>
-
-              <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+              <View
+                style={{
+                  paddingHorizontal: 10,
+                  paddingTop: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 <Text style={styles.userName}>
                   {userData ? userData.fname || 'Mentlada' : 'Mentlada'}{' '}
                   {userData ? userData.lname || 'Patient' : 'Patient'}
                 </Text>
 
-                <Text style={styles.aboutUser}>
+                <Text style={[styles.aboutUser, {textAlign: 'center'}]}>
                   {userData ? userData.about || 'No details added.' : ''}
                 </Text>
+              </View>
+
+              <View style={{flexDirection: 'row', paddingTop: SIZES.padding}}>
+                <LinearGradient
+                  colors={[COLORS.lightpurple, COLORS.lightyellow]}
+                  start={{x: 0.5, y: 2.0}}
+                  end={{x: 0.0, y: 0.25}}
+                  style={{
+                    marginVertical: 5,
+                    alignItems: 'center',
+                    borderRadius: 7,
+                    flex: 1,
+                    margin: 5,
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      borderRadius: 7,
+                      paddingTop: 10,
+                      paddingBottom: 10,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        ...FONTS.h4,
+                        width: 100,
+                        textAlign: 'center',
+                        marginTop: 5,
+                      }}>
+                      {ApprovedChats.length}
+                    </Text>
+                    <Text style={{...FONTS.body5}}>Professionals</Text>
+                  </View>
+                </LinearGradient>
+                <LinearGradient
+                  colors={[COLORS.lightpurple, COLORS.lightGreen]}
+                  start={{x: 0.5, y: 2.0}}
+                  end={{x: 0.0, y: 0.25}}
+                  style={{
+                    marginVertical: 5,
+                    alignItems: 'center',
+                    borderRadius: 7,
+                    margin: 5,
+                    flex: 1,
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      borderRadius: 7,
+                      paddingTop: 10,
+                      paddingBottom: 10,
+                      justifyContent: 'center',
+                    }}>
+                    {packageData ? (
+                      <Text
+                        style={{
+                          ...FONTS.h6,
+                          width: 100,
+                          textAlign: 'center',
+                          marginTop: 5,
+                        }}>
+                        {formatted}
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          ...FONTS.h6,
+                          width: 100,
+                          textAlign: 'center',
+                          marginTop: 5,
+                        }}>
+                        No Plan
+                      </Text>
+                    )}
+                    <Text style={{...FONTS.body5}}>Mentlada Plan</Text>
+                  </View>
+                </LinearGradient>
+                <LinearGradient
+                  colors={[COLORS.lightpurple, COLORS.emerald]}
+                  start={{x: 0.5, y: 2.0}}
+                  end={{x: 0.0, y: 0.25}}
+                  style={{
+                    marginVertical: 5,
+                    alignItems: 'center',
+                    borderRadius: 7,
+                    margin: 5,
+                    flex: 1,
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      borderRadius: 7,
+                      paddingTop: 10,
+                      paddingBottom: 10,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        ...FONTS.h4,
+                        width: 100,
+                        textAlign: 'center',
+                        marginTop: 5,
+                      }}>
+                      {posts.length}
+                    </Text>
+                    <Text style={{...FONTS.body5}}>Posts</Text>
+                  </View>
+                </LinearGradient>
+              </View>
+              <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -677,6 +747,41 @@ const ProfileScreen = ({navigation, route}) => {
               </TouchableOpacity>
             </View>
             <View
+              style={{
+                marginBottom: 10,
+                marginHorizontal: 5,
+                marginTop: 20,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: -9,
+                    marginLeft: 20,
+                  }}>
+                  <Icon name="apps" size={20} />
+                  <Text style={styles.sPosts}>Your posts</Text>
+                </View>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: -9,
+                    marginRight: 20,
+                  }}
+                  onPress={() => navigation.navigate('AddPost')}>
+                  <Icon name="add" size={23} />
+                </TouchableOpacity>
+              </View>
+              <Divider />
+            </View>
+            {/* <View
               style={{marginBottom: 10, marginHorizontal: 5, marginTop: 20}}>
               <View
                 style={{
@@ -690,7 +795,7 @@ const ProfileScreen = ({navigation, route}) => {
                 <Text style={styles.Posts}>Your posts</Text>
               </View>
               <Divider />
-            </View>
+            </View> */}
           </>
         )}
 
@@ -702,6 +807,7 @@ const ProfileScreen = ({navigation, route}) => {
                 key={item.id}
                 item={item}
                 onDelete={handleDelete}
+                DeletingPost={deleting}
                 onContainerPress={() =>
                   navigation.navigate('FullPost', {
                     userId: item.userId,
@@ -762,7 +868,7 @@ const ProfileScreen = ({navigation, route}) => {
                     {userData
                       ? userData.fname + ' ' + userData.lname || 'Mentlada'
                       : 'Mentlada'}{' '}
-                    post anything, his post will appear here.
+                    post anything, the post will appear here.
                   </Text>
                 </View>
               </View>
