@@ -16,7 +16,7 @@ import EditProfileScreen from '../patient/screens/EditProfileScreen';
 import ProfProfile from '../patient/screens/ProfProfile';
 import patientChat from '../patient/screens/patientChat';
 import professionalList from '../patient/screens/professionalList';
-import TermsAndPrivacy from '../patient/screens/TermsAndPrivacy';
+import WAW from '../patient/screens/WAW';
 import Help from '../patient/screens/Help';
 import sessionPlan from '../patient/screens/sessionPlan';
 import BlogContent from '../patient/screens/BlogContent';
@@ -34,6 +34,8 @@ import ReviewsList from '../patient/screens/ReviewsList';
 import BlogQuestion from '../patient/screens/subScreen/BlogQuestion';
 import FreeSession from '../patient/screens/subScreen/FreeSession';
 import Done from '../patient/screens/subScreen/Done';
+import Report from '../patient/Report';
+import PatientReport from '../patient/patientReport';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,7 +115,11 @@ export default function AppStack() {
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="Chat" component={patientChat} />
         <Stack.Screen name="professionaList" component={professionalList} />
-        <Stack.Screen name="TermsAndPrivacy" component={TermsAndPrivacy} />
+        <Stack.Screen
+          name="WAW"
+          component={WAW}
+          options={() => ({headerShown: true})}
+        />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="sessionPlan" component={sessionPlan} />
         <Stack.Screen name="Notification" component={Notification} />
@@ -172,6 +178,16 @@ export default function AppStack() {
           name="Done"
           component={Done}
           // options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="Report"
+          component={Report}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="PatientReport"
+          component={PatientReport}
+          options={() => ({headerShown: true})}
         />
       </Stack.Navigator>
     </SafeAreaProvider>

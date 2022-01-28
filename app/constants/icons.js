@@ -42,8 +42,28 @@ const clapFill = require('../assets/icons/clapFill.png');
 const Chat = require('../assets/icons/chat.png');
 const blogonBor = require('../assets/icons/blogonBor.png');
 const blog2 = require('../assets/icons/blogs2.png');
+const Community = require('../assets/icons/Community.png');
+const Empowerment = require('../assets/icons/Empowerment.png');
+const Inclusivity = require('../assets/icons/Inclusivity.png');
+const Belal = require('../assets/icons/Belal.jpg');
+const Hanan = require('../assets/icons/Hanan.jpg');
+const SecurityAndPrivacy = require('../assets/icons/SecurityAndPrivacy.png');
+const WritePosts = require('../assets/icons/WritePosts.png');
+const ConnectWithExperts = require('../assets/icons/ConnectWithExperts.png');
+const caution = require('../assets/icons/caution.png');
+const arrowRight = require('../assets/icons/arrow-right.png');
 
 export default {
+  Hanan,
+  arrowRight,
+  caution,
+  SecurityAndPrivacy,
+  WritePosts,
+  ConnectWithExperts,
+  Belal,
+  Community,
+  Empowerment,
+  Inclusivity,
   blog2,
   blogonBor,
   Chat,

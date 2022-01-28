@@ -147,9 +147,8 @@ const professionalList = ({navigation, route}) => {
       <Heder
         userImage={{
           uri: userData
-            ? userData.userImg ||
-              'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-            : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+            ? userData.userImg || 'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+            : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
         }}
         onBacePress={() => navigation.goBack()}
         onProfilePress={() => navigation.navigate('Profile')}

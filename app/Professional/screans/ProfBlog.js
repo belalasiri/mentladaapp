@@ -129,8 +129,8 @@ const ProfBlog = ({navigation, route}) => {
               source={{
                 uri: profData
                   ? profData.userImg ||
-                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                    'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                  : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
               }}
             />
           </TouchableOpacity>

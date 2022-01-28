@@ -36,6 +36,8 @@ import ProfileScreen from '../patient/screens/profileScreen';
 import FullPost from '../patient/screens/FullPost';
 import BlogQuestion from '../patient/screens/subScreen/BlogQuestion';
 import ReviewsList from '../patient/screens/ReviewsList';
+import WAW from '../patient/screens/WAW';
+import Report from '../patient/Report';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -135,7 +137,11 @@ export default function AppStack() {
           component={ProfileScreen}
           options={() => ({headerShown: true})}
         />
-        <Stack.Screen name="FullPost" component={FullPost} />
+        <Stack.Screen
+          name="FullPost"
+          component={FullPost}
+          options={() => ({headerShown: true})}
+        />
         <Stack.Screen
           name="BlogQuestion"
           component={BlogQuestion}
@@ -144,6 +150,16 @@ export default function AppStack() {
         <Stack.Screen
           name="ReviewsList"
           component={ReviewsList}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="WAW"
+          component={WAW}
+          options={() => ({headerShown: true})}
+        />
+        <Stack.Screen
+          name="PatientReport"
+          component={Report}
           options={() => ({headerShown: true})}
         />
       </Stack.Navigator>

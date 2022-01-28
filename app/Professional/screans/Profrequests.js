@@ -66,8 +66,8 @@ const Profrequests = ({navigation, route}) => {
               source={{
                 uri: profData
                   ? profData.userImg ||
-                    'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                  : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                    'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                  : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
               }}
             />
           </TouchableOpacity>
@@ -98,6 +98,7 @@ const Profrequests = ({navigation, route}) => {
             profEmail: doc.data().profEmail,
             professionalAvatar: doc.data().professionalAvatar,
             createdAt: doc.data().createdAt,
+            patientId: doc.data().patientId,
           })),
         ),
       );
@@ -118,6 +119,7 @@ const Profrequests = ({navigation, route}) => {
             professionalName: doc.data().professionalName,
             profEmail: doc.data().profEmail,
             professionalAvatar: doc.data().professionalAvatar,
+            patientId: doc.data().patientId,
           })),
         ),
       );
@@ -138,6 +140,7 @@ const Profrequests = ({navigation, route}) => {
             professionalName: doc.data().professionalName,
             profEmail: doc.data().profEmail,
             professionalAvatar: doc.data().professionalAvatar,
+            patientId: doc.data().patientId,
           })),
         ),
       );
@@ -222,12 +225,15 @@ const Profrequests = ({navigation, route}) => {
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
-                <View
+                <TouchableOpacity
                   style={{
                     width: windowWidth / 1 - 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }}>
+                  }}
+                  onPress={() =>
+                    navigation.navigate('HomeProfile', {userId: item.patientId})
+                  }>
                   <LinearGradient
                     colors={[colors.w, '#fffcf4']}
                     start={{x: 0, y: 0}}
@@ -340,7 +346,7 @@ const Profrequests = ({navigation, route}) => {
                       </View>
                     </View>
                   </LinearGradient>
-                </View>
+                </TouchableOpacity>
               )}
             />
           ) : (
@@ -428,12 +434,15 @@ const Profrequests = ({navigation, route}) => {
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
-                <View
+                <TouchableOpacity
                   style={{
                     width: windowWidth / 1 - 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }}>
+                  }}
+                  onPress={() =>
+                    navigation.navigate('HomeProfile', {userId: item.patientId})
+                  }>
                   <LinearGradient
                     colors={[colors.w, '#fffcf4']}
                     start={{x: 0, y: 0}}
@@ -506,7 +515,7 @@ const Profrequests = ({navigation, route}) => {
                       </LinearGradient>
                     </View>
                   </LinearGradient>
-                </View>
+                </TouchableOpacity>
               )}
             />
           ) : (
@@ -558,12 +567,15 @@ const Profrequests = ({navigation, route}) => {
               keyExtractor={item => item.id}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
-                <View
+                <TouchableOpacity
                   style={{
                     width: windowWidth / 1 - 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                  }}>
+                  }}
+                  onPress={() =>
+                    navigation.navigate('HomeProfile', {userId: item.patientId})
+                  }>
                   <LinearGradient
                     colors={[COLORS.lightpurple, '#fffcf4']}
                     start={{x: 0, y: 0}}
@@ -653,7 +665,7 @@ const Profrequests = ({navigation, route}) => {
                       </LinearGradient>
                     </View>
                   </LinearGradient>
-                </View>
+                </TouchableOpacity>
               )}
             />
           ) : (

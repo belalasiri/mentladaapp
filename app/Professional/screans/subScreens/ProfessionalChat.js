@@ -60,7 +60,7 @@ const ProfessionalChat = ({navigation, route}) => {
             source={{
               uri:
                 route.params.patientAvatar ||
-                'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                'https://i.ibb.co/2kR5zq0/Final-Logo.png',
             }}
           />
           <Text
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
 
   message: {
     flexDirection: 'row',
-    marginVertical: moderateScale(7, 2),
+    marginVertical: moderateScale(1, 2),
   },
 
   professional: {marginLeft: 20, paddingBottom: 5, position: 'relative'},

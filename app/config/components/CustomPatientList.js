@@ -54,10 +54,11 @@ const CustomPatientList = ({
       <Avatar
         rounded
         source={{
-          uri:
-            patientAvatar || 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+          uri: patientAvatar || 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
         }}
       />
+      {/*      'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                            : 'https://i.ibb.co/2kR5zq0/Final-Logo.png', */}
       <ListItem.Content>
         <ListItem.Title style={styles.Title}>{patientName}</ListItem.Title>
         <ListItem.Subtitle

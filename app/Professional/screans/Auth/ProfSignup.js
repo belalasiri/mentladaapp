@@ -23,6 +23,7 @@ import font from '../../../config/font';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {COLORS} from '../../../constants';
 
 const ProfSignup = ({navigation}) => {
   const [fname, setfName] = useState();
@@ -76,55 +77,13 @@ const ProfSignup = ({navigation}) => {
           <View style={styles.Right} />
         </View>
 
-        {/* <View style={[styles.fullLogo, {borderRadius: 70}]}>
-          {image ? (
-            <ImageBackground
-              source={{
-                uri:
-                  image || 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
-              }}
-              style={{height: 130, width: 130}}
-              blurRadius={2}
-              imageStyle={{borderRadius: 70}}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <TouchableOpacity onPress={choosePhotoFromLibrary}>
-                  <MaterialCommunityIcons
-                    name="camera"
-                    size={35}
-                    color="#fff"
-                    style={{
-                      opacity: 0.7,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 1,
-                      borderColor: '#fff',
-                      borderRadius: 10,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </ImageBackground>
-          ) : (
-            <TouchableOpacity onPress={choosePhotoFromLibrary}>
-              <ImageBackground
-                source={require('../../../assets/image/upload.png')}
-                style={{height: 130, width: 130}}
-                blurRadius={2}
-                imageStyle={{borderRadius: 70}}></ImageBackground>
-            </TouchableOpacity>
-          )}
-        </View> */}
-
-        {/* </View> */}
-        <View style={{paddingTop: 100}}>
+        <View style={{paddingTop: 60}}>
           <Text
-            style={[styles.text, {width: windowWidth / 1, marginBottom: 20}]}>
-            Create patient account
+            style={[
+              styles.text,
+              {width: windowWidth / 2 + 40, marginBottom: 20},
+            ]}>
+            Create Professional account
           </Text>
           <Input
             labelValue={fname}
@@ -361,16 +320,16 @@ const styles = StyleSheet.create({
     zIndex: -100,
   },
   Left: {
-    backgroundColor: colors.secoundary,
+    backgroundColor: COLORS.lightyellow,
     position: 'absolute',
     width: 200,
     height: 200,
     borderRadius: 100,
-    left: -50,
-    top: -50,
+    left: -30,
+    top: -30,
   },
   Right: {
-    backgroundColor: colors.primary,
+    backgroundColor: COLORS.lightpurple,
     position: 'absolute',
     width: 400,
     height: 400,

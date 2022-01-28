@@ -46,7 +46,8 @@ const EditProfileScreen = ({navigation}) => {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false);
   const {
     control,
     handleSubmit,
@@ -239,7 +240,7 @@ const EditProfileScreen = ({navigation}) => {
               <View style={{alignItems: 'center'}}>
                 {/* Image continer */}
                 <TouchableOpacity onPress={choosePhotoFromLibrary}>
-                  {!loading ? (
+                  {loading ? (
                     <ImageBackground
                       source={icons.FinalLogo}
                       style={{
@@ -275,8 +276,8 @@ const EditProfileScreen = ({navigation}) => {
                             ? image
                             : userData
                             ? userData.userImg ||
-                              'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                            : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                              'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                            : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
                         }}
                         style={{height: 130, width: 130}}
                         blurRadius={2}

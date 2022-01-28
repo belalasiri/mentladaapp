@@ -25,7 +25,7 @@ import {Divider} from '../styles/FeedStyles';
 import File from '../../assets/filesBase64';
 import {windowHeight, windowWidth} from '../../utils/Dimentions';
 import moment from 'moment';
-import {COLORS, FONTS, SIZES} from '../../constants';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
 import {BarIndicator} from 'react-native-indicators';
 import PostContent from './subScreen/PostContent';
 import LinearGradient from 'react-native-linear-gradient';
@@ -134,7 +134,7 @@ const ProfileScreen = ({navigation, route}) => {
               id: doc.id,
               userId,
               userName: 'Mentlada Patient',
-              userImg: 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+              userImg: 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
               postTime: postTime,
               post,
               postImg,
@@ -333,8 +333,8 @@ const ProfileScreen = ({navigation, route}) => {
                         source={{
                           uri: userData
                             ? userData.userImg ||
-                              'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                            : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                              'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                            : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
                         }}
                       />
 
@@ -369,31 +369,6 @@ const ProfileScreen = ({navigation, route}) => {
                   </View>
 
                   <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
-                    {/* <View
-                      style={{
-                        flexDirection: 'row',
-                        alignContent: 'center',
-                        paddingVertical: 15,
-                      }}>
-                      <Icon name="mail-outline" size={15} />
-
-                      <Text style={styles.phone}>
-                        {userData ? userData.email || 'No email added.' : ''}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignContent: 'center',
-                      }}>
-                      <Icon name="call-outline" size={15} />
-
-                      <Text style={styles.phone}>
-                        {userData
-                          ? userData.phone || 'No phone no. added.'
-                          : ''}
-                      </Text>
-                    </View> */}
                     <View
                       style={{
                         flexDirection: 'row',
@@ -504,7 +479,27 @@ const ProfileScreen = ({navigation, route}) => {
         ) : (
           <>
             {/* current user view */}
+            <View style={styles.HederStss}>
+              <View style={styles.Left} />
+              <View style={styles.Right} />
+            </View>
             <View style={{marginRight: 15, marginTop: 30, marginLeft: 15}}>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  marginRight: 15,
+                  paddingTop: 15,
+                }}
+                activeOpacity={1}
+                onPress={() => navigation.navigate('WAW')}>
+                <Image
+                  source={icons.info}
+                  style={{width: 20, height: 20, tintColor: COLORS.primary}}
+                />
+              </TouchableOpacity>
               <View
                 style={{
                   flexDirection: 'row',
@@ -516,15 +511,15 @@ const ProfileScreen = ({navigation, route}) => {
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    paddingTop: 20,
+                    paddingTop: 10,
                   }}>
                   <Image
                     style={styles.userImg}
                     source={{
                       uri: userData
                         ? userData.userImg ||
-                          'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1'
-                        : 'https://gcdn.pbrd.co/images/in5sUpqlUHfV.png?o=1',
+                          'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                        : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
                     }}
                   />
                 </View>
@@ -1031,45 +1026,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
   },
+  HederStss: {
+    position: 'absolute',
+    width: '100%',
+    top: -50,
+    zIndex: -100,
+  },
+  Left: {
+    backgroundColor: COLORS.lightyellow,
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    left: -30,
+    top: -30,
+  },
+  Right: {
+    backgroundColor: COLORS.lightpurple,
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    right: -100,
+    top: -200,
+  },
 });
-
-// const onUnfollow = () => {
-//   firebase
-//     .firestore()
-//     .collection('following')
-//     .doc(auth().currentUser.uid)
-//     .collection('userFollowing')
-//     .doc(route.params.userId)
-//     .delete({});
-// };
-// const onFollow = () => {
-//   firebase
-//     .firestore()
-//     .collection('following')
-//     .doc(auth().currentUser.uid)
-//     .collection('userFollowing')
-//     .doc(route.params.userId)
-//     .set({});
-// };
-
-// const fetchUserFollowing = async () => {
-//   console.log('hi baby');
-//   try {
-//     const followings = [];
-
-//     await firestore()
-//       .collection('Following')
-//       .doc('h2aH2YRqnIPZIbwmYv87WmtY6Lo1')
-//       .collection('userFollowing')
-//       .onSnapshot(Snapshot => {
-//         Snapshot.docs.map(doc => {
-//           followings.push(doc.id);
-//         });
-//         let countFollowings = 0;
-//         countFollowings = followings.length;
-//         console.log(countFollowings);
-//       });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };

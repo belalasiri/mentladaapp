@@ -17,9 +17,6 @@ import {COLORS, FONTS, icons, images, SIZES} from '../../../constants';
 import storage from '@react-native-firebase/storage';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 
-import {Button} from 'react-native-elements';
-import {BallIndicator} from 'react-native-indicators';
-
 const PlansCustom = ({
   item,
   navigation,

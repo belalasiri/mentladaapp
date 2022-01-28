@@ -309,7 +309,7 @@ const patientChat = ({navigation, route}) => {
                       key={id}
                       style={[styles.Message, styles.professional]}>
                       <View
-                        style={[styles.cloud, {backgroundColor: '#ececec'}]}>
+                        style={[styles.cloud, {backgroundColor: '#f9f9f9'}]}>
                         <Text style={[styles.text, {color: 'black'}]}>
                           {item.message}
                         </Text>
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
 
   Message: {
     flexDirection: 'row',
-    marginVertical: moderateScale(7, 2),
+    marginVertical: moderateScale(1, 2),
   },
 
   professional: {marginLeft: 20, paddingBottom: 5, position: 'relative'},

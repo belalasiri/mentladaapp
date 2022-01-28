@@ -139,6 +139,23 @@ const ProfProfile = ({route, item, navigation}) => {
           <View style={styles.Right} />
         </View>
         <View style={{paddingHorizontal: 15}}>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              marginRight: 15,
+              paddingTop: 50,
+            }}
+            activeOpacity={1}
+            onPress={() => navigation.navigate('WAW')}>
+            <Image
+              source={icons.info}
+              style={{width: 20, height: 20, tintColor: COLORS.primary}}
+            />
+            {/* <Image source={icons.info} style={{width: 20, height: 20}} /> */}
+          </TouchableOpacity>
           <View style={styles.Hedercontainer}>
             <Image
               style={styles.ProfileImage}
@@ -559,7 +576,7 @@ const styles = StyleSheet.create({
   },
   Hedercontainer: {
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 30,
   },
   ProfileImage: {
     width: 100,
