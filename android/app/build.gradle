@@ -79,6 +79,8 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+
+    // enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -132,7 +134,8 @@ android {
 
     defaultConfig {
         applicationId "com.mentlada"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 21
+        vectorDrawables.useSupportLibrary = true
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"

@@ -6,66 +6,131 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  StatusBar,
+  ImageBackground,
 } from 'react-native';
+
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import colors from '../../config/colors';
 import FormButton from '../../config/components/FormButton';
 import FormInput from '../../config/components/FormInput';
-import SocialButton from '../../config/components/SocialButton';
 import font from '../../config/font';
 import {AuthContext} from '../../navigation/AuthProvider';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import ImagePicker from 'react-native-image-crop-picker';
+import {COLORS} from '../../constants';
 
 const LoginScreen = ({navigation}) => {
-  const [name, setName] = useState();
+  const [fname, setfName] = useState();
+  const [lname, setlName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [image, setImage] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
 
   // Firebase
   const {register} = useContext(AuthContext);
 
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to Take the imag you taked. Please try again',
+          );
+        }
+      });
+  };
+
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+      cropping: true,
+      mediaType: 'photo',
+      includeBase64: true,
+    })
+      .then(image => {
+        // console.log(image);
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUri);
+      })
+      .catch(e => {
+        if (e.code !== 'E_PICKER_CANCELLED') {
+          console.log(e);
+          Alert.alert(
+            'Sorry, there was an issue attempting to get the image/video you selected. Please try again',
+          );
+        }
+      });
+  };
+
   return (
     <ScrollView>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <View style={styles.container}>
-        {/* segment */}
-        <View style={styles.fullLogo}>
-          <Image
-            source={require('../../assets/image/logo.png')}
-            style={styles.logo}
+        <View style={styles.Heder}>
+          <View style={styles.Left} />
+          <View style={styles.Right} />
+        </View>
+
+        <View style={{paddingTop: 60}}>
+          <Text style={[styles.text, {width: windowWidth / 2 + 40}]}>
+            Create patient account
+          </Text>
+          <FormInput
+            labelValue={fname}
+            onChangeText={userName => setfName(userName)}
+            placeholderText="Frist Name"
+            iconType="user"
+            keyboardType="default"
+          />
+          <FormInput
+            labelValue={lname}
+            onChangeText={userName => setlName(userName)}
+            placeholderText="Last Name"
+            iconType="user"
+            keyboardType="default"
+          />
+          <FormInput
+            labelValue={email}
+            onChangeText={userEmail => setEmail(userEmail)}
+            placeholderText="Email"
+            iconType="mail"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <FormInput
+            labelValue={password}
+            onChangeText={userPassword => setPassword(userPassword)}
+            placeholderText="Password"
+            iconType="lock"
+            secureTextEntry={true}
+          />
+          <FormInput
+            labelValue={confirmPassword}
+            onChangeText={userPassword => setConfirmPassword(userPassword)}
+            placeholderText="Confirm Password"
+            iconType="lock"
+            secureTextEntry={true}
           />
         </View>
-        <Text style={styles.text}>Create account</Text>
-        <FormInput
-          labelValue={name}
-          onChangeText={userName => setName(userName)}
-          placeholderText="Name"
-          iconType="user"
-          keyboardType="default"
-        />
-        <FormInput
-          labelValue={email}
-          onChangeText={userEmail => setEmail(userEmail)}
-          placeholderText="Email"
-          iconType="mail"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <FormInput
-          labelValue={password}
-          onChangeText={userPassword => setPassword(userPassword)}
-          placeholderText="Password"
-          iconType="lock"
-          secureTextEntry={true}
-        />
-        <FormInput
-          labelValue={confirmPassword}
-          onChangeText={userPassword => setConfirmPassword(userPassword)}
-          placeholderText="Confirm Password"
-          iconType="lock"
-          secureTextEntry={true}
-        />
-
         {/* By registering, you confirm that you accept our */}
         <View style={styles.textPrivate}>
           <Text style={styles.color_textPrivate}>
@@ -81,17 +146,21 @@ const LoginScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <Text style={styles.color_textPrivate}> and </Text>
-          <Text
-            style={[
-              styles.color_textPrivate,
-              {color: '#6b4f89', textDecorationLine: 'underline'},
-            ]}>
-            Privacy Policy
-          </Text>
+          <TouchableOpacity onPress={() => alert('Privacy Policy Clicked!')}>
+            <Text
+              style={[
+                styles.color_textPrivate,
+                {color: '#6b4f89', textDecorationLine: 'underline'},
+              ]}>
+              Privacy Policy
+            </Text>
+          </TouchableOpacity>
         </View>
         <FormButton
           buttonTitle="Create an account"
-          onPress={() => register(email, password, confirmPassword)}
+          onPress={() =>
+            register(fname, lname, email, password, confirmPassword)
+          }
         />
 
         {/* OR */}
@@ -117,7 +186,7 @@ const LoginScreen = ({navigation}) => {
           <View style={{flex: 1, height: 1, backgroundColor: '#E2D0F5'}} />
         </View>
 
-        <SocialButton
+        {/* <SocialButton
           buttonTitle="Sign up with Facebook!"
           btnType="facebook"
           color="#4867aa"
@@ -131,7 +200,7 @@ const LoginScreen = ({navigation}) => {
           color="#de4d41"
           backgroundColor="#f5e7ea"
           onPress={() => {}}
-        />
+        /> */}
 
         {/* Have an account? Sign In */}
         <View style={styles.textPrivate}>
@@ -142,7 +211,7 @@ const LoginScreen = ({navigation}) => {
                 styles.color_textPrivate,
                 {color: '#353948', textDecorationLine: 'underline'},
               ]}>
-              Sign In
+              SIGN IN
             </Text>
           </TouchableOpacity>
         </View>
@@ -163,7 +232,7 @@ const styles = StyleSheet.create({
   },
   fullLogo: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf: 'center',
   },
   logo: {
     height: 150,
@@ -203,5 +272,29 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: 'grey',
     fontFamily: font.subtitle,
+  },
+  Heder: {
+    position: 'absolute',
+    width: '100%',
+    top: -50,
+    zIndex: -100,
+  },
+  Left: {
+    backgroundColor: COLORS.lightyellow,
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    left: -30,
+    top: -30,
+  },
+  Right: {
+    backgroundColor: COLORS.lightpurple,
+    position: 'absolute',
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    right: -100,
+    top: -200,
   },
 });

@@ -1,5 +1,7 @@
 import React from 'react';
-import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {BallIndicator} from 'react-native-indicators';
+import {COLORS} from '../../constants';
 
 import {windowHeight} from '../../utils/Dimentions';
 import colors from '../colors';

@@ -1,77 +1,179 @@
-import React from 'react';
-import {FlatList} from 'react-native';
+import React, {useState, useLayoutEffect} from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+} from 'react-native';
 
-import PostCard from '../../config/components/PostCard';
-import {Container} from '../styles/FeedStyles';
+//DataBase
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
-const Posts = [
-  {
-    id: '1',
-    userName: 'Belal Alqadasi',
-    userImg: require('../../assets/image/users/user_1.jpg'),
-    postTime: '4 mins ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_1.jpg'),
-    liked: true,
-    likes: '14',
-    comments: '5',
-  },
-  {
-    id: '2',
-    userName: 'Ahmed Asiri',
-    userImg: require('../../assets/image/users/user_4.jpg'),
-    postTime: '2 hours ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '8',
-    comments: '0',
-  },
-  {
-    id: '3',
-    userName: 'Eng.Amer Aljabre',
-    userImg: require('../../assets/image/users/user_2.jpg'),
-    postTime: '1 hours ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_2.jpg'),
-    liked: true,
-    likes: '1',
-    comments: '0',
-  },
-  {
-    id: '4',
-    userName: 'Hanan Alatas',
-    userImg: require('../../assets/image/users/user_5.jpg'),
-    postTime: '1 day ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: require('../../assets/image/post/img_3.jpg'),
-    liked: true,
-    likes: '22',
-    comments: '4',
-  },
-  {
-    id: '5',
-    userName: 'Bari Abikar',
-    userImg: require('../../assets/image/users/user_3.jpg'),
-    postTime: '2 days ago',
-    post: 'Hey there, this is my test for a post of my Mentlada app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '0',
-    comments: '0',
-  },
-];
+//Libraries
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Avatar} from 'react-native-elements';
 
-const PostScreen = () => {
+//Imports
+import colors from '../../config/colors';
+import font from '../../config/font';
+import {windowHeight, windowWidth} from '../../utils/Dimentions';
+import PostContent from './subScreen/PostContent';
+import {COLORS, FONTS} from '../../constants';
+
+const PostScreen = ({navigation, route}) => {
+  const [posts, setPosts] = useState(null);
+  const [patientData, setPatientData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Mentlada Social',
+      headerStyle: {elevation: 0},
+      headerTitleStyle: {
+        color: COLORS.secondary,
+        ...FONTS.h4,
+      },
+      headerTitleAlign: 'center',
+      headerTintColor: COLORS.secondary,
+      headerLeft: () => (
+        <View style={{marginLeft: 20}}>
+          <Avatar
+            rounded
+            source={{
+              uri: patientData
+                ? patientData.userImg ||
+                  'https://i.ibb.co/2kR5zq0/Final-Logo.png'
+                : 'https://i.ibb.co/2kR5zq0/Final-Logo.png',
+            }}
+          />
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{marginRight: 20}}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              navigation.navigate('AddPost');
+            }}>
+            <Icon name="create-outline" size={25} color={COLORS.secondary} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [patientData]);
+
+  const getPatientData = async () => {
+    await firestore()
+      .collection('users')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setPatientData(documentSnapshot.data());
+        }
+      });
+  };
+
+  useLayoutEffect(() => {
+    getPatientData();
+    const FETCHPOSTS = firestore()
+      .collection('posts')
+      .orderBy('postTime', 'desc')
+      .onSnapshot(snapshot =>
+        setPosts(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            userId: doc.data().userId,
+            userName: 'Mentlada Patient',
+            userImg: 'https://i.ibb.co/pv5S0nm/logo.png',
+            postTime: doc.data().postTime,
+            post: doc.data().post,
+            postImg: doc.data().postImg,
+            liked: false,
+            likes: doc.data().likes,
+            comments: doc.data().comments,
+          })),
+        ),
+      );
+    if (loading) {
+      setLoading(false);
+    }
+    return FETCHPOSTS;
+  }, [route, navigation]);
+
   return (
-    <Container>
-      <FlatList
-        data={Posts}
-        renderItem={({item}) => <PostCard item={item} />}
-        keyExtractor={item => item.id}
-        showsVerticalScrollIndicator={false}
-      />
-    </Container>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      {posts?.[0] ? (
+        <FlatList
+          initialNumToRender={3}
+          data={posts}
+          keyExtractor={item => item.id}
+          renderItem={({id, item}) =>
+            item.userId === auth().currentUser.uid ? null : (
+              <PostContent
+                item={item}
+                onPress={() =>
+                  navigation.navigate('HomeProfile', {userId: item.userId})
+                }
+                onContainerPress={() =>
+                  navigation.navigate('FullPost', {
+                    userId: item.userId,
+                    post: item.post,
+                    postTime: item.postTime,
+                    postImg: item.postImg,
+                    id: item.id,
+                  })
+                }
+              />
+            )
+          }
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../../assets/image/image.png')}
+            style={{
+              height: windowHeight / 3 + 20,
+              width: windowWidth / 2 + 20,
+            }}
+          />
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: font.title,
+                color: colors.text,
+              }}>
+              Posts list
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                fontFamily: font.subtitle,
+                color: colors.subtext,
+                textAlign: 'center',
+                width: windowWidth - 120,
+                lineHeight: 27,
+              }}>
+              When any patient post a post, that post will appear here.
+            </Text>
+          </View>
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 

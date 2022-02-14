@@ -2,9 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.View`
   flex: 1;
-  align-items: center;
   background-color: #fff;
-  padding: 10px;
 `;
 
 export const Card = styled.View`
@@ -14,22 +12,24 @@ export const Card = styled.View`
   border-radius: 10px;
 `;
 
-export const UserInfo = styled.View`
+export const UserInfo = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: flex-start;
   padding: 15px;
+  margin-left: 10px;
 `;
 
 export const UserImg = styled.Image`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: 40px;
+  height: 40px;
+  border-radius: 7px;
 `;
 
 export const UserInfoText = styled.View`
   flex-direction: column;
   justify-content: center;
   margin-left: 10px;
+  margin-top: -5px;
 `;
 
 export const UserName = styled.Text`
@@ -41,12 +41,13 @@ export const PostTime = styled.Text`
   font-size: 12px;
   font-family: 'DINNextLTArabic-Regular';
   color: #666;
+  margin-top: -5px;
 `;
 
 export const PostText = styled.Text`
   font-size: 14px;
   font-family: 'DINNextLTArabic-Regular';
-  padding-left: 15px;
+  padding-left: 25px;
   padding-right: 15px;
   margin-bottom: 15px;
 `;
@@ -68,7 +69,7 @@ export const Divider = styled.View`
 export const InteractionWrapper = styled.View`
   flex-direction: row;
   justify-content: space-around;
-  padding: 15px;
+  padding: 10px;
 `;
 
 export const Interaction = styled.TouchableOpacity`
@@ -82,8 +83,7 @@ export const Interaction = styled.TouchableOpacity`
 export const InteractionText = styled.Text`
   font-size: 12px;
   font-family: 'DINNextLTArabic-Medium';
-
-  color: ${props => (props.active ? '#61edea' : '#120d17')};
+  color: ${props => (props.active ? '#b283e4 ' : '#120d17')};
 
   margin-left: 5px;
 `;
