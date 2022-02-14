@@ -52,8 +52,10 @@ const WritePosts = require('../assets/icons/WritePosts.png');
 const ConnectWithExperts = require('../assets/icons/ConnectWithExperts.png');
 const caution = require('../assets/icons/caution.png');
 const arrowRight = require('../assets/icons/arrow-right.png');
+const Notification = require('../assets/icons/notification.png');
 
 export default {
+  Notification,
   Hanan,
   arrowRight,
   caution,

@@ -97,7 +97,7 @@ const WAW = ({navigation}) => {
     {
       id: 3,
       name: 'Write posts',
-      desc: 'Choose from our extended network of counsellors and wellness specialists across the globe. Engage in confidential interactions from the comfort of your own space.',
+      desc: 'Mentlada Social connects you with like-minded mentors and individuals working on their wellness journey.',
       source: icons.WritePosts,
     },
   ];

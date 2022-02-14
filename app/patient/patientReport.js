@@ -186,7 +186,7 @@ const patientReport = ({navigation}) => {
         <View style={styles.newPostContainer}>
           <View style={styles.textInputContainer}>
             <TextInput
-              placeholder="Report content"
+              placeholder="Please briefly describe what happened. A step by step description can be very helpful"
               multiline
               value={content}
               onChangeText={text => setContent(text)}

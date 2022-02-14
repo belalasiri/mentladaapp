@@ -24,6 +24,7 @@ import SpecialityCard from '../../config/components/SpecialityCard';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ImageBackground} from 'react-native';
+import ReadMore from 'react-native-read-more-text';
 
 const ProfProfile = ({route, item, navigation}) => {
   const {user, Proflogout} = useContext(AuthContext);
@@ -121,6 +122,27 @@ const ProfProfile = ({route, item, navigation}) => {
   professionalRating.forEach(item => {
     starRatings += item.Review / professionalRating.length;
   });
+
+  const _renderTruncatedFooter = handlePress => {
+    return (
+      <Text
+        style={{color: COLORS.primary, marginTop: 5, ...FONTS.h6}}
+        onPress={handlePress}>
+        Read more
+      </Text>
+    );
+  };
+
+  const _renderRevealedFooter = handlePress => {
+    return (
+      <Text
+        style={{color: COLORS.primary, marginTop: 5, ...FONTS.h6}}
+        onPress={handlePress}>
+        Show less
+      </Text>
+    );
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -209,6 +231,7 @@ const ProfProfile = ({route, item, navigation}) => {
                   fontSize: 13,
                   fontFamily: font.subtitle,
                   color: colors.primary,
+                  textAlign: 'center',
                 }}>
                 {profData
                   ? profData.specialization || 'Mentlada'
@@ -373,17 +396,22 @@ const ProfProfile = ({route, item, navigation}) => {
                         ? profData.fname || 'Professional'
                         : 'Professional'}
                     </Text>
-                    <Text
-                      style={{
-                        fontSize: 13,
-                        fontFamily: font.subtitle,
-                        color: colors.subtext,
-                        paddingTop: 5,
-                      }}>
-                      {profData
-                        ? profData.about || 'No deteiles are provided..'
-                        : 'No deteiles are provided..'}
-                    </Text>
+                    <ReadMore
+                      numberOfLines={5}
+                      renderTruncatedFooter={_renderTruncatedFooter}
+                      renderRevealedFooter={_renderRevealedFooter}>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontFamily: font.subtitle,
+                          color: colors.subtext,
+                          paddingTop: 5,
+                        }}>
+                        {profData
+                          ? profData.about || 'No deteiles are provided..'
+                          : 'No deteiles are provided..'}
+                      </Text>
+                    </ReadMore>
                   </View>
                 ) : null}
               </>
@@ -397,18 +425,23 @@ const ProfProfile = ({route, item, navigation}) => {
                   }}>
                   About you
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontFamily: font.subtitle,
-                    color: colors.subtext,
-                    paddingTop: 5,
-                  }}>
-                  {profData
-                    ? profData.about ||
-                      'There are no details provided. By editing your profile, you may add an About you information.'
-                    : 'There are no details provided. By editing your profile, you may add an About you information.'}
-                </Text>
+                <ReadMore
+                  numberOfLines={5}
+                  renderTruncatedFooter={_renderTruncatedFooter}
+                  renderRevealedFooter={_renderRevealedFooter}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: font.subtitle,
+                      color: colors.subtext,
+                      paddingTop: 5,
+                    }}>
+                    {profData
+                      ? profData.about ||
+                        'There are no details provided. By editing your profile, you may add an About you information.'
+                      : 'There are no details provided. By editing your profile, you may add an About you information.'}
+                  </Text>
+                </ReadMore>
               </>
             )}
           </View>

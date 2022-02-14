@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 
 // DataBase
@@ -23,7 +24,7 @@ import font from '../../config/font';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Avatar} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-import {COLORS, FONTS, icons} from '../../constants';
+import {COLORS, FONTS, icons, SIZES} from '../../constants';
 
 const Heder = ({userImage, onBacePress, onProfilePress, navigation}) => {
   return (
@@ -78,33 +79,11 @@ const Heder = ({userImage, onBacePress, onProfilePress, navigation}) => {
 
 const Notification = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
-  const [ProfessionalData, setProfessionalData] = useState(null);
+  const [ProfessionalData, setProfessionalData] = useState([]);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(true);
   const [fetchPending, setFetchPending] = useState(false);
-
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     title: 'Notification',
-  //     headerStyle: {elevation: 0, backgroundColor: '#F0E6FA'},
-  //     headerTitleStyle: {color: COLORS.secondary, ...FONTS.h5},
-  //     headerTitleAlign: 'center',
-  //     headerTintColor: COLORS.secondary,
-
-  //     headerLeft: () => (
-  //       <View style={{marginLeft: 10}}>
-  //         <TouchableOpacity
-  //           activeOpacity={0.5}
-  //           onPress={() => {
-  //             navigation.goBack();
-  //           }}>
-  //           <Icon name="chevron-back" size={25} color={COLORS.secondary} />
-  //         </TouchableOpacity>
-  //       </View>
-  //     ),
-  //   });
-  // }, []);
 
   const getUser = async () => {
     await firestore()
@@ -192,6 +171,13 @@ const Notification = ({navigation, route}) => {
         if (loading == false) {
           setLoading(true);
         }
+        ToastAndroid.showWithGravityAndOffset(
+          'Patient Approved',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          0,
+          200,
+        );
       })
       .catch(e => {
         console.log(e);
@@ -207,19 +193,7 @@ const Notification = ({navigation, route}) => {
     getUser();
     fetchUsers();
     fetchPendingUsers();
-  }, [loading, pending, ProfessionalData]);
-
-  if (loading == true) {
-    return (
-      <View style={[styles.containerLoading, styles.horizontal]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  const Sar = (
-    <Text>{ProfessionalData ? ProfessionalData.Verified || 'sss' : null}</Text>
-  );
+  }, [pending, ProfessionalData]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -286,115 +260,154 @@ const Notification = ({navigation, route}) => {
           </LinearGradient>
         </View>
       ) : null}
-      <FlatList
-        data={pending}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View>
-            <LinearGradient
-              colors={['#f7f3fc', '#fff']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              style={{
-                flexDirection: 'row',
-                marginHorizontal: 15,
-                marginVertical: 5,
-                alignItems: 'center',
-                borderRadius: 7,
-                padding: 10,
-              }}>
-              <Avatar
-                rounded
-                size={70}
-                source={{
-                  uri: userData
-                    ? item.patientAvatar ||
-                      'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
-                    : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
-                }}
-              />
-              <View
+      {pending?.[0] ? (
+        <FlatList
+          data={pending}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <View>
+              <LinearGradient
+                colors={['#f7f3fc', '#fff']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
                 style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  marginHorizontal: 20,
+                  flexDirection: 'row',
+                  marginHorizontal: 15,
+                  marginVertical: 5,
+                  alignItems: 'center',
+                  borderRadius: 7,
+                  padding: 10,
                 }}>
+                <Avatar
+                  rounded
+                  size={70}
+                  source={{
+                    uri: userData
+                      ? item.patientAvatar ||
+                        'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg'
+                      : 'https://i.ibb.co/Rhmf85Y/6104386b867b790a5e4917b5.jpg',
+                  }}
+                />
                 <View
                   style={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
+                    flex: 1,
+                    justifyContent: 'center',
+                    marginHorizontal: 20,
                   }}>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 15,
-                      color: colors.subtext,
-                      fontFamily: font.title,
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
                     }}>
-                    {item.patientName} requested to have a counsultation with
-                    you
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row', marginVertical: 7}}>
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-                      backgroundColor: colors.primary,
-                      padding: 7,
-                      marginRight: 3,
-                      borderRadius: 7,
-                    }}
-                    onPress={() => approvePaitent(item)}>
-                    {fetchPending ? (
-                      <View
-                        style={{
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                          paddingTop: 2,
-                        }}>
-                        <ActivityIndicator size="small" color={colors.w} />
-                      </View>
-                    ) : (
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        color: colors.subtext,
+                        fontFamily: font.title,
+                      }}>
+                      {item.patientName} requested to have a counsultation with
+                      you
+                    </Text>
+                  </View>
+                  <View style={{flexDirection: 'row', marginVertical: 7}}>
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        backgroundColor: colors.primary,
+                        padding: 7,
+                        marginRight: 3,
+                        borderRadius: 7,
+                      }}
+                      onPress={() => approvePaitent(item)}>
+                      {fetchPending ? (
+                        <View
+                          style={{
+                            alignSelf: 'center',
+                            justifyContent: 'center',
+                            paddingTop: 2,
+                          }}>
+                          <ActivityIndicator size="small" color={colors.w} />
+                        </View>
+                      ) : (
+                        <Text
+                          style={{
+                            color: colors.w,
+                            textAlign: 'center',
+                            fontFamily: font.subtitle,
+                            fontSize: 13,
+                            marginBottom: 1,
+                          }}>
+                          Approve
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        backgroundColor: colors.empty,
+                        padding: 7,
+                        marginLeft: 3,
+                        borderRadius: 7,
+                      }}
+                      onPress={() => {}}>
                       <Text
                         style={{
-                          color: colors.w,
+                          color: colors.subtext,
                           textAlign: 'center',
                           fontFamily: font.subtitle,
                           fontSize: 13,
                           marginBottom: 1,
                         }}>
-                        Approve
+                        Reject
                       </Text>
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-                      backgroundColor: colors.empty,
-                      padding: 7,
-                      marginLeft: 3,
-                      borderRadius: 7,
-                    }}
-                    onPress={() => {}}>
-                    <Text
-                      style={{
-                        color: colors.subtext,
-                        textAlign: 'center',
-                        fontFamily: font.subtitle,
-                        fontSize: 13,
-                        marginBottom: 1,
-                      }}>
-                      Reject
-                    </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </LinearGradient>
+              </LinearGradient>
+            </View>
+          )}
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={icons.Notification}
+            style={{
+              height: 130,
+              width: 130,
+              marginBottom: 20,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: 18,
+              ...FONTS.h4,
+              color: COLORS.secondary,
+            }}>
+            Your Notification
+          </Text>
+          <View>
+            <Text
+              style={{
+                fontSize: 13,
+                ...FONTS.body5,
+                color: COLORS.secondary,
+                textAlign: 'center',
+                width: SIZES.width - 120,
+                lineHeight: 27,
+              }}>
+              When you are notified of something, it will appear here.
+            </Text>
           </View>
-        )}
-      />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

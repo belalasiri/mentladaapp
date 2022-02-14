@@ -105,7 +105,7 @@ const AddPostScreen = ({navigation, route}) => {
         ToastAndroid.showWithGravity(
           'Your post has been published Successfully',
           ToastAndroid.LONG,
-          ToastAndroid.CENTER,
+          ToastAndroid.BOTTOM,
         );
         setPost(null);
         setUploading(false);

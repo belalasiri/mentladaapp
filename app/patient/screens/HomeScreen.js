@@ -574,7 +574,7 @@ const HomeScreen = ({navigation, route}) => {
                   paddingHorizontal: 20,
                   textAlign: 'center',
                 }}>
-                Contact a personal therapist
+                Contact a personal professional
               </Text>
               <TouchableOpacity
                 style={styles.buttonContainer}
